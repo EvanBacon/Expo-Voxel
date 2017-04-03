@@ -1,0 +1,26 @@
+{
+  "name": "voxel",
+  "version": "0.0.0",
+  "description": "Hello Expo!",
+  "author": null,
+  "main": "main.js",
+  "scripts": {
+    "test": "node node_modules/jest/bin/jest.js"
+  },
+  "jest": {
+    "preset": "jest-expo"
+  },
+  "dependencies": {
+    "@expo/ex-navigation": "~2.9.2",
+    "@expo/samples": "~1.0.3",
+    "expo": "^15.0.2",
+    "react": "~15.4.0",
+    "react-native": "https://github.com/exponent/react-native/archive/sdk-15.0.0.tar.gz",
+    "three": "^0.84.0",
+    "voxel": "0.0.9",
+    "voxel-engine": "0.2.3"
+  },
+  "devDependencies": {
+    "jest-expo": "~0.3.0"
+  }
+}

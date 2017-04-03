@@ -1,0 +1,25 @@
+{
+  "name": "voxel",
+  "description": "No description",
+  "slug": "voxel",
+  "privacy": "unlisted",
+  "sdkVersion": "15.0.0",
+  "version": "1.0.0",
+  "orientation": "portrait",
+  "primaryColor": "#cccccc",
+  "icon": "./assets/icons/app-icon.png",
+  "notification": {
+    "icon": "./assets/icons/notification-icon.png",
+    "color": "#000000"
+  },
+  "loading": {
+    "icon": "./assets/icons/loading-icon.png",
+    "hideExponentText": false
+  },
+  "packagerOpts": {
+    "assetExts": ["ttf"]
+  },
+  "ios": {
+    "supportsTablet": true
+  }
+}

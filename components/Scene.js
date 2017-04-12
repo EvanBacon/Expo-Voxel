@@ -39,6 +39,16 @@ export default class BasicScene extends React.Component {
     world.createFlatWorld( 6 );
     // Set up renderer
     var render = new Renderer( gl );
+    render.setWorld( world, 8 );
+    render.setPerspective( 60, 0.01, 200 );
+
+    var physics = new Physics();
+    physics.setWorld( world );
+    //
+    // // Create new local player
+    var player = new Player();
+    player.setWorld( world );
+
 
     // Compile vertex and fragment shader
     const vert = gl.createShader(gl.VERTEX_SHADER);
@@ -68,25 +78,40 @@ export default class BasicScene extends React.Component {
           // return;
         }
 
-        // Clear
-        gl.clearColor(0, 0, 1, 1);
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        // // Clear
+        // gl.clearColor(0, 0, 1, 1);
+        // gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        //
+        // // Bind buffer, program and position attribute for use
+        // gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+        // gl.useProgram(program);
+        // gl.enableVertexAttribArray(positionAttrib);
+        // gl.vertexAttribPointer(positionAttrib, 2, gl.FLOAT, false, 0, 0);
+        //
+        // // Buffer data and draw!
+        // const speed = this.props.speed || 1;
+        // const a = 0.48 * Math.sin(0.001 * speed * Date.now()) + 0.5;
+        // const verts = new Float32Array([
+        //   -a, -a, a, -a, -a,  a,
+        //   -a,  a, a, -a,  a,  a,
+        // ]);
+        // gl.bufferData(gl.ARRAY_BUFFER, verts, gl.STATIC_DRAW);
+        // gl.drawArrays(gl.TRIANGLES, 0, verts.length / 2);
 
-        // Bind buffer, program and position attribute for use
-        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-        gl.useProgram(program);
-        gl.enableVertexAttribArray(positionAttrib);
-        gl.vertexAttribPointer(positionAttrib, 2, gl.FLOAT, false, 0, 0);
 
-        // Buffer data and draw!
-        const speed = this.props.speed || 1;
-        const a = 0.48 * Math.sin(0.001 * speed * Date.now()) + 0.5;
-        const verts = new Float32Array([
-          -a, -a, a, -a, -a,  a,
-          -a,  a, a, -a,  a,  a,
-        ]);
-        gl.bufferData(gl.ARRAY_BUFFER, verts, gl.STATIC_DRAW);
-        gl.drawArrays(gl.TRIANGLES, 0, verts.length / 2);
+        // Simulate physics
+        physics.simulate();
+
+        // Update local player
+        player.update();
+
+        // Build a chunk
+        render.buildChunks( 1 );
+
+        // Draw world
+        render.setCamera( player.getEyePos().toArray(), player.angles );
+        render.draw();
+
 
         // Submit frame
         gl.flush();

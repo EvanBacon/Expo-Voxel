@@ -133,13 +133,13 @@ export default class Player {
 
 			this.dragging = false;
 			this.mouseDown = false;
-			this.canvas.style.cursor = "default";
+			// this.canvas.style.cursor = "default";
 		} else if ( type == MOUSE.MOVE && this.mouseDown ) {
 			this.dragging = true;
 			this.targetPitch = this.pitchStart - ( y - this.dragStart.y ) / 200;
 			this.targetYaw = this.yawStart + ( x - this.dragStart.x ) / 200;
 
-			this.canvas.style.cursor = "move";
+			// this.canvas.style.cursor = "move";
 		}
 	}
 

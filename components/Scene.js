@@ -1,8 +1,8 @@
 'use strict';
 
 import React from 'react';
-
-import { GLView } from 'expo';
+import Expo from 'expo'
+import { GLView, AppLoading } from 'expo';
 
 
 const vertSrc = `
@@ -26,19 +26,49 @@ export default class BasicScene extends React.Component {
     description: 'Basic Scene',
   };
 
+  state = {
+      ready: false,
+    };
+
+    componentDidMount() {
+  (async () => {
+    this._textureAsset = Expo.Asset.fromModule(
+      require('../assets/images/terrain.png'));
+    await this._textureAsset.downloadAsync();
+
+    // this._playerAsset = Expo.Asset.fromModule(
+    //   require('../assets/images/player.png'));
+    // await this._playerAsset.downloadAsync();
+
+    this.setState({ ready: true });
+  })();
+}
+
+
   render() {
-    return (
-      <GLView
-        style={this.props.style}
-        onContextCreate={this._onContextCreate}/>
-    );
+    return this.state.ready ? (
+     <Expo.GLView
+       style={this.props.style}
+       onContextCreate={this._onContextCreate}
+     />
+   ) : (
+     <AppLoading />
+   );
+
+    // return (
+    //   <GLView
+    //     style={this.props.style}
+    //     onContextCreate={this._onContextCreate}/>
+    // );
   }
+clientX = 0
+clientY = 0
 
   _onContextCreate = (gl) => {
     var world = new World( 16, 16, 16 );
     world.createFlatWorld( 6 );
     // Set up renderer
-    var render = new Renderer( gl );
+    var render = new Renderer( gl, this._textureAsset );
     render.setWorld( world, 8 );
     render.setPerspective( 60, 0.01, 200 );
 
@@ -69,7 +99,7 @@ export default class BasicScene extends React.Component {
 
     // Create buffer
     const buffer = gl.createBuffer();
-
+player.onMouseEvent( this.clientX + 0.01, this.clientY + 0.01, 1, false )
     // Animate!
     let skip = false;
     const animate = () => {
@@ -99,6 +129,7 @@ export default class BasicScene extends React.Component {
         // gl.drawArrays(gl.TRIANGLES, 0, verts.length / 2);
 
 
+        player.onMouseEvent( this.clientX + 0.01, this.clientY + 0.01, 3, false )
         // Simulate physics
         physics.simulate();
 

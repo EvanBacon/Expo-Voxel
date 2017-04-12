@@ -46,7 +46,7 @@ var fragmentSource =
 
 export default class Renderer {
 
-	constructor( gl ) {
+	constructor( gl, _terrainTexture ) {
 	this.gl = gl
 
 	gl.clearColor( 0.62, 0.81, 1.0, 1.0 );
@@ -107,10 +107,26 @@ export default class Renderer {
 	// 		require('../assets/images/terrain.png'));
 	// 		await this.terrainTexture.downloadAsync();
 	//
-	// 		gl.bindTexture( gl.TEXTURE_2D, this.terrainTexture );
-	// 		gl.texImage2D( gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this.terrainTexture );
-	// 		gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST );
-	// 		gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST );
+
+	if (_terrainTexture) {
+		var terrainTexture = this.texTerrain = gl.createTexture();
+
+		gl.bindTexture( gl.TEXTURE_2D, terrainTexture );
+
+		gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST );
+		gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST );
+
+		// gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA,
+    //               128, 128, 0,
+    //               gl.RGBA, gl.UNSIGNED_BYTE,
+		// 	_terrainTexture
+		// );
+		// gl.uniform1i(gl.getUniformLocation(program, 'texture'), 0);
+
+	} else {
+		console.warn("Terrain not loaded")
+	}
+
 	// 	})();
 
 	// var terrainTexture = this.texTerrain = gl.createTexture();
@@ -153,7 +169,7 @@ draw = () =>
 	// Draw level chunks
 	var chunks = this.chunks;
 
-	gl.bindTexture( gl.TEXTURE_2D, this.texTerrain );
+	gl.bindTexture( gl.TEXTURE_2D, this.texWhite );
 
 	if ( chunks != null )
 	{
@@ -367,7 +383,7 @@ pickAt = ( min, max, mx, my ) =>
 	gl.readPixels( mx/gl.viewportWidth*512, (1-my/gl.viewportHeight)*512, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel );
 
 	// Reset states
-	gl.bindTexture( gl.TEXTURE_2D, this.texTerrain );
+	gl.bindTexture( gl.TEXTURE_2D, this.texWhite );
 	gl.bindFramebuffer( gl.FRAMEBUFFER, null );
 	gl.clearColor( 0.62, 0.81, 1.0, 1.0 );
 

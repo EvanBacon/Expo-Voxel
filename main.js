@@ -3,7 +3,7 @@ import React from 'react';
 import { Platform, StatusBar, StyleSheet, View } from 'react-native';
 import { NavigationProvider, StackNavigation } from '@expo/ex-navigation';
 import { FontAwesome } from '@expo/vector-icons';
-
+import HomeScreen from './screens/HomeScreen'
 import Router from './navigation/Router';
 import cacheAssetsAsync from './utilities/cacheAssetsAsync';
 
@@ -38,6 +38,7 @@ class AppContainer extends React.Component {
 
   render() {
     if (this.state.appIsReady) {
+      return (<HomeScreen />)
       return (
         <View style={styles.container}>
           <NavigationProvider router={Router}>

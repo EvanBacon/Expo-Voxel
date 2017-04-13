@@ -5,6 +5,7 @@ import {
   View,
 } from 'react-native';
 
+import DirectionType from '../js/DirectionType'
 class Button extends React.PureComponent {
   render() {
     const size = 50 - 4
@@ -24,19 +25,19 @@ export default class Dpad extends React.Component {
     return (
       <View pointerEvents={'box-none'} style={[styles.container, style]}>
         <View pointerEvents={'box-none'} style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-          <Button onPressOut={onPressOut} onPress={onPress} id={0}
+          <Button onPressOut={onPressOut} onPress={onPress} id={DirectionType.front}
           />
         </View>
         <View pointerEvents={'box-none'} style={{flexDirection: 'row'}}>
-          <Button onPressOut={onPressOut} onPress={onPress} id={1}
+          <Button onPressOut={onPressOut} onPress={onPress} id={DirectionType.left}
           />
-          <Button onPressOut={onPressOut} onPress={onPress} id={2}
+        <Button onPressOut={onPressOut} onPress={onPress} id={DirectionType.up}
           />
-          <Button onPressOut={onPressOut} onPress={onPress} id={3}
+        <Button onPressOut={onPressOut} onPress={onPress} id={DirectionType.right}
           />
         </View>
         <View pointerEvents={'box-none'} style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-          <Button onPressOut={onPressOut} onPress={onPress} id={4}
+          <Button onPressOut={onPressOut} onPress={onPress} id={DirectionType.back}
           />
         </View>
       </View>

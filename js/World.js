@@ -22,16 +22,14 @@ export default class World {
 
   }
 
-  getGeometry = () => {
+  getGeometry = async () => {
     if (this.mesh) {
       return this.mesh
     }
-    try {
-      this.buildTerrain()
-    } catch (error) {
-      console.error("Could not construct terrain:", error)
-    }
+
+    this.mesh = await this.buildTerrain()
     return this.mesh
+    
   }
 
   generateHeight( width, height ) {
@@ -64,6 +62,8 @@ export default class World {
 
   _buildTerrain = (texture) => {
     // // sides
+    const size = 100
+    const half = size * 0.5
     var light = new THREE.Color( 0xffffff );
     var shadow = new THREE.Color( 0x505050 );
     var matrix = new THREE.Matrix4();
@@ -77,7 +77,7 @@ export default class World {
     pxGeometry.faceVertexUvs[ 0 ][ 0 ][ 2 ].y = 0.5;
     pxGeometry.faceVertexUvs[ 0 ][ 1 ][ 2 ].y = 0.5;
     pxGeometry.rotateY( Math.PI / 2 );
-    pxGeometry.translate( 50, 0, 0 );
+    pxGeometry.translate( half, 0, 0 );
 
     var nxGeometry = new THREE.PlaneGeometry( 100, 100 );
     nxGeometry.faces[ 0 ].vertexColors = [ light, shadow, light ];
@@ -86,7 +86,7 @@ export default class World {
     nxGeometry.faceVertexUvs[ 0 ][ 0 ][ 2 ].y = 0.5;
     nxGeometry.faceVertexUvs[ 0 ][ 1 ][ 2 ].y = 0.5;
     nxGeometry.rotateY( - Math.PI / 2 );
-    nxGeometry.translate( - 50, 0, 0 );
+    nxGeometry.translate( - half, 0, 0 );
 
     var pyGeometry = new THREE.PlaneGeometry( 100, 100 );
     pyGeometry.faces[ 0 ].vertexColors = [ light, light, light ];
@@ -95,7 +95,7 @@ export default class World {
     pyGeometry.faceVertexUvs[ 0 ][ 1 ][ 0 ].y = 0.5;
     pyGeometry.faceVertexUvs[ 0 ][ 1 ][ 1 ].y = 0.5;
     pyGeometry.rotateX( - Math.PI / 2 );
-    pyGeometry.translate( 0, 50, 0 );
+    pyGeometry.translate( 0, half, 0 );
 
     var py2Geometry = new THREE.PlaneGeometry( 100, 100 );
     py2Geometry.faces[ 0 ].vertexColors = [ light, light, light ];
@@ -105,7 +105,7 @@ export default class World {
     py2Geometry.faceVertexUvs[ 0 ][ 1 ][ 1 ].y = 0.5;
     py2Geometry.rotateX( - Math.PI / 2 );
     py2Geometry.rotateY( Math.PI / 2 );
-    py2Geometry.translate( 0, 50, 0 );
+    py2Geometry.translate( 0, half, 0 );
 
     var pzGeometry = new THREE.PlaneGeometry( 100, 100 );
     pzGeometry.faces[ 0 ].vertexColors = [ light, shadow, light ];
@@ -113,7 +113,7 @@ export default class World {
     pzGeometry.faceVertexUvs[ 0 ][ 0 ][ 0 ].y = 0.5;
     pzGeometry.faceVertexUvs[ 0 ][ 0 ][ 2 ].y = 0.5;
     pzGeometry.faceVertexUvs[ 0 ][ 1 ][ 2 ].y = 0.5;
-    pzGeometry.translate( 0, 0, 50 );
+    pzGeometry.translate( 0, 0, half );
 
     var nzGeometry = new THREE.PlaneGeometry( 100, 100 );
     nzGeometry.faces[ 0 ].vertexColors = [ light, shadow, light ];
@@ -122,7 +122,7 @@ export default class World {
     nzGeometry.faceVertexUvs[ 0 ][ 0 ][ 2 ].y = 0.5;
     nzGeometry.faceVertexUvs[ 0 ][ 1 ][ 2 ].y = 0.5;
     nzGeometry.rotateY( Math.PI );
-    nzGeometry.translate( 0, 0, - 50 );
+    nzGeometry.translate( 0, 0, -half );
 
     const worldHalfWidth = this.width / 2
     const worldHalfDepth = this.depth / 2
@@ -208,16 +208,16 @@ export default class World {
   }
 
   buildMesh = (geometry, image) => {
-    let {mesh} = this
+
 
     /// Prevent Rebuilding
-    if (mesh) {
-      return
+    if (this.mesh) {
+      return this.mesh
     }
 
 
-    mesh = new THREE.Mesh( geometry, this.buildTexture(image) );
-    return mesh
+    this.mesh = new THREE.Mesh( geometry, this.buildTexture(image) );
+    return this.mesh
   }
 
   buildTexture = (image) => {
@@ -226,15 +226,15 @@ export default class World {
 
 
   async buildTerrain() {
-    let {texture} = this
+
 
     const textureAsset = Expo.Asset.fromModule(require('../assets/images/atlas.png'));
     await textureAsset.downloadAsync();
 
-    texture = THREEView.textureFromAsset(textureAsset);
-    texture.magFilter = THREE.NearestFilter;
-    texture.minFilter = THREE.LinearMipMapLinearFilter;
+    this.texture = THREEView.textureFromAsset(textureAsset);
+    this.texture.magFilter = THREE.NearestFilter;
+    this.texture.minFilter = THREE.LinearMipMapLinearFilter;
 
-    return this._buildTerrain(texture)
+    return this._buildTerrain(this.texture)
   }
 }

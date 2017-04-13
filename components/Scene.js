@@ -317,7 +317,7 @@ export default class App extends React.Component {
       }
 
       return (
-        <View style={{flex: 1}}>
+        <View style={{flex: 1, backgroundColor: 'green'}}>
           <THREEView
             {...this.panResponder.panHandlers}
             style={{ flex: 1 }}

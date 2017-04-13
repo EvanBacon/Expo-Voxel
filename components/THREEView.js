@@ -6,7 +6,7 @@ import * as THREE from 'three';
 
 const skyColor = 0xb2d0ff
 
-class THREEView extends React.Component {
+export default class THREEView extends React.Component {
 	static propTypes = {
 		// Parameters to http://threejs.org/docs/?q=webgl#Reference/Renderers/WebGLRenderer.render
 		scene: PropTypes.object,

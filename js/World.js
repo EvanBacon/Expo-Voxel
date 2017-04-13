@@ -13,12 +13,12 @@ export default class World {
   height;
   data;
   mesh;
-
+  blocks = [];
   constructor(width, depth) {
     this.width = width;
     this.depth = depth;
     this.data = this.generateHeight( width, depth );
-
+    this.blocks = this.constructBlocks()
 
   }
 
@@ -49,6 +49,33 @@ export default class World {
   getY = ( x, z ) => {
     return ( this.data[ x + z * this.width ] * 0.2 ) | 0;
   }
+
+  constructBlocks = () => {
+    // let blocks = new Array(this.width)
+    let blocks = new Array(this.width);
+for ( var x = 0; x < this.width; x++ )
+{
+  blocks[x] = new Array( this.width );
+  for ( var y = 0; y < this.width; y++ )
+  {
+    blocks[x][y] = new Array( this.depth );
+  }
+}
+
+    for ( var x = 0; x < this.width; x++ )
+	    for ( var y = 0; y < this.width; y++ ) //TODO: make height
+		    for ( var z = 0; z < this.depth; z++ )
+			     blocks[x][y][z] = y < this.getY(x, z) ? 1 : -1;
+
+    return blocks
+  }
+
+  getBlock = (x,y,z) => {
+	   if ( x < 0 || y < 0 || z < 0 || x > this.width - 1 || y > this.width - 1 || z > this.depth - 1 ) return -1; //BLOCK.AIR;
+
+	   return this.blocks[x][y][z];
+  }
+
 
   _buildTerrain = (texture) => {
     // // sides

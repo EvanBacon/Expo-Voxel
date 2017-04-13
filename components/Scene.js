@@ -72,7 +72,7 @@ export default class App extends React.Component {
   }
 
   setupControls = () => {
-    this.controls = new FirstPersonControls( this.camera );
+    this.controls = new FirstPersonControls( this.camera, this.world );
     this.controls.setSize(width, height);
     this.controls.movementSpeed = 1000;
     this.controls.lookSpeed = 0.125;

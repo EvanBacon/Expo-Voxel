@@ -450,7 +450,7 @@ export default class App extends React.Component {
 			scene.add( directionalLight );
 
 
-		this.setupSky()
+		// this.setupSky()
 
 
 			this.setState({ready: true})

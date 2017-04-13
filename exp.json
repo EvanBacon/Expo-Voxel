@@ -14,7 +14,8 @@
   },
   "loading": {
     "icon": "./assets/icons/loading-icon.png",
-    "hideExponentText": false
+    "hideExponentText": false,
+    "backgroundColor": "#46bd00"
   },
   "packagerOpts": {
     "assetExts": [

@@ -3,7 +3,8 @@ import React from 'react';
 import { Platform, StatusBar, StyleSheet, View } from 'react-native';
 import { NavigationProvider, StackNavigation } from '@expo/ex-navigation';
 import { FontAwesome } from '@expo/vector-icons';
-import HomeScreen from './screens/HomeScreen'
+// import HomeScreen from './screens/HomeScreen'
+import LinksScreen from './screens/LinksScreen'
 import Router from './navigation/Router';
 import cacheAssetsAsync from './utilities/cacheAssetsAsync';
 
@@ -38,21 +39,21 @@ class AppContainer extends React.Component {
 
   render() {
     if (this.state.appIsReady) {
-      return (<HomeScreen />)
-      return (
-        <View style={styles.container}>
-          <NavigationProvider router={Router}>
-            <StackNavigation
-              id="root"
-              initialRoute={Router.getRoute('rootNavigation')}
-            />
-          </NavigationProvider>
-
-          {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
-          {Platform.OS === 'android' &&
-            <View style={styles.statusBarUnderlay} />}
-        </View>
-      );
+      return (<LinksScreen />)
+      // return (
+      //   <View style={styles.container}>
+      //     <NavigationProvider router={Router}>
+      //       <StackNavigation
+      //         id="root"
+      //         initialRoute={Router.getRoute('rootNavigation')}
+      //       />
+      //     </NavigationProvider>
+      //
+      //     {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
+      //     {Platform.OS === 'android' &&
+      //       <View style={styles.statusBarUnderlay} />}
+      //   </View>
+      // );
     } else {
       return <Expo.AppLoading />;
     }

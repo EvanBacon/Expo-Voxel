@@ -48,7 +48,6 @@ export default class Renderer {
 
 	constructor( gl, _terrainTexture ) {
 	this.gl = gl
-
 	gl.clearColor( 0.62, 0.81, 1.0, 1.0 );
 	gl.enable( gl.DEPTH_TEST );
 	// gl.enable( gl.CULL_FACE );
@@ -108,24 +107,31 @@ export default class Renderer {
 	// 		await this.terrainTexture.downloadAsync();
 	//
 
-	if (_terrainTexture) {
-		var terrainTexture = this.texTerrain = gl.createTexture();
+	// if (_terrainTexture) {
 
-		gl.bindTexture( gl.TEXTURE_2D, terrainTexture );
+	// const texture = gl.createTexture();
+	// gl.bindTexture(gl.TEXTURE_2D, texture);
+	// gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+	// gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+	// gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA,
+	// 							128, 128, 0,
+	// 							gl.RGBA, gl.UNSIGNED_BYTE,
+	// 							this._textureAsset);
 
-		gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST );
-		gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST );
+	// var terrainTexture = this.texTerrain = gl.createTexture();
+	// gl.bindTexture( gl.TEXTURE_2D, terrainTexture );
+	// gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST );
+	// gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST );
+	// gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA,
+  //                 128, 128, 0,
+  //                 gl.RGBA, gl.UNSIGNED_BYTE,
+	// 								_terrainTexture);
 
-		// gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA,
-    //               128, 128, 0,
-    //               gl.RGBA, gl.UNSIGNED_BYTE,
-		// 	_terrainTexture
-		// );
 		// gl.uniform1i(gl.getUniformLocation(program, 'texture'), 0);
 
-	} else {
-		console.warn("Terrain not loaded")
-	}
+	// } else {
+		// console.warn("Terrain not loaded")
+	// }
 
 	// 	})();
 
@@ -169,7 +175,7 @@ draw = () =>
 	// Draw level chunks
 	var chunks = this.chunks;
 
-	gl.bindTexture( gl.TEXTURE_2D, this.texWhite );
+	gl.bindTexture( gl.TEXTURE_2D, this.texTerrain );
 
 	if ( chunks != null )
 	{
@@ -256,8 +262,8 @@ draw = () =>
 		mat4.scale( this.modelMatrix, [ 0.005, 1, 0.005 ] );
 		gl.uniformMatrix4fv( this.uModelMat, false, this.modelMatrix );
 
-		gl.bindTexture( gl.TEXTURE_2D, player.nametag.texture );
-		this.drawBuffer( player.nametag.model );
+		// gl.bindTexture( gl.TEXTURE_2D, player.nametag.texture );
+		// this.drawBuffer( player.nametag.model );
 	}
 
 	gl.disable( gl.BLEND );
@@ -383,7 +389,7 @@ pickAt = ( min, max, mx, my ) =>
 	gl.readPixels( mx/gl.viewportWidth*512, (1-my/gl.viewportHeight)*512, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel );
 
 	// Reset states
-	gl.bindTexture( gl.TEXTURE_2D, this.texWhite );
+	gl.bindTexture( gl.TEXTURE_2D, this.texTerrain );
 	gl.bindFramebuffer( gl.FRAMEBUFFER, null );
 	gl.clearColor( 0.62, 0.81, 1.0, 1.0 );
 

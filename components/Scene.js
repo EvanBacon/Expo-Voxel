@@ -33,12 +33,19 @@ export default class BasicScene extends React.Component {
     componentDidMount() {
   (async () => {
     this._textureAsset = Expo.Asset.fromModule(
-      require('../assets/images/terrain.png'));
+      require('../assets/images/background.png'));
     await this._textureAsset.downloadAsync();
+
+    this._texturePlayer = Expo.Asset.fromModule(
+      require('../assets/images/background.png'));
+    await this._texturePlayer.downloadAsync();
+
+
 
     // this._playerAsset = Expo.Asset.fromModule(
     //   require('../assets/images/player.png'));
     // await this._playerAsset.downloadAsync();
+    // console.log("asset", this._textureAsset)
 
     this.setState({ ready: true });
   })();
@@ -65,6 +72,8 @@ clientX = 0
 clientY = 0
 
   _onContextCreate = (gl) => {
+    gl.enableLogging = true;
+
     var world = new World( 16, 16, 16 );
     world.createFlatWorld( 6 );
     // Set up renderer
@@ -94,12 +103,34 @@ clientY = 0
     gl.attachShader(program, frag);
     gl.linkProgram(program);
 
+
+var terrainTexture = render.texPlayer = gl.createTexture();
+gl.bindTexture( gl.TEXTURE_2D, terrainTexture );
+gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST );
+gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST );
+gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA,
+                128, 128, 0,
+                gl.RGBA, gl.UNSIGNED_BYTE,
+                this._texturePlayer);
+
+
+    var terrainTexture = render.texTerrain = gl.createTexture();
+    gl.bindTexture( gl.TEXTURE_2D, terrainTexture );
+    gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST );
+    gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST );
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA,
+                    128, 128, 0,
+                    gl.RGBA, gl.UNSIGNED_BYTE,
+                    this._textureAsset);
+
+
+
     // Save position attribute
     const positionAttrib = gl.getAttribLocation(program, 'position');
 
     // Create buffer
     const buffer = gl.createBuffer();
-player.onMouseEvent( this.clientX + 0.01, this.clientY + 0.01, 1, false )
+    player.onMouseEvent( this.clientX + 0.01, this.clientY + 0.01, 1, false )
     // Animate!
     let skip = false;
     const animate = () => {
@@ -109,14 +140,14 @@ player.onMouseEvent( this.clientX + 0.01, this.clientY + 0.01, 1, false )
         }
 
         // // Clear
-        // gl.clearColor(0, 0, 1, 1);
-        // gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-        //
-        // // Bind buffer, program and position attribute for use
-        // gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-        // gl.useProgram(program);
-        // gl.enableVertexAttribArray(positionAttrib);
-        // gl.vertexAttribPointer(positionAttrib, 2, gl.FLOAT, false, 0, 0);
+        gl.clearColor(0, 0, 1, 1);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+        // Bind buffer, program and position attribute for use
+        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+        gl.useProgram(program);
+        gl.enableVertexAttribArray(positionAttrib);
+        gl.vertexAttribPointer(positionAttrib, 2, gl.FLOAT, false, 0, 0);
         //
         // // Buffer data and draw!
         // const speed = this.props.speed || 1;

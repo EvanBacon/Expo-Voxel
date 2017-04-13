@@ -1,14 +1,15 @@
 import Expo, {GLView} from 'expo';
 import React, { PropTypes } from 'react';
-import {PanResponder, Dimensions} from 'react-native'
+import {PanResponder,View, Dimensions} from 'react-native'
 const {width, height} = Dimensions.get('window')
 import * as THREE from 'three';
 import ImprovedNoise from '../js/ImprovedNoise'
 import FirstPersonControls from '../js/FirstPersonControls'
 
-import { View } from 'react-native';
-
+import Sky from '../js/SkyShader'
+import Dpad from './Dpad'
 skyColor = 0xcce0ff
+var sky, sunSphere;
 
 
 
@@ -160,25 +161,24 @@ export default class App extends React.Component {
 
   touchesBegan = (event, gestureState) => {
     if (controls) {
-      controls.onMouseDown(event)
+
+        controls.onMouseDown(event, gestureState.numberActiveTouches)
     }
   }
   touchesMoved = (event, gestureState) => {
     event.preventDefault();
     const {locationX, locationY} = event.nativeEvent;
     if (controls) {
-      controls.onMouseMove(event)
+      controls.onMouseMove(event, gestureState.numberActiveTouches)
     }
   }
   touchesEnded = (event, gestureState) => {
     event.preventDefault();
     const {locationX, locationY} = event.nativeEvent;
     if (controls) {
-      controls.onMouseUp(event)
+      controls.onMouseUp(event, gestureState.numberActiveTouches)
     }
   }
-
-
 
   async componentWillMount() {
     let {objects, texture} = this
@@ -187,10 +187,8 @@ export default class App extends React.Component {
       require('../assets/images/atlas.png'));
       await textureAsset.downloadAsync();
       texture = THREEView.textureFromAsset(textureAsset);
-      texture.magFilter = THREE.LinearFilter;
-      texture.minFilter = THREE.LinearFilter;
-
-
+      texture.magFilter = THREE.NearestFilter;
+      texture.minFilter = THREE.LinearMipMapLinearFilter;
 
       /// Gesture
       this.panResponder = PanResponder.create({
@@ -201,9 +199,6 @@ export default class App extends React.Component {
         onPanResponderTerminate: this.touchesEnded, //cancel
         onShouldBlockNativeResponder: () => false,
       });
-
-
-
 
       camera = new THREE.PerspectiveCamera( 50, width / height, 1, 20000 );
     	camera.position.y = getY( worldHalfWidth, worldHalfDepth ) * 100 + 100;
@@ -347,15 +342,26 @@ export default class App extends React.Component {
     					}
     				}
     				// // var texture = new THREE.TextureLoader().load( 'textures/minecraft/atlas.png' );
-    				texture.magFilter = THREE.NearestFilter;
-    				texture.minFilter = THREE.LinearMipMapLinearFilter;
-    				var mesh = new THREE.Mesh( geometry, new THREE.MeshLambertMaterial( { map: texture, vertexColors: THREE.VertexColors } ) );
-    				scene.add( mesh );
+    				// var mesh = new THREE.Mesh( geometry, new THREE.MeshLambertMaterial( { map: texture, vertexColors: THREE.VertexColors } ) );
+    				// scene.add( mesh );
     				var ambientLight = new THREE.AmbientLight( 0xcccccc );
     				scene.add( ambientLight );
     				var directionalLight = new THREE.DirectionalLight( 0xffffff, 2 );
     				directionalLight.position.set( 1, 1, 0.5 ).normalize();
     				scene.add( directionalLight );
+
+
+            // Add Sky Mesh
+            				let sky = new Sky();
+            				scene.add( sky.mesh );
+            				// Add Sun Helper
+            				let sunSphere = new THREE.Mesh(
+            					new THREE.SphereBufferGeometry( 2000, 16, 8 ),
+            					new THREE.MeshBasicMaterial( { color: 0xffffff } )
+            				);
+            				sunSphere.position.y = 0;
+            				sunSphere.visible = false;
+            				scene.add( sunSphere );
 
 
 
@@ -370,7 +376,7 @@ export default class App extends React.Component {
           // this.mesh.rotation.y += 2 * dt;
 
           if (controls) {
-            controls.update( dt );
+            controls.update( dt, this.moveID );
           }
 
 
@@ -383,14 +389,24 @@ export default class App extends React.Component {
           if (!this.state.ready) {
             return null
           }
+
+
+
           return (
-            <THREEView
-              {...this.panResponder.panHandlers}
-              style={{ flex: 1 }}
-              scene={scene}
-              camera={camera}
-              tick={this.tick}
-            />
+            <View style={{flex: 1}}>
+
+              <THREEView
+                {...this.panResponder.panHandlers}
+                style={{ flex: 1 }}
+                scene={scene}
+                camera={camera}
+                tick={this.tick}
+              />
+              
+          <Dpad style={{position: 'absolute', bottom: 8, left: 8}} onPressOut={_=> {this.moveID = null}} onPress={id => {
+              this.moveID = id
+            }}/>
+        </View>
         );
       }
     }

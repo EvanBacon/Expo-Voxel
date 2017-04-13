@@ -71,7 +71,7 @@ export default function ( object, domElement ) {
 			this.viewHalfY = height / 2;
 	};
 
-	this.onMouseDown = function ( event ) {
+	this.onMouseDown = function ( event, numberOfTouches ) {
 
 		// if ( this.domElement !== document ) {
     //
@@ -83,7 +83,10 @@ export default function ( object, domElement ) {
 		event.stopPropagation();
 
 		if ( this.activeLook ) {
-      // this.moveForward = true;
+      if (numberOfTouches > 1) {
+        this.moveForward = true;
+      }
+
 
 			// switch ( event.button ) {
       //
@@ -98,7 +101,7 @@ export default function ( object, domElement ) {
 
 	};
 
-	this.onMouseUp = function ( event ) {
+	this.onMouseUp = function ( event, numberOfTouches ) {
 
 		event.preventDefault();
 		event.stopPropagation();
@@ -118,7 +121,7 @@ export default function ( object, domElement ) {
 
 	};
 
-	this.onMouseMove = function ( event ) {
+	this.onMouseMove = function ( event, numberOfTouches ) {
 
 		// if ( this.domElement === document ) {
 
@@ -182,7 +185,7 @@ export default function ( object, domElement ) {
 
 	};
 
-	this.update = function( delta ) {
+	this.update = function( delta, moveID ) {
 
 		if ( this.enabled === false ) return;
 
@@ -201,14 +204,35 @@ export default function ( object, domElement ) {
 
 		var actualMoveSpeed = delta * this.movementSpeed;
 
-		if ( this.moveForward || ( this.autoForward && ! this.moveBackward ) ) this.object.translateZ( - ( actualMoveSpeed + this.autoSpeedFactor ) );
-		if ( this.moveBackward ) this.object.translateZ( actualMoveSpeed );
+    switch (moveID) {
+      case 0: //Top
+      this.object.translateZ( - ( actualMoveSpeed + this.autoSpeedFactor ) );
+      break;
+      case 1: //Left
+      this.object.translateX( - actualMoveSpeed );
+      break;
+      case 2: //Center
+      this.object.translateY( actualMoveSpeed );
+      break;
+      case 3: //Right
+      this.object.translateX( actualMoveSpeed );
+      break;
+      case 4: //Bottom
+      this.object.translateZ( actualMoveSpeed );
+      break;
+      default:
+      break;
+    }
 
-		if ( this.moveLeft ) this.object.translateX( - actualMoveSpeed );
-		if ( this.moveRight ) this.object.translateX( actualMoveSpeed );
 
-		if ( this.moveUp ) this.object.translateY( actualMoveSpeed );
-		if ( this.moveDown ) this.object.translateY( - actualMoveSpeed );
+		// if ( this.moveForward || ( this.autoForward && ! this.moveBackward ) ) this.object.translateZ( - ( actualMoveSpeed + this.autoSpeedFactor ) );
+		// if ( this.moveBackward ) this.object.translateZ( actualMoveSpeed );
+    //
+		// if ( this.moveLeft ) this.object.translateX( - actualMoveSpeed );
+		// if ( this.moveRight ) this.object.translateX( actualMoveSpeed );
+    //
+		// if ( this.moveUp ) this.object.translateY( actualMoveSpeed );
+		// if ( this.moveDown ) this.object.translateY( - actualMoveSpeed );
 
 		var actualLookSpeed = delta * this.lookSpeed;
 

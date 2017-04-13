@@ -16,7 +16,7 @@ class AppContainer extends React.Component {
   };
 
   componentWillMount() {
-    this._loadAssetsAsync();
+    // this._loadAssetsAsync();
   }
 
   async _loadAssetsAsync() {
@@ -40,7 +40,7 @@ class AppContainer extends React.Component {
   }
 
   render() {
-    if (this.state.appIsReady) {
+    // if (this.state.appIsReady) {
       return (<SettingsScreen />)
       // return (
       //   <View style={styles.container}>
@@ -56,9 +56,9 @@ class AppContainer extends React.Component {
       //       <View style={styles.statusBarUnderlay} />}
       //   </View>
       // );
-    } else {
-      return <Expo.AppLoading />;
-    }
+    // } else {
+    //   return <Expo.AppLoading />;
+    // }
   }
 }
 

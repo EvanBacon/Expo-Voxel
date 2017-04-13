@@ -211,10 +211,9 @@ const Sky = function () {
 		fragmentShader: skyShader.fragmentShader,
 		vertexShader: skyShader.vertexShader,
 		uniforms: skyUniforms,
-		side: THREE.BackSide
 	} );
 
-	var skyGeo = new THREE.SphereBufferGeometry( 450000, 32, 15 );
+	var skyGeo = new THREE.SphereBufferGeometry( 4000, 32, 15 );
 	var skyMesh = new THREE.Mesh( skyGeo, skyMat );
 
 	// Expose variables

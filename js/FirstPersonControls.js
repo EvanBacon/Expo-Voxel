@@ -83,9 +83,9 @@ export default function ( object, domElement ) {
 		event.stopPropagation();
 
 		if ( this.activeLook ) {
-      if (numberOfTouches > 1) {
-        this.moveForward = true;
-      }
+      // if (numberOfTouches > 1) {
+      //   this.moveForward = true;
+      // }
 
 
 			// switch ( event.button ) {
@@ -107,7 +107,7 @@ export default function ( object, domElement ) {
 		event.stopPropagation();
 
 		if ( this.activeLook ) {
-      this.moveForward = false
+      // this.moveForward = false
 			// switch ( event.button ) {
       //
 			// 	case 0: this.moveForward = false; break;
@@ -121,12 +121,14 @@ export default function ( object, domElement ) {
 
 	};
 
-	this.onMouseMove = function ( event, numberOfTouches ) {
+	this.onMouseMove = function ( event, numberOfTouches, gestureState ) {
 
 		// if ( this.domElement === document ) {
 
-			this.mouseX = event.nativeEvent.pageX - this.viewHalfX;
-			this.mouseY = event.nativeEvent.pageY - this.viewHalfY;
+    this.mouseX = gestureState.dx;
+    this.mouseY = gestureState.dy;
+			// this.mouseX = event.nativeEvent.pageX - this.viewHalfX;
+			// this.mouseY = event.nativeEvent.pageY - this.viewHalfY;
 
 		// } else {
     //
@@ -272,6 +274,10 @@ export default function ( object, domElement ) {
 		targetPosition.z = position.z + 100 * Math.sin( this.phi ) * Math.sin( this.theta );
 
 		this.object.lookAt( targetPosition );
+
+    const damp = 0.95
+    this.mouseX *= damp
+    this.mouseY *= damp
 
 	};
 

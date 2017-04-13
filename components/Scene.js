@@ -125,9 +125,9 @@ export default class App extends React.Component {
     sky.uniforms.sunPosition.value.copy( sunSphere.position );
   }
 
-  setupCamera = () => {
+  setupCamera = (fov = 60, zNear = 1, zFar = 20000) => {
 
-    this.camera = new THREE.PerspectiveCamera( 50, width / height, 1, 20000 );
+    this.camera = new THREE.PerspectiveCamera( fov, width / height, zNear, zFar );
     this.camera.position.y = this.world.getY( worldSize/2, worldSize/2 ) * 100 + 100;
   }
   setupScene = () => {

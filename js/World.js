@@ -29,7 +29,7 @@ export default class World {
 
     this.mesh = await this.buildTerrain()
     return this.mesh
-    
+
   }
 
   generateHeight( width, height ) {
@@ -50,16 +50,6 @@ export default class World {
     return ( this.data[ x + z * this.width ] * 0.2 ) | 0;
   }
 
-  buildFace = (size, light, shadow, matrix) => {
-    var geometry = new THREE.PlaneGeometry( size, size );
-    geometry.faces[ 0 ].vertexColors = [ light, shadow, light ];
-    geometry.faces[ 1 ].vertexColors = [ shadow, shadow, light ];
-    geometry.faceVertexUvs[ 0 ][ 0 ][ 0 ].y = 0.5;
-    geometry.faceVertexUvs[ 0 ][ 0 ][ 2 ].y = 0.5;
-    geometry.faceVertexUvs[ 0 ][ 1 ][ 2 ].y = 0.5;
-    return geometry
-  }
-
   _buildTerrain = (texture) => {
     // // sides
     const size = 100
@@ -68,9 +58,8 @@ export default class World {
     var shadow = new THREE.Color( 0x505050 );
     var matrix = new THREE.Matrix4();
 
-    // const face = buildFace(100, light, shadow, matrix)
 
-    var pxGeometry = new THREE.PlaneGeometry( 100, 100 );
+    var pxGeometry = new THREE.PlaneGeometry( size, size );
     pxGeometry.faces[ 0 ].vertexColors = [ light, shadow, light ];
     pxGeometry.faces[ 1 ].vertexColors = [ shadow, shadow, light ];
     pxGeometry.faceVertexUvs[ 0 ][ 0 ][ 0 ].y = 0.5;
@@ -79,7 +68,7 @@ export default class World {
     pxGeometry.rotateY( Math.PI / 2 );
     pxGeometry.translate( half, 0, 0 );
 
-    var nxGeometry = new THREE.PlaneGeometry( 100, 100 );
+    var nxGeometry = new THREE.PlaneGeometry( size, size );
     nxGeometry.faces[ 0 ].vertexColors = [ light, shadow, light ];
     nxGeometry.faces[ 1 ].vertexColors = [ shadow, shadow, light ];
     nxGeometry.faceVertexUvs[ 0 ][ 0 ][ 0 ].y = 0.5;
@@ -88,7 +77,7 @@ export default class World {
     nxGeometry.rotateY( - Math.PI / 2 );
     nxGeometry.translate( - half, 0, 0 );
 
-    var pyGeometry = new THREE.PlaneGeometry( 100, 100 );
+    var pyGeometry = new THREE.PlaneGeometry( size, size );
     pyGeometry.faces[ 0 ].vertexColors = [ light, light, light ];
     pyGeometry.faces[ 1 ].vertexColors = [ light, light, light ];
     pyGeometry.faceVertexUvs[ 0 ][ 0 ][ 1 ].y = 0.5;
@@ -97,7 +86,7 @@ export default class World {
     pyGeometry.rotateX( - Math.PI / 2 );
     pyGeometry.translate( 0, half, 0 );
 
-    var py2Geometry = new THREE.PlaneGeometry( 100, 100 );
+    var py2Geometry = new THREE.PlaneGeometry( size, size );
     py2Geometry.faces[ 0 ].vertexColors = [ light, light, light ];
     py2Geometry.faces[ 1 ].vertexColors = [ light, light, light ];
     py2Geometry.faceVertexUvs[ 0 ][ 0 ][ 1 ].y = 0.5;
@@ -107,7 +96,7 @@ export default class World {
     py2Geometry.rotateY( Math.PI / 2 );
     py2Geometry.translate( 0, half, 0 );
 
-    var pzGeometry = new THREE.PlaneGeometry( 100, 100 );
+    var pzGeometry = new THREE.PlaneGeometry( size, size );
     pzGeometry.faces[ 0 ].vertexColors = [ light, shadow, light ];
     pzGeometry.faces[ 1 ].vertexColors = [ shadow, shadow, light ];
     pzGeometry.faceVertexUvs[ 0 ][ 0 ][ 0 ].y = 0.5;
@@ -115,7 +104,7 @@ export default class World {
     pzGeometry.faceVertexUvs[ 0 ][ 1 ][ 2 ].y = 0.5;
     pzGeometry.translate( 0, 0, half );
 
-    var nzGeometry = new THREE.PlaneGeometry( 100, 100 );
+    var nzGeometry = new THREE.PlaneGeometry( size, size );
     nzGeometry.faces[ 0 ].vertexColors = [ light, shadow, light ];
     nzGeometry.faces[ 1 ].vertexColors = [ shadow, shadow, light ];
     nzGeometry.faceVertexUvs[ 0 ][ 0 ][ 0 ].y = 0.5;
@@ -132,9 +121,9 @@ export default class World {
       for ( var x = 0; x < this.width; x ++ ) {
         var h = getY( x, z );
         matrix.makeTranslation(
-          x * 100 - worldHalfWidth * 100,
-          h * 100,
-          z * 100 - worldHalfDepth * 100
+          x * size - worldHalfWidth * size,
+          h * size,
+          z * size - worldHalfDepth * size
         );
         var px = getY( x + 1, z );
         var nx = getY( x - 1, z );

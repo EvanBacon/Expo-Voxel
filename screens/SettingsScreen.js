@@ -342,8 +342,8 @@ export default class App extends React.Component {
     					}
     				}
     				// // var texture = new THREE.TextureLoader().load( 'textures/minecraft/atlas.png' );
-    				// var mesh = new THREE.Mesh( geometry, new THREE.MeshLambertMaterial( { map: texture, vertexColors: THREE.VertexColors } ) );
-    				// scene.add( mesh );
+    				var mesh = new THREE.Mesh( geometry, new THREE.MeshLambertMaterial( { map: texture, vertexColors: THREE.VertexColors } ) );
+    				scene.add( mesh );
     				var ambientLight = new THREE.AmbientLight( 0xcccccc );
     				scene.add( ambientLight );
     				var directionalLight = new THREE.DirectionalLight( 0xffffff, 2 );
@@ -402,7 +402,7 @@ export default class App extends React.Component {
                 camera={camera}
                 tick={this.tick}
               />
-              
+
           <Dpad style={{position: 'absolute', bottom: 8, left: 8}} onPressOut={_=> {this.moveID = null}} onPress={id => {
               this.moveID = id
             }}/>

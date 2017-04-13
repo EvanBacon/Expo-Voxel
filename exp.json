@@ -1,12 +1,12 @@
 {
-  "name": "voxel",
-  "description": "No description",
+  "name": "Terravox",
+  "description": "Beautiful Voxel Terrain",
   "slug": "voxel",
-  "privacy": "unlisted",
+  "privacy": "public",
   "sdkVersion": "15.0.0",
   "version": "1.0.0",
-  "orientation": "portrait",
-  "primaryColor": "#cccccc",
+  "orientation": "default",
+  "primaryColor": "#46bd00",
   "icon": "./assets/icons/app-icon.png",
   "notification": {
     "icon": "./assets/icons/notification-icon.png",
@@ -17,7 +17,9 @@
     "hideExponentText": false
   },
   "packagerOpts": {
-    "assetExts": ["ttf"]
+    "assetExts": [
+      "ttf"
+    ]
   },
   "ios": {
     "supportsTablet": true

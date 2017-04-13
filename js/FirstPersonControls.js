@@ -17,8 +17,6 @@ export default function ( object, domElement ) {
 	this.object = object;
 	this.target = new THREE.Vector3( 0, 0, 0 );
 
-	// this.domElement = ( domElement !== undefined ) ? domElement : document;
-
 	this.enabled = true;
 
 	this.movementSpeed = 1.0;
@@ -58,14 +56,6 @@ export default function ( object, domElement ) {
 	this.viewHalfX = 0;
 	this.viewHalfY = 0;
 
-	// if ( this.domElement !== document ) {
-  //
-	// 	this.domElement.setAttribute( 'tabindex', - 1 );
-  //
-	// }
-
-	//
-
 	this.handleResize = function () {
 			this.viewHalfX = width / 2;
 			this.viewHalfY = height / 2;
@@ -73,11 +63,6 @@ export default function ( object, domElement ) {
 
 	this.onMouseDown = function ( event, numberOfTouches ) {
 
-		// if ( this.domElement !== document ) {
-    //
-		// 	this.domElement.focus();
-    //
-		// }
 
 		event.preventDefault();
 		event.stopPropagation();
@@ -289,40 +274,7 @@ export default function ( object, domElement ) {
 
 	this.dispose = function() {
 
-		// this.domElement.removeEventListener( 'contextmenu', contextmenu, false );
-		// this.domElement.removeEventListener( 'mousedown', _onMouseDown, false );
-		// this.domElement.removeEventListener( 'mousemove', _onMouseMove, false );
-		// this.domElement.removeEventListener( 'mouseup', _onMouseUp, false );
-    //
-		// window.removeEventListener( 'keydown', _onKeyDown, false );
-		// window.removeEventListener( 'keyup', _onKeyUp, false );
-
 	}
 
-	// var _onMouseMove = bind( this, this.onMouseMove );
-	// var _onMouseDown = bind( this, this.onMouseDown );
-	// var _onMouseUp = bind( this, this.onMouseUp );
-	// var _onKeyDown = bind( this, this.onKeyDown );
-	// var _onKeyUp = bind( this, this.onKeyUp );
-
-	// this.domElement.addEventListener( 'contextmenu', contextmenu, false );
-	// this.domElement.addEventListener( 'mousemove', _onMouseMove, false );
-	// this.domElement.addEventListener( 'mousedown', _onMouseDown, false );
-	// this.domElement.addEventListener( 'mouseup', _onMouseUp, false );
-  //
-	// window.addEventListener( 'keydown', _onKeyDown, false );
-	// window.addEventListener( 'keyup', _onKeyUp, false );
-
-	// function bind( scope, fn ) {
-  //
-	// 	return function () {
-  //
-	// 		fn.apply( scope, arguments );
-  //
-	// 	};
-  //
-	// }
-
 	this.handleResize();
-
 };

@@ -1,5 +1,7 @@
-import Expo, {GLView} from 'expo';
-import React, { PropTypes } from 'react';
+// Author: Three.js - https://threejs.org/examples/?q=mine#webgl_geometry_minecraft_ao
+
+import Expo from 'expo';
+import React from 'react';
 import {PanResponder,View, Dimensions} from 'react-native'
 const {width, height} = Dimensions.get('window')
 import * as THREE from 'three';
@@ -37,8 +39,6 @@ function generateHeight( width, height ) {
 function getY( x, z ) {
   return ( data[ x + z * worldWidth ] * 0.2 ) | 0;
 }
-
-
 
 export default class App extends React.Component {
 
@@ -303,7 +303,6 @@ export default class App extends React.Component {
 
       this.setState({ready: true})
     }
-
 
     tick = (dt) => {
       if (controls) {

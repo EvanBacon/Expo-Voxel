@@ -1,220 +1,335 @@
-'use strict';
+import Expo, {GLView} from 'expo';
+import React, { PropTypes } from 'react';
+import {PanResponder,View, Dimensions} from 'react-native'
+const {width, height} = Dimensions.get('window')
+import * as THREE from 'three';
+import ImprovedNoise from '../js/ImprovedNoise'
+import FirstPersonControls from '../js/FirstPersonControls'
+import THREEView from './THREEView'
+import Sky from '../js/SkyShader'
+import Dpad from './Dpad'
 
-import React from 'react';
-import Expo from 'expo'
-import { GLView, AppLoading } from 'expo';
-
-
-const vertSrc = `
-attribute vec2 position;
-varying vec2 uv;
-void main() {
-  gl_Position = vec4(position.x, -position.y, 0.0, 1.0);
-  uv = vec2(0.5, 0.3) * (position+vec2(1.0, 1.0));
-}`;
-
-const fragSrc = `
-precision highp float;
-varying vec2 uv;
-void main () {
-  gl_FragColor = vec4(uv.x, uv.y, 0.5, 1.0);
-}`;
+console.ignoredYellowBox = ['THREE.WebGLRenderer'];
 
 
-export default class BasicScene extends React.Component {
-  static meta = {
-    description: 'Basic Scene',
-  };
+var sky, sunSphere;
+var container, stats;
+var camera, controls, scene, renderer;
+var mesh, mat;
+var worldWidth = 200, worldDepth = 200,
+worldHalfWidth = worldWidth / 2, worldHalfDepth = worldDepth / 2,
+data = generateHeight( worldWidth, worldDepth );
+
+function generateHeight( width, height ) {
+  var data = [], perlin = new ImprovedNoise(),
+  size = width * height, quality = 2, z = Math.random() * 100;
+  for ( var j = 0; j < 4; j ++ ) {
+    if ( j == 0 ) for ( var i = 0; i < size; i ++ ) data[ i ] = 0;
+    for ( var i = 0; i < size; i ++ ) {
+      var x = i % width, y = ( i / width ) | 0;
+      data[ i ] += perlin.noise( x / quality, y / quality, z ) * quality;
+    }
+    quality *= 4
+  }
+  return data;
+}
+
+function getY( x, z ) {
+  return ( data[ x + z * worldWidth ] * 0.2 ) | 0;
+}
+
+
+
+export default class App extends React.Component {
 
   state = {
-      ready: false,
-    };
-
-    componentDidMount() {
-  (async () => {
-    this._textureAsset = Expo.Asset.fromModule(
-      require('../assets/images/background.png'));
-    await this._textureAsset.downloadAsync();
-
-    this._texturePlayer = Expo.Asset.fromModule(
-      require('../assets/images/background.png'));
-    await this._texturePlayer.downloadAsync();
-
-
-
-    // this._playerAsset = Expo.Asset.fromModule(
-    //   require('../assets/images/player.png'));
-    // await this._playerAsset.downloadAsync();
-    // console.log("asset", this._textureAsset)
-
-    this.setState({ ready: true });
-  })();
-}
-
-
-  render() {
-    return this.state.ready ? (
-     <Expo.GLView
-       style={this.props.style}
-       onContextCreate={this._onContextCreate}
-     />
-   ) : (
-     <AppLoading />
-   );
-
-    // return (
-    //   <GLView
-    //     style={this.props.style}
-    //     onContextCreate={this._onContextCreate}/>
-    // );
+    ready: false
   }
-clientX = 0
-clientY = 0
 
-  _onContextCreate = (gl) => {
-    gl.enableLogging = true;
+  touchesBegan = (event, gestureState) => {
+    if (controls) {
 
-    var world = new World( 16, 16, 16 );
-    world.createFlatWorld( 6 );
-    // Set up renderer
-    var render = new Renderer( gl, this._textureAsset );
-    render.setWorld( world, 8 );
-    render.setPerspective( 60, 0.01, 200 );
+      controls.onMouseDown(event, gestureState.numberActiveTouches)
+    }
+  }
+  touchesMoved = (event, gestureState) => {
+    event.preventDefault();
+    const {locationX, locationY} = event.nativeEvent;
+    if (controls) {
+      controls.onMouseMove(event, gestureState.numberActiveTouches, gestureState)
+    }
+  }
+  touchesEnded = (event, gestureState) => {
+    event.preventDefault();
+    const {locationX, locationY} = event.nativeEvent;
+    if (controls) {
+      controls.onMouseUp(event, gestureState.numberActiveTouches)
+    }
+  }
 
-    var physics = new Physics();
-    physics.setWorld( world );
-    //
-    // // Create new local player
-    var player = new Player();
-    player.setWorld( world );
+  setupGestures = () => {
+    /// Gesture
+    this.panResponder = PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onPanResponderGrant: this.touchesBegan,
+      onPanResponderMove: this.touchesMoved,
+      onPanResponderRelease: this.touchesEnded,
+      onPanResponderTerminate: this.touchesEnded, //cancel
+      onShouldBlockNativeResponder: () => false,
+    });
 
+  }
 
-    // Compile vertex and fragment shader
-    const vert = gl.createShader(gl.VERTEX_SHADER);
-    gl.shaderSource(vert, vertSrc);
-    gl.compileShader(vert);
-    const frag = gl.createShader(gl.FRAGMENT_SHADER);
-    gl.shaderSource(frag, fragSrc);
-    gl.compileShader(frag);
+  buildTerrain = (texture) => {
+    let {objects} = this
 
-    // Link together into a program
-    const program = gl.createProgram();
-    gl.attachShader(program, vert);
-    gl.attachShader(program, frag);
-    gl.linkProgram(program);
-
-
-var terrainTexture = render.texPlayer = gl.createTexture();
-gl.bindTexture( gl.TEXTURE_2D, terrainTexture );
-gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST );
-gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST );
-gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA,
-                128, 128, 0,
-                gl.RGBA, gl.UNSIGNED_BYTE,
-                this._texturePlayer);
-
-
-    var terrainTexture = render.texTerrain = gl.createTexture();
-    gl.bindTexture( gl.TEXTURE_2D, terrainTexture );
-    gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST );
-    gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST );
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA,
-                    128, 128, 0,
-                    gl.RGBA, gl.UNSIGNED_BYTE,
-                    this._textureAsset);
-
-
-
-    // Save position attribute
-    const positionAttrib = gl.getAttribLocation(program, 'position');
-
-    // Create buffer
-    const buffer = gl.createBuffer();
-    player.onMouseEvent( this.clientX + 0.01, this.clientY + 0.01, 1, false )
-    // Animate!
-    let skip = false;
-    const animate = () => {
-      try {
-        if (skip) {
-          // return;
+    // // sides
+    var light = new THREE.Color( 0xffffff );
+    var shadow = new THREE.Color( 0x505050 );
+    var matrix = new THREE.Matrix4();
+    var pxGeometry = new THREE.PlaneGeometry( 100, 100 );
+    pxGeometry.faces[ 0 ].vertexColors = [ light, shadow, light ];
+    pxGeometry.faces[ 1 ].vertexColors = [ shadow, shadow, light ];
+    pxGeometry.faceVertexUvs[ 0 ][ 0 ][ 0 ].y = 0.5;
+    pxGeometry.faceVertexUvs[ 0 ][ 0 ][ 2 ].y = 0.5;
+    pxGeometry.faceVertexUvs[ 0 ][ 1 ][ 2 ].y = 0.5;
+    pxGeometry.rotateY( Math.PI / 2 );
+    pxGeometry.translate( 50, 0, 0 );
+    var nxGeometry = new THREE.PlaneGeometry( 100, 100 );
+    nxGeometry.faces[ 0 ].vertexColors = [ light, shadow, light ];
+    nxGeometry.faces[ 1 ].vertexColors = [ shadow, shadow, light ];
+    nxGeometry.faceVertexUvs[ 0 ][ 0 ][ 0 ].y = 0.5;
+    nxGeometry.faceVertexUvs[ 0 ][ 0 ][ 2 ].y = 0.5;
+    nxGeometry.faceVertexUvs[ 0 ][ 1 ][ 2 ].y = 0.5;
+    nxGeometry.rotateY( - Math.PI / 2 );
+    nxGeometry.translate( - 50, 0, 0 );
+    var pyGeometry = new THREE.PlaneGeometry( 100, 100 );
+    pyGeometry.faces[ 0 ].vertexColors = [ light, light, light ];
+    pyGeometry.faces[ 1 ].vertexColors = [ light, light, light ];
+    pyGeometry.faceVertexUvs[ 0 ][ 0 ][ 1 ].y = 0.5;
+    pyGeometry.faceVertexUvs[ 0 ][ 1 ][ 0 ].y = 0.5;
+    pyGeometry.faceVertexUvs[ 0 ][ 1 ][ 1 ].y = 0.5;
+    pyGeometry.rotateX( - Math.PI / 2 );
+    pyGeometry.translate( 0, 50, 0 );
+    var py2Geometry = new THREE.PlaneGeometry( 100, 100 );
+    py2Geometry.faces[ 0 ].vertexColors = [ light, light, light ];
+    py2Geometry.faces[ 1 ].vertexColors = [ light, light, light ];
+    py2Geometry.faceVertexUvs[ 0 ][ 0 ][ 1 ].y = 0.5;
+    py2Geometry.faceVertexUvs[ 0 ][ 1 ][ 0 ].y = 0.5;
+    py2Geometry.faceVertexUvs[ 0 ][ 1 ][ 1 ].y = 0.5;
+    py2Geometry.rotateX( - Math.PI / 2 );
+    py2Geometry.rotateY( Math.PI / 2 );
+    py2Geometry.translate( 0, 50, 0 );
+    var pzGeometry = new THREE.PlaneGeometry( 100, 100 );
+    pzGeometry.faces[ 0 ].vertexColors = [ light, shadow, light ];
+    pzGeometry.faces[ 1 ].vertexColors = [ shadow, shadow, light ];
+    pzGeometry.faceVertexUvs[ 0 ][ 0 ][ 0 ].y = 0.5;
+    pzGeometry.faceVertexUvs[ 0 ][ 0 ][ 2 ].y = 0.5;
+    pzGeometry.faceVertexUvs[ 0 ][ 1 ][ 2 ].y = 0.5;
+    pzGeometry.translate( 0, 0, 50 );
+    var nzGeometry = new THREE.PlaneGeometry( 100, 100 );
+    nzGeometry.faces[ 0 ].vertexColors = [ light, shadow, light ];
+    nzGeometry.faces[ 1 ].vertexColors = [ shadow, shadow, light ];
+    nzGeometry.faceVertexUvs[ 0 ][ 0 ][ 0 ].y = 0.5;
+    nzGeometry.faceVertexUvs[ 0 ][ 0 ][ 2 ].y = 0.5;
+    nzGeometry.faceVertexUvs[ 0 ][ 1 ][ 2 ].y = 0.5;
+    nzGeometry.rotateY( Math.PI );
+    nzGeometry.translate( 0, 0, - 50 );
+    var geometry = new THREE.Geometry();
+    var dummy = new THREE.Mesh();
+    for ( var z = 0; z < worldDepth; z ++ ) {
+      for ( var x = 0; x < worldWidth; x ++ ) {
+        var h = getY( x, z );
+        matrix.makeTranslation(
+          x * 100 - worldHalfWidth * 100,
+          h * 100,
+          z * 100 - worldHalfDepth * 100
+        );
+        var px = getY( x + 1, z );
+        var nx = getY( x - 1, z );
+        var pz = getY( x, z + 1 );
+        var nz = getY( x, z - 1 );
+        var pxpz = getY( x + 1, z + 1 );
+        var nxpz = getY( x - 1, z + 1 );
+        var pxnz = getY( x + 1, z - 1 );
+        var nxnz = getY( x - 1, z - 1 );
+        var a = nx > h || nz > h || nxnz > h ? 0 : 1;
+        var b = nx > h || pz > h || nxpz > h ? 0 : 1;
+        var c = px > h || pz > h || pxpz > h ? 0 : 1;
+        var d = px > h || nz > h || pxnz > h ? 0 : 1;
+        if ( a + c > b + d ) {
+          var colors = py2Geometry.faces[ 0 ].vertexColors;
+          colors[ 0 ] = b === 0 ? shadow : light;
+          colors[ 1 ] = c === 0 ? shadow : light;
+          colors[ 2 ] = a === 0 ? shadow : light;
+          var colors = py2Geometry.faces[ 1 ].vertexColors;
+          colors[ 0 ] = c === 0 ? shadow : light;
+          colors[ 1 ] = d === 0 ? shadow : light;
+          colors[ 2 ] = a === 0 ? shadow : light;
+          geometry.merge( py2Geometry, matrix );
+        } else {
+          var colors = pyGeometry.faces[ 0 ].vertexColors;
+          colors[ 0 ] = a === 0 ? shadow : light;
+          colors[ 1 ] = b === 0 ? shadow : light;
+          colors[ 2 ] = d === 0 ? shadow : light;
+          var colors = pyGeometry.faces[ 1 ].vertexColors;
+          colors[ 0 ] = b === 0 ? shadow : light;
+          colors[ 1 ] = c === 0 ? shadow : light;
+          colors[ 2 ] = d === 0 ? shadow : light;
+          geometry.merge( pyGeometry, matrix );
         }
-
-        // // Clear
-        gl.clearColor(0, 0, 1, 1);
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
-        // Bind buffer, program and position attribute for use
-        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-        gl.useProgram(program);
-        gl.enableVertexAttribArray(positionAttrib);
-        gl.vertexAttribPointer(positionAttrib, 2, gl.FLOAT, false, 0, 0);
-        //
-        // // Buffer data and draw!
-        // const speed = this.props.speed || 1;
-        // const a = 0.48 * Math.sin(0.001 * speed * Date.now()) + 0.5;
-        // const verts = new Float32Array([
-        //   -a, -a, a, -a, -a,  a,
-        //   -a,  a, a, -a,  a,  a,
-        // ]);
-        // gl.bufferData(gl.ARRAY_BUFFER, verts, gl.STATIC_DRAW);
-        // gl.drawArrays(gl.TRIANGLES, 0, verts.length / 2);
-
-
-        player.onMouseEvent( this.clientX + 0.01, this.clientY + 0.01, 3, false )
-        // Simulate physics
-        physics.simulate();
-
-        // Update local player
-        player.update();
-
-        // Build a chunk
-        render.buildChunks( 1 );
-
-        // Draw world
-        render.setCamera( player.getEyePos().toArray(), player.angles );
-        render.draw();
-
-
-        // Submit frame
-        gl.flush();
-        gl.endFrameEXP();
-      } finally {
-        skip = !skip;
-        gl.enableLogging = false;
-        requestAnimationFrame(animate);
+        if ( ( px != h && px != h + 1 ) || x == 0 ) {
+          var colors = pxGeometry.faces[ 0 ].vertexColors;
+          colors[ 0 ] = pxpz > px && x > 0 ? shadow : light;
+          colors[ 2 ] = pxnz > px && x > 0 ? shadow : light;
+          var colors = pxGeometry.faces[ 1 ].vertexColors;
+          colors[ 2 ] = pxnz > px && x > 0 ? shadow : light;
+          geometry.merge( pxGeometry, matrix );
+        }
+        if ( ( nx != h && nx != h + 1 ) || x == worldWidth - 1 ) {
+          var colors = nxGeometry.faces[ 0 ].vertexColors;
+          colors[ 0 ] = nxnz > nx && x < worldWidth - 1 ? shadow : light;
+          colors[ 2 ] = nxpz > nx && x < worldWidth - 1 ? shadow : light;
+          var colors = nxGeometry.faces[ 1 ].vertexColors;
+          colors[ 2 ] = nxpz > nx && x < worldWidth - 1 ? shadow : light;
+          geometry.merge( nxGeometry, matrix );
+        }
+        if ( ( pz != h && pz != h + 1 ) || z == worldDepth - 1 ) {
+          var colors = pzGeometry.faces[ 0 ].vertexColors;
+          colors[ 0 ] = nxpz > pz && z < worldDepth - 1 ? shadow : light;
+          colors[ 2 ] = pxpz > pz && z < worldDepth - 1 ? shadow : light;
+          var colors = pzGeometry.faces[ 1 ].vertexColors;
+          colors[ 2 ] = pxpz > pz && z < worldDepth - 1 ? shadow : light;
+          geometry.merge( pzGeometry, matrix );
+        }
+        if ( ( nz != h && nz != h + 1 ) || z == 0 ) {
+          var colors = nzGeometry.faces[ 0 ].vertexColors;
+          colors[ 0 ] = pxnz > nz && z > 0 ? shadow : light;
+          colors[ 2 ] = nxnz > nz && z > 0 ? shadow : light;
+          var colors = nzGeometry.faces[ 1 ].vertexColors;
+          colors[ 2 ] = nxnz > nz && z > 0 ? shadow : light;
+          geometry.merge( nzGeometry, matrix );
+        }
       }
-    };
-    animate();
+    }
+
+    var mesh = new THREE.Mesh( geometry, new THREE.MeshLambertMaterial( { map: texture, vertexColors: THREE.VertexColors } ) );
+    scene.add( mesh );
   }
-}
+
+  setupControls = () => {
+    this.setupGestures()
+
+    controls = new FirstPersonControls( camera );
+    controls.movementSpeed = 1000;
+    controls.lookSpeed = 0.125;
+    controls.lookVertical = true;
+    controls.constrainVertical = true;
+    controls.verticalMin = 1.1;
+    controls.verticalMax = 2.2;
+  }
+
+  setupSky = () => {
+    // Add Sky Mesh
+    let sky = new Sky();
+    scene.add( sky.mesh );
+
+    // Add Sun Helper
+    let sunSphere = new THREE.Mesh(
+      new THREE.SphereBufferGeometry( 2000, 16, 8 ),
+      new THREE.MeshBasicMaterial( { color: 0xffffff } )
+    );
+    sunSphere.position.y = - 700000;
+    sunSphere.visible = false;
+    scene.add( sunSphere );
+
+    var effectController  = {
+      turbidity: 10,
+      rayleigh: 2,
+      mieCoefficient: 0.005,
+      mieDirectionalG: 0.8,
+      luminance: 1,
+      inclination: 0.49, // elevation / inclination
+      azimuth: 0.25, // Facing front,
+      sun: true
+    };
+
+    var distance = 400000;
+    var uniforms = sky.uniforms;
+    uniforms.turbidity.value = effectController.turbidity;
+    uniforms.rayleigh.value = effectController.rayleigh;
+    uniforms.luminance.value = effectController.luminance;
+    uniforms.mieCoefficient.value = effectController.mieCoefficient;
+    uniforms.mieDirectionalG.value = effectController.mieDirectionalG;
+    var theta = Math.PI * ( effectController.inclination - 0.5 );
+    var phi = 2 * Math.PI * ( effectController.azimuth - 0.5 );
+    sunSphere.position.x = distance * Math.cos( phi );
+    sunSphere.position.y = distance * Math.sin( phi ) * Math.sin( theta );
+    sunSphere.position.z = distance * Math.sin( phi ) * Math.cos( theta );
+    sunSphere.visible = effectController.sun;
+    sky.uniforms.sunPosition.value.copy( sunSphere.position );
 
 
-  import Renderer from '../js/render'
-  import World from '../js/world'
-  import Physics from '../js/physics'
-  import Player from '../js/player'
+  }
 
-  /*
+  async componentWillMount() {
+    let {objects, texture} = this
 
-  import Renderer from '../js/render'
-  import World from '../js/world'
-  import Physics from '../js/physics'
-  import Player from '../js/player'
+    const textureAsset = Expo.Asset.fromModule(
+      require('../assets/images/atlas.png'));
+      await textureAsset.downloadAsync();
+      texture = THREEView.textureFromAsset(textureAsset);
+      texture.magFilter = THREE.NearestFilter;
+      texture.minFilter = THREE.LinearMipMapLinearFilter;
 
-      var world = new World( 16, 16, 16 );
-      world.createFlatWorld( 6 );
 
-      // // Set up renderer
-      var render = new Renderer( gl );
-      render.setWorld( world, 8 );
-      render.setPerspective( 60, 0.01, 200 );
-      //
-      // // Create physics simulator
-      var physics = new Physics();
-      physics.setWorld( world );
-      //
-      // // Create new local player
-      var player = new Player();
-      player.setWorld( world );
+      camera = new THREE.PerspectiveCamera( 50, width / height, 1, 20000 );
+      camera.position.y = getY( worldHalfWidth, worldHalfDepth ) * 100 + 100;
 
-  */
+      this.setupControls()
+
+      scene = new THREE.Scene();
+      scene.fog = new THREE.FogExp2( 0xffffff, 0.00015 );
+
+      this.buildTerrain(texture)
+
+      var ambientLight = new THREE.AmbientLight( 0xcccccc );
+      scene.add( ambientLight );
+      var directionalLight = new THREE.DirectionalLight( 0xffffff, 2 );
+      directionalLight.position.set( 1, 1, 0.5 ).normalize();
+      scene.add( directionalLight );
+
+      // this.setupSky()
+
+      this.setState({ready: true})
+    }
+
+
+    tick = (dt) => {
+      if (controls) {
+        controls.update( dt, this.moveID );
+      }
+    }
+
+    render() {
+      if (!this.state.ready) {
+        return null
+      }
+
+      return (
+        <View style={{flex: 1}}>
+          <THREEView
+            {...this.panResponder.panHandlers}
+            style={{ flex: 1 }}
+            scene={scene}
+            camera={camera}
+            tick={this.tick}
+          />
+          <Dpad style={{position: 'absolute', bottom: 8, left: 8}} onPressOut={_=> {this.moveID = null}} onPress={id => {
+              this.moveID = id
+            }}
+          />
+        </View>
+      );
+    }
+  }

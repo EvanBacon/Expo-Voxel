@@ -1,7 +1,7 @@
 {
   "name": "Terravox",
   "description": "Beautiful Voxel Terrain",
-  "slug": "voxel",
+  "slug": "voxel-debug",
   "privacy": "public",
   "sdkVersion": "15.0.0",
   "version": "1.0.0",

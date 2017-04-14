@@ -65,7 +65,7 @@ for ( var x = 0; x < this.width; x++ )
     for ( var x = 0; x < this.width; x++ )
 	    for ( var y = 0; y < this.width; y++ ) //TODO: make height
 		    for ( var z = 0; z < this.depth; z++ )
-			     blocks[x][y][z] = y < this.getY(x, z) ? 1 : -1;
+			     blocks[x][y][z] = z < this.getY(x, y) ? 1 : -1;
 
     return blocks
   }

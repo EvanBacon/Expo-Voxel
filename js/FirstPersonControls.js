@@ -324,7 +324,7 @@ export default class FirstPersonControls {
   			}
   		}
   		if ( walkVelocity.length() > 0 ) {
-  				walkVelocity = walkVelocity.normal();
+  				walkVelocity = walkVelocity.normalize();
   				velocity.x = walkVelocity.x * 4;
   				velocity.y = walkVelocity.y * 4;
   		} else {
@@ -336,13 +336,13 @@ export default class FirstPersonControls {
   		this.pos = this.resolveCollision( pos, bPos, velocity.multiplyScalar( delta ) );
   	}
     this.object.position.x = this.pos.x * 100
-      this.object.position.y = this.pos.y * 100
-      this.object.position.z = this.pos.z * 100
+      this.object.position.z = this.pos.y * 100
+      this.object.position.y = this.pos.z * 100
 
     let targetPosition = new THREE.Vector3()
     targetPosition.x = this.object.position.x + 100 * Math.sin( this.angles[0] ) * Math.cos( this.angles[1] );
-    targetPosition.y = this.object.position.y + 100 * Math.cos( this.angles[0] );
-    targetPosition.z = this.object.position.z + 100 * Math.sin( this.angles[0] ) * Math.sin( this.angles[1] );
+    targetPosition.z = this.object.position.z + 100 * Math.cos( this.angles[0] );
+    targetPosition.y = this.object.position.y + 100 * Math.sin( this.angles[0] ) * Math.sin( this.angles[1] );
     this.object.lookAt( targetPosition );
 
 
@@ -414,7 +414,7 @@ export default class FirstPersonControls {
   	}
 
   	// Solve Z collisions
-  	this.falling = true;
+  	this.falling = false; //True
   	for ( var i in collisionCandidates )
   	{
   		var face = collisionCandidates[i];

@@ -67,6 +67,7 @@ for ( var x = 0; x < this.width; x++ )
 		    for ( var z = 0; z < this.depth; z++ )
 			     blocks[x][y][z] = z < this.getY(x, y) ? 1 : -1;
 
+    console.warn(blocks)
     return blocks
   }
 

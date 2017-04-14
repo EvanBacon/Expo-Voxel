@@ -164,7 +164,7 @@ export default class App extends React.Component {
     // this.buildTerrain()
 
     this.setupLights()
-      // this.setupSky()
+      this.setupSky()
   }
 
   tick = (dt) => {

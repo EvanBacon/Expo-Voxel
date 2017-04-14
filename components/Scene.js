@@ -4,10 +4,13 @@ import Expo from 'expo';
 import React from 'react';
 import {PanResponder,View, Dimensions} from 'react-native'
 const {width, height} = Dimensions.get('window')
+
 import * as THREE from 'three';
+const THREEView = Expo.createTHREEViewClass(THREE);
+
 import ImprovedNoise from '../js/ImprovedNoise'
 import FirstPersonControls from '../js/FirstPersonControls'
-import THREEView from './THREEView'
+
 import Sky from '../js/SkyShader'
 import Dpad from './Dpad'
 import World from '../js/World'
@@ -16,7 +19,7 @@ console.ignoredYellowBox = ['THREE.WebGLRenderer'];
 var sky, sunSphere;
 import GestureType from '../js/GestureType'
 
-const worldSize = 100
+const worldSize = 200
 export default class App extends React.Component {
   world;
   state = {
@@ -26,15 +29,15 @@ export default class App extends React.Component {
   setupGestures = () => {
     const {controls} = this
     const touchesBegan = (event, gestureState) => {
-      controls.onGesture(event, gestureState, GestureType.began)
+      this.controls.onGesture(event, gestureState, GestureType.began)
     }
 
     const touchesMoved = (event, gestureState) => {
-      controls.onGesture(event, gestureState, GestureType.moved)
+      this.controls.onGesture(event, gestureState, GestureType.moved)
     }
 
     const touchesEnded = (event, gestureState) => {
-      controls.onGesture(event, gestureState, GestureType.ended)
+      this.controls.onGesture(event, gestureState, GestureType.ended)
     }
 
     this.panResponder = PanResponder.create({
@@ -52,7 +55,7 @@ export default class App extends React.Component {
     this.controls = new FirstPersonControls( this.camera );
     this.controls.setSize(width, height);
     this.controls.movementSpeed = 1000;
-    this.controls.lookSpeed = 0.225;
+    this.controls.lookSpeed = 0.3;
     this.controls.lookVertical = true;
     this.controls.constrainVertical = true;
     this.controls.verticalMin = 1.1;
@@ -72,7 +75,6 @@ export default class App extends React.Component {
       new THREE.MeshBasicMaterial( { color: 0xffffff } )
     );
     sunSphere.position.y = - 700000;
-    sunSphere.visible = false;
     this.scene.add( sunSphere );
 
     var effectController  = {
@@ -107,14 +109,18 @@ export default class App extends React.Component {
     this.camera = new THREE.PerspectiveCamera( fov, width / height, zNear, zFar );
     this.camera.position.y = this.world.getY( worldSize/2, worldSize/2 ) * 100 + 100;
   }
-  setupScene = () => {
+
+  setupScene = (fogColor = 0x7394a0, fogFalloff = 0.00015) => {
     this.scene = new THREE.Scene();
-    this.scene.fog = new THREE.FogExp2( 0x7394a0, 0.00015 );
+    this.scene.fog = new THREE.FogExp2(fogColor, fogFalloff);
   }
 
   setupLights = () => {
+    /// General Lighting
     var ambientLight = new THREE.AmbientLight( 0xcccccc );
     this.scene.add( ambientLight );
+
+    /// Directional Lighting
     var directionalLight = new THREE.DirectionalLight( 0xffffff, 2 );
     directionalLight.position.set( 1, 1, 0.5 ).normalize();
     this.scene.add( directionalLight );
@@ -129,7 +135,6 @@ export default class App extends React.Component {
 
     this.scene.add( this.mesh );
 
-
     this.setState({ready: true})
   }
 
@@ -143,14 +148,12 @@ export default class App extends React.Component {
   }
 
   tick = (dt) => {
-    if (this.controls) {
-      this.controls.update( dt, this.moveID );
-    }
+    this.controls.update( dt, this.moveID );
   }
 
   render() {
     if (!this.state.ready) {
-      return null
+      return <Expo.AppLoading />
     }
 
     const dPad = (<Dpad

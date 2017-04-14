@@ -20,8 +20,6 @@ export default class FirstPersonControls {
     this.lookSpeed = 0.005;
 
     this.lookVertical = true;
-    this.autoForward = false;
-
     this.activeLook = true;
 
     this.heightSpeed = false;
@@ -35,24 +33,17 @@ export default class FirstPersonControls {
 
     this.autoSpeedFactor = 0.0;
 
-    this.mouseX = 0;
-    this.mouseY = 0;
+    this.touchX = 0;
+    this.touchY = 0;
 
     this.lat = 0;
     this.lon = 0;
     this.phi = 0;
     this.theta = 0;
 
-    this.moveForward = false;
-    this.moveBackward = false;
-    this.moveLeft = false;
-    this.moveRight = false;
-
-    this.mouseDragOn = false;
-
+    /// Screen Center
     this.viewHalfX = 0;
     this.viewHalfY = 0;
-
   }
 
   setSize = (width, height) => {
@@ -62,19 +53,14 @@ export default class FirstPersonControls {
 
   onGesture = (event, gestureState, type) => {
     event.preventDefault();
-
-
-
     switch (type) {
       case GestureType.began:
-      this.mouseDragOn = true;
       break;
       case GestureType.moved:
-      this.mouseX = gestureState.dx;
-      this.mouseY = gestureState.dy;
+      this.touchX = gestureState.dx;
+      this.touchY = gestureState.dy;
       break;
       case GestureType.ended:
-      this.mouseDragOn = false;
       break;
       default:
       console.warn("Unknown Gesture State: ", gestureState)
@@ -130,8 +116,8 @@ export default class FirstPersonControls {
       verticalLookRatio = Math.PI / ( this.verticalMax - this.verticalMin );
     }
 
-    this.lon += this.mouseX * actualLookSpeed;
-    if ( this.lookVertical ) this.lat -= this.mouseY * actualLookSpeed * verticalLookRatio;
+    this.lon += this.touchX * actualLookSpeed;
+    if ( this.lookVertical ) this.lat -= this.touchY * actualLookSpeed * verticalLookRatio;
 
     this.lat = Math.max( - 85, Math.min( 85, this.lat ) );
     this.phi = THREE.Math.degToRad( 90 - this.lat );
@@ -151,8 +137,8 @@ export default class FirstPersonControls {
     this.object.lookAt( targetPosition );
 
     const damp = 0.95
-    this.mouseX *= damp
-    this.mouseY *= damp
+    this.touchX *= damp
+    this.touchY *= damp
 
   }
 }

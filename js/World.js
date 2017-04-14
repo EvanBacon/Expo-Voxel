@@ -6,7 +6,7 @@ import {PanResponder,View, Dimensions} from 'react-native'
 const {width, height} = Dimensions.get('window')
 import * as THREE from 'three';
 import ImprovedNoise from './ImprovedNoise'
-import THREEView from '../components/THREEView'
+const THREEView = Expo.createTHREEViewClass(THREE);
 
 export default class World {
   width;
@@ -18,8 +18,6 @@ export default class World {
     this.width = width;
     this.depth = depth;
     this.data = this.generateHeight( width, depth );
-
-
   }
 
   getGeometry = async () => {
@@ -213,11 +211,8 @@ export default class World {
     return new THREE.MeshLambertMaterial( { map: image, vertexColors: THREE.VertexColors } )
   }
 
-
   async buildTerrain() {
-
-
-    const textureAsset = Expo.Asset.fromModule(require('../assets/images/atlas.png'));
+    const textureAsset = Expo.Asset.fromModule(require('../assets/images/material.png'));
     await textureAsset.downloadAsync();
 
     this.texture = THREEView.textureFromAsset(textureAsset);

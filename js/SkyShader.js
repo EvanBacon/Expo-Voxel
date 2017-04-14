@@ -1,20 +1,18 @@
+/// @author / THREE.js - https://threejs.org/examples/?q=sky#webgl_shaders_sky
+
 import * as THREE from 'three';
 
 const skyShader = {
-
 	uniforms: {
-
 		luminance: { value: 1 },
 		turbidity: { value: 2 },
 		rayleigh: { value: 1 },
 		mieCoefficient: { value: 0.005 },
 		mieDirectionalG: { value: 0.8 },
 		sunPosition: { value: new THREE.Vector3() }
-
 	},
 
 	vertexShader: [
-
 		"uniform vec3 sunPosition;",
 		"uniform float rayleigh;",
 		"uniform float turbidity;",
@@ -197,30 +195,21 @@ const skyShader = {
 
 			"gl_FragColor.a = 1.0;",
 		"}"
-
 	].join( "\n" )
-
 };
 
-const Sky = function () {
-
-	// var skyShader = skyShader;
-	var skyUniforms = THREE.UniformsUtils.clone( skyShader.uniforms );
-
-	var skyMat = new THREE.ShaderMaterial( {
-		fragmentShader: skyShader.fragmentShader,
-		vertexShader: skyShader.vertexShader,
-		uniforms: skyUniforms,
-		side: THREE.BackSide
-	} );
-
-	var skyGeo = new THREE.SphereBufferGeometry( 10000, 32, 15 );
-	var skyMesh = new THREE.Mesh( skyGeo, skyMat );
-
-	// Expose variables
-	this.mesh = skyMesh;
-	this.uniforms = skyUniforms;
-
-};
-
-module.exports = Sky
+export default class Sky {
+	constructor() {
+		const skyUniforms = THREE.UniformsUtils.clone( skyShader.uniforms );
+		const skyMat = new THREE.ShaderMaterial( {
+			fragmentShader: skyShader.fragmentShader,
+			vertexShader: skyShader.vertexShader,
+			uniforms: skyUniforms,
+			side: THREE.BackSide
+		});
+		const skyGeo = new THREE.SphereBufferGeometry( 15000, 32, 15 );
+		// Expose variables
+		this.mesh = new THREE.Mesh( skyGeo, skyMat );
+		this.uniforms = skyUniforms;
+	}
+}

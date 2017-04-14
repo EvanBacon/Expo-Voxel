@@ -13,30 +13,7 @@ import Dpad from './Dpad'
 import World from '../js/World'
 console.ignoredYellowBox = ['THREE.WebGLRenderer'];
 
-
 var sky, sunSphere;
-
-// var worldWidth = 200, worldDepth = 200, worldHalfWidth = worldWidth / 2, worldHalfDepth = worldDepth / 2,
-// data = generateHeight( worldWidth, worldDepth );
-//
-// function generateHeight( width, height ) {
-//   var data = [], perlin = new ImprovedNoise(),
-//   size = width * height, quality = 2, z = Math.random() * 100;
-//   for ( var j = 0; j < 4; j ++ ) {
-//     if ( j == 0 ) for ( var i = 0; i < size; i ++ ) data[ i ] = 0;
-//     for ( var i = 0; i < size; i ++ ) {
-//       var x = i % width, y = ( i / width ) | 0;
-//       data[ i ] += perlin.noise( x / quality, y / quality, z ) * quality;
-//     }
-//     quality *= 4
-//   }
-//   return data;
-// }
-//
-// function getY( x, z ) {
-//   return ( data[ x + z * worldWidth ] * 0.2 ) | 0;
-// }
-
 import GestureType from '../js/GestureType'
 
 const worldSize = 100
@@ -75,7 +52,7 @@ export default class App extends React.Component {
     this.controls = new FirstPersonControls( this.camera );
     this.controls.setSize(width, height);
     this.controls.movementSpeed = 1000;
-    this.controls.lookSpeed = 0.125;
+    this.controls.lookSpeed = 0.225;
     this.controls.lookVertical = true;
     this.controls.constrainVertical = true;
     this.controls.verticalMin = 1.1;
@@ -101,10 +78,10 @@ export default class App extends React.Component {
     var effectController  = {
       turbidity: 10,
       rayleigh: 2,
-      mieCoefficient: 0.005,
+      mieCoefficient: 0.004,
       mieDirectionalG: 0.8,
       luminance: 1,
-      inclination: 0.49, // elevation / inclination
+      inclination: 0.4315, // elevation / inclination
       azimuth: 0.25, // Facing front,
       sun: true
     };
@@ -132,7 +109,7 @@ export default class App extends React.Component {
   }
   setupScene = () => {
     this.scene = new THREE.Scene();
-    this.scene.fog = new THREE.FogExp2( 0xffffff, 0.00015 );
+    this.scene.fog = new THREE.FogExp2( 0x7394a0, 0.00015 );
   }
 
   setupLights = () => {
@@ -161,10 +138,8 @@ export default class App extends React.Component {
     this.setupControls()
     this.setupScene()
 
-    // this.buildTerrain()
-
     this.setupLights()
-      // this.setupSky()
+    this.setupSky()
   }
 
   tick = (dt) => {

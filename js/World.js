@@ -24,10 +24,9 @@ export default class World {
     if (this.mesh) {
       return this.mesh
     }
+    await this.buildTerrain()
 
-    this.mesh = await this.buildTerrain()
     return this.mesh
-
   }
 
   generateHeight( width, height ) {
@@ -195,14 +194,6 @@ export default class World {
   }
 
   buildMesh = (geometry, image) => {
-
-
-    /// Prevent Rebuilding
-    if (this.mesh) {
-      return this.mesh
-    }
-
-
     this.mesh = new THREE.Mesh( geometry, this.buildTexture(image) );
     return this.mesh
   }

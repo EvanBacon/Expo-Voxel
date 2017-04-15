@@ -22,10 +22,8 @@ Stack:
 ## Special Thanks
 
 - [Nikhilesh Sigatapu](https://github.com/nikki93)
-
 - [Charlie Cheever](https://github.com/ccheever)
-
-- [Expo Team](https://twitter.com/expo_io).
+- [Expo Team](https://twitter.com/expo_io)
 
 
 ----

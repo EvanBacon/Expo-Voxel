@@ -1,4 +1,5 @@
-### Expo-Voxel
+Expo Voxel
+========
 
 __[Voxel Terrain](https://threejs.org/examples/?q=mine#webgl_geometry_minecraft_ao) by [Mr. Doob](https://github.com/mrdoob)__
 

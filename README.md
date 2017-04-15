@@ -3,7 +3,7 @@ Expo Voxel
 
 __[Voxel Terrain](https://threejs.org/examples/?q=mine#webgl_geometry_minecraft_ao) by [Mr. Doob](https://github.com/mrdoob)__
 
-Exponent: https://exp.host/@bacon/voxel
+Expo: https://exp.host/@bacon/voxel
 
 ![voxel gif should be here. yolo](/demo.gif?raw=true "Preview Gif 😀 ...I love you")
 

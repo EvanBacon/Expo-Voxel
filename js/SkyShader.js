@@ -207,7 +207,7 @@ export default class Sky {
 			uniforms: skyUniforms,
 			side: THREE.BackSide
 		});
-		const skyGeo = new THREE.SphereBufferGeometry( 15000, 32, 15 );
+		const skyGeo = new THREE.SphereBufferGeometry( 14500, 32, 15 );
 		// Expose variables
 		this.mesh = new THREE.Mesh( skyGeo, skyMat );
 		this.uniforms = skyUniforms;

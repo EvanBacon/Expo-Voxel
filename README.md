@@ -5,7 +5,7 @@ __[Voxel Terrain](https://threejs.org/examples/?q=mine#webgl_geometry_minecraft_
 
 Exponent: https://exp.host/@bacon/voxel
 
-![react-native-voxels ∛](/demo.gif?raw=true "Preview Gif 😀 ...I love you")
+![voxel gif should be here. yolo](/demo.gif?raw=true "Preview Gif 😀 ...I love you")
 
 
 ----
@@ -21,11 +21,11 @@ Stack:
 
 ## Special Thanks
 
-[Nikhilesh Sigatapu](https://github.com/nikki93)__
-[Charlie Cheever](https://github.com/ccheever)__
+- [Nikhilesh Sigatapu](https://github.com/nikki93)
 
+- [Charlie Cheever](https://github.com/ccheever)
 
-[Read the full Expo SDK docs](https://docs.expo.io/versions/latest/sdk/index.html).
+- [Expo Team](https://twitter.com/expo_io).
 
 
 ----

@@ -7,6 +7,7 @@ Expo: https://exp.host/@bacon/voxel
 
 ![voxel gif should be here. yolo](/demo.gif?raw=true "Preview Gif 😀 ...I love you")
 
+Watch the tutorial: https://youtu.be/H-4t-srSSvI
 
 ----
 

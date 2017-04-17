@@ -6,6 +6,7 @@ import {
 } from 'react-native';
 
 import DirectionType from '../js/DirectionType'
+
 class Button extends React.PureComponent {
   render() {
     const size = 50 - 4

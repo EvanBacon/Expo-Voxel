@@ -5,9 +5,13 @@
 */
 
 import React, { PropTypes } from 'react';
+
 import * as THREE from 'three';
+
 import GestureType from './GestureType'
+
 import DirectionType from './DirectionType'
+
 export default class FirstPersonControls {
 
   constructor( object ) {
@@ -68,7 +72,7 @@ export default class FirstPersonControls {
     }
   }
 
-  update = ( delta, moveID ) => {
+  update = ( delta, directionType ) => {
     if ( this.enabled === false ) return;
 
     if ( this.heightSpeed ) {
@@ -81,7 +85,7 @@ export default class FirstPersonControls {
 
     var actualMoveSpeed = delta * this.movementSpeed;
 
-    switch (moveID) {
+    switch (directionType) {
       case DirectionType.front: //Top
       this.object.translateZ( - ( actualMoveSpeed + this.autoSpeedFactor ) );
       break;

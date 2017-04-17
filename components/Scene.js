@@ -20,7 +20,7 @@ var sky, sunSphere;
 import GestureType from '../js/GestureType'
 
 const worldSize = 200
-export default class App extends React.Component {
+export default class Scene extends React.Component {
   world;
   state = {
     ready: false

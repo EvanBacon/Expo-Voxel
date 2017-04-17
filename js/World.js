@@ -2,7 +2,7 @@
 
 import Expo from 'expo';
 import React from 'react';
-import {PanResponder,View, Dimensions} from 'react-native'
+import {View, Dimensions} from 'react-native'
 const {width, height} = Dimensions.get('window')
 import * as THREE from 'three';
 import ImprovedNoise from './ImprovedNoise'
@@ -24,6 +24,7 @@ export default class World {
     if (this.mesh) {
       return this.mesh
     }
+
     await this.buildTerrain()
 
     return this.mesh
@@ -122,18 +123,22 @@ export default class World {
           h * size,
           z * size - worldHalfDepth * size
         );
+
         var px = getY( x + 1, z );
         var nx = getY( x - 1, z );
         var pz = getY( x, z + 1 );
         var nz = getY( x, z - 1 );
+
         var pxpz = getY( x + 1, z + 1 );
         var nxpz = getY( x - 1, z + 1 );
         var pxnz = getY( x + 1, z - 1 );
         var nxnz = getY( x - 1, z - 1 );
+
         var a = nx > h || nz > h || nxnz > h ? 0 : 1;
         var b = nx > h || pz > h || nxpz > h ? 0 : 1;
         var c = px > h || pz > h || pxpz > h ? 0 : 1;
         var d = px > h || nz > h || pxnz > h ? 0 : 1;
+
         if ( a + c > b + d ) {
           var colors = py2Geometry.faces[ 0 ].vertexColors;
           colors[ 0 ] = b === 0 ? shadow : light;

@@ -20,6 +20,13 @@ export default class World {
     this.data = this.generateHeight( width, depth );
   }
 
+  isValidBlock = (x,y,z) => {
+    return false
+  }
+  getBlock = (x,y,z) => {
+    return null
+  }
+
   getGeometry = async () => {
     if (this.mesh) {
       return this.mesh

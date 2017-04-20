@@ -9,7 +9,8 @@ import * as THREE from 'three';
 const THREEView = Expo.createTHREEViewClass(THREE);
 
 import ImprovedNoise from '../js/ImprovedNoise'
-import FirstPersonControls from '../js/FirstPersonControls'
+import Player from '../js/Player'
+import Physics from '../js/Physics'
 
 import Sky from '../js/SkyShader'
 import Dpad from './Dpad'
@@ -52,7 +53,7 @@ export default class Scene extends React.Component {
   }
 
   setupControls = () => {
-    this.controls = new FirstPersonControls( this.camera );
+    this.controls = new Player( this.camera, this.physics );
     this.controls.setSize(width, height);
     this.controls.movementSpeed = 1000;
     this.controls.lookSpeed = 0.3;
@@ -131,6 +132,7 @@ export default class Scene extends React.Component {
 
     this.mesh = await this.world.getGeometry()
 
+    this.physics = new Physics(this.world)
     this.setupWorld()
 
     this.scene.add( this.mesh );

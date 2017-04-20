@@ -55,7 +55,7 @@ export default class Player {
   }
 
   jump = () => {
-
+    if( !this.physics.world.isValidBlock(this.position.x, this.position.y, this.position.z - 0.01) || this.physics.world.getBlock(this.position.x, this.position.y, this.position.z - 0.01) ) this.velocity.z += 9.0;
   }
 
   look = (vertical, horizontal) => {
@@ -63,19 +63,32 @@ export default class Player {
     this.touchX = horizontal;
   }
 
+
+  checkDeath = () => {
+    if (this.position.y < -5) {
+      this.position.y = 50
+      this.position.x = 0
+      this.position.z = 0
+    }
+  }
+
   setPosition = (position) => {
     // this.position = position
-    this.position = new THREE.Vector3(
-      this.position.x + position.x,
-      this.position.y + position.y,
-      this.position.z + position.z
-    )
 
-    this.object.translateX(this.position.x)
-    this.object.translateY(this.position.y)
-    this.object.translateZ(this.position.z)
+
+    this.object.translateX(position.x * 100)
+    this.object.translateY(position.y * 100)
+    this.object.translateZ(position.z * 100)
+
+    this.position = position
+    // this.position = new THREE.Vector3(
+    //   this.position.x + position.x,
+    //   this.position.y + position.y,
+    //   this.position.z + position.z
+    // )
 
     ///Update Camera
+    this.checkDeath()
   }
 
   setSize = (width, height) => {
@@ -125,13 +138,15 @@ export default class Player {
   	let pieces = Math.round(1 / piece);
   	for(let i = 0; i < pieces; i++){
   		// collide that shizzle
-  		let oldPos = position;
-  		position = this.physics.checkMovement2(position, direction, HEIGHT, RADIUS);
+  		let oldPos = this.position;
+  		// this.position = this.physics.checkMovement2(this.position, direction, HEIGHT, RADIUS);
 
+      this.setPosition(this.physics.checkMovement2(this.position, direction, HEIGHT, RADIUS))
 
-  		if( Math.abs( oldPos.y - position.y ) < 0.00001 ) // set velocity to zero if we stopped moving vertically
+  		if( Math.abs( oldPos.y - this.position.y ) < 0.00001 ) // set velocity to zero if we stopped moving vertically
   			this.velocity.y = 0;
   	}
+    return this.position
   }
 
 
@@ -187,8 +202,8 @@ export default class Player {
 
       movement = this.checkedMovement(movement);
 
-
-      this.setPosition(movement)
+      // console.log(this.position)
+      // this.setPosition(movement)
 
     var actualLookSpeed = delta * this.lookSpeed;
 
@@ -216,9 +231,9 @@ export default class Player {
 
     var targetPosition = this.target, position = this.object.position;
 
-    targetPosition.x = position.x + 100 * Math.sin( this.phi ) * Math.cos( this.theta );
-    targetPosition.y = position.y + 100 * Math.cos( this.phi );
-    targetPosition.z = position.z + 100 * Math.sin( this.phi ) * Math.sin( this.theta );
+    targetPosition.x = (this.position.x * 100) + 100 * Math.sin( this.phi ) * Math.cos( this.theta );
+    targetPosition.y = (this.position.y * 100) + 100 * Math.cos( this.phi );
+    targetPosition.z = (this.position.z * 100) + 100 * Math.sin( this.phi ) * Math.sin( this.theta );
 
     this.object.lookAt( targetPosition );
 

@@ -21,10 +21,16 @@ export default class World {
   }
 
   isValidBlock = (x,y,z) => {
-    return false
+    return (x >= 0 && x < this.width &&
+  			y >= 0 && y < this.width &&
+  			z >= 0 && z < this.depth);
   }
   getBlock = (x,y,z) => {
-    return null
+    return y > (( this.data[ x + z * this.width ] * 0.2 ) | 0) ? null : 1;
+
+    // return blocks[(z*MAP_BLOCK_WIDTH*MAP_BLOCK_HEIGHT)+(y*MAP_BLOCK_WIDTH)+x];
+    //
+    // return null
   }
 
   getGeometry = async () => {

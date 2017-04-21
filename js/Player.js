@@ -77,7 +77,7 @@ export default class Player {
   setPosition = (position) => {
     const {x, y, z} = position
     // this.position.set(x,y,z)
-    this.camera.position.set(x, y + 1, z)
+    this.camera.position.set(x, y, z) //TODO: Add Player Height
     this.position = position
   }
 
@@ -89,7 +89,7 @@ export default class Player {
     this.camera.translateZ(translation.z)
 
     this.position = this.camera.position
-    this.position.y -= 1
+    // this.position.y -= 1
 
     ///Update Camera
     this.checkDeath()
@@ -156,10 +156,7 @@ export default class Player {
   }
 
 
-
-  update = ( delta, directionType ) => {
-    if ( this.enabled === false ) return;
-
+  movePlayer = (delta, directionType) => {
     if ( this.heightSpeed ) {
       var y = THREE.Math.clamp( this.camera.position.y, this.heightMin, this.heightMax );
       var heightDelta = y - this.heightMin;
@@ -198,14 +195,14 @@ export default class Player {
     }
 
 
-    	const GRAVITY = -20;
-      // this.velocity.y += (GRAVITY * delta)
+      const GRAVITY = -20;
+      this.velocity.y += (GRAVITY * delta)
 
-      // movement.x += this.velocity.x * delta;
-      // movement.z += this.velocity.z * delta;
-    	// movement.y += this.velocity.y * delta;
+      movement.x += this.velocity.x * delta;
+      movement.z += this.velocity.z * delta;
+      movement.y += this.velocity.y * delta;
 
-    	//velocity->z = 0;
+      //velocity->z = 0;
 
       // movement = this.checkedMovement(movement);
 
@@ -213,38 +210,49 @@ export default class Player {
 
       this.translatePosition(movement)
 
-    var actualLookSpeed = delta * this.lookSpeed;
+  }
 
-    if (!this.activeLook) {
-      actualLookSpeed = 0;
-    }
+  rotatePlayer = (delta) => {
 
-    var verticalLookRatio = 1;
+      var actualLookSpeed = delta * this.lookSpeed;
 
-    if (this.constrainVertical) {
-      verticalLookRatio = Math.PI / ( this.verticalMax - this.verticalMin );
-    }
+      if (!this.activeLook) {
+        actualLookSpeed = 0;
+      }
 
-    this.lon += this.touchX * actualLookSpeed;
-    if ( this.lookVertical ) this.lat -= this.touchY * actualLookSpeed * verticalLookRatio;
+      var verticalLookRatio = 1;
 
-    this.lat = Math.max( - 85, Math.min( 85, this.lat ) );
-    this.phi = THREE.Math.degToRad( 90 - this.lat );
+      if (this.constrainVertical) {
+        verticalLookRatio = Math.PI / ( this.verticalMax - this.verticalMin );
+      }
 
-    this.theta = THREE.Math.degToRad( this.lon );
+      this.lon += this.touchX * actualLookSpeed;
+      if ( this.lookVertical ) this.lat -= this.touchY * actualLookSpeed * verticalLookRatio;
 
-    if (this.constrainVertical) {
-      this.phi = THREE.Math.mapLinear( this.phi, 0, Math.PI, this.verticalMin, this.verticalMax );
-    }
+      this.lat = Math.max( - 85, Math.min( 85, this.lat ) );
+      this.phi = THREE.Math.degToRad( 90 - this.lat );
 
-    var targetPosition = this.target, position = this.camera.position;
+      this.theta = THREE.Math.degToRad( this.lon );
 
-    targetPosition.x = (position.x) + 1 * Math.sin( this.phi ) * Math.cos( this.theta );
-    targetPosition.y = (position.y) + 1 * Math.cos( this.phi );
-    targetPosition.z = (position.z) + 1 * Math.sin( this.phi ) * Math.sin( this.theta );
+      if (this.constrainVertical) {
+        this.phi = THREE.Math.mapLinear( this.phi, 0, Math.PI, this.verticalMin, this.verticalMax );
+      }
 
-    this.camera.lookAt( targetPosition );
+      var targetPosition = this.target, position = this.camera.position;
 
+      targetPosition.x = (position.x) + 1 * Math.sin( this.phi ) * Math.cos( this.theta );
+      targetPosition.y = (position.y) + 1 * Math.cos( this.phi );
+      targetPosition.z = (position.z) + 1 * Math.sin( this.phi ) * Math.sin( this.theta );
+
+      this.camera.lookAt( targetPosition );
+
+  }
+
+  update = ( delta, directionType ) => {
+    if ( this.enabled === false ) return;
+
+    this.movePlayer(delta, directionType)
+    this.rotatePlayer(delta)
     const damp = 0.95
     this.touchX *= damp
     this.touchY *= damp

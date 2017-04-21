@@ -157,8 +157,13 @@ export default class Scene extends React.Component {
     this.setupSky()
   }
 
+  frame = 0
   tick = (dt) => {
-    this.controls.update( dt, this.moveID );
+    // if (this.frame % 60 == 0) {
+      this.controls.update( dt, this.moveID );
+    // }
+    this.frame += 1
+
   }
 
   render() {

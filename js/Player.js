@@ -65,7 +65,7 @@ export default class Player {
 
 
   checkDeath = () => {
-    if (this.position.y < -1) {
+    if (this.position.y < -1 || this.position.y > 200) {
       console.log("Dead", this.position)
       this.setPosition(new THREE.Vector3(0, 50, 0))
       // this.position.y = 50
@@ -118,41 +118,42 @@ export default class Player {
 
 
   checkedMovement = (direction) => {
-  	//for any input movement, break it down into granular chunks so the displacement
-  	//of a chunk in any axis is less than the radius of the player
+    //for any input movement, break it down into granular chunks so the displacement
+    //of a chunk in any axis is less than the radius of the player
 
-  	const HEIGHT = 1.7;
-  	const RADIUS = .3;
-  	//const int X_AXIS = 0, Y_AXIS = 1, Z_AXIS = 2;
+    const HEIGHT = 1.7;
+    const RADIUS = .3;
+    //const int X_AXIS = 0, Y_AXIS = 1, Z_AXIS = 2;
 
-  	// determine which axis has the most displacement
-  	let xMult = 1;
-  	if( Math.abs(direction.x) > RADIUS ) xMult = Math.abs(RADIUS / direction.x);
+    // determine which axis has the most displacement
+    let xMult = 1;
+    if( Math.abs(direction.x) > RADIUS ) xMult = Math.abs(RADIUS / direction.x);
 
-  	let yMult = 1;
-  	if( Math.abs(direction.y) > RADIUS ) yMult = Math.abs(RADIUS / direction.y);
+    let yMult = 1;
+    if( Math.abs(direction.y) > RADIUS ) yMult = Math.abs(RADIUS / direction.y);
 
-  	let zMult = 1;
-  	if( Math.abs(direction.z) > RADIUS ) zMult = Math.abs(RADIUS / direction.z);
+    let zMult = 1;
+    if( Math.abs(direction.z) > RADIUS ) zMult = Math.abs(RADIUS / direction.z);
 
-  	// and use that to break the direction vector into pieces
-  	let piece = xMult < zMult ? (xMult < yMult ? xMult : yMult) : (zMult < yMult ? zMult : yMult);
-  	direction.x *= piece; direction.z *= piece; direction.y *= piece;
+    // and use that to break the direction vector into pieces
+    let piece = xMult < zMult ? (xMult < yMult ? xMult : yMult) : (zMult < yMult ? zMult : yMult);
+    direction.x *= piece; direction.z *= piece; direction.y *= piece;
 
-  	let pieces = Math.round(1 / piece);
-  	for(let i = 0; i < pieces; i++){
-  		// collide that shizzle
-  		let oldPos = this.position;
-  		// this.position = this.physics.checkMovement2(this.position, direction, HEIGHT, RADIUS);
+    let pieces = Math.round(1 / piece);
 
-      // this.translatePosition(this.physics.checkMovement2(this.position, direction, HEIGHT, RADIUS))
+    let _position = this.camera.position
+    for(let i = 0; i < pieces; i++){
+      // collide that shizzle
+      let oldPos = _position;
+      _position = this.physics.checkMovement2(_position, direction, HEIGHT, RADIUS);
 
-      this.translatePosition(this.position)
+      // this.translatePosition(_translation)
       // console.log("Moved by", oldPos.x - this.position.x, oldPos.y - this.position.y, oldPos.z - this.position.z)
-  		if( Math.abs( oldPos.y - this.position.y ) < 0.00001 ) // set velocity to zero if we stopped moving vertically
-  			this.velocity.y = 0;
-  	}
-    return this.position
+      if( Math.abs( oldPos.y - _position.y ) < 0.00001 ) { // set velocity to zero if we stopped moving vertically
+        this.velocity.y = 0;
+      }
+    }
+    return _position
   }
 
 
@@ -195,56 +196,49 @@ export default class Player {
     }
 
 
-      const GRAVITY = -20;
-      this.velocity.y += (GRAVITY * delta)
+    const GRAVITY = -0.01;
+    // this.velocity.y += (GRAVITY * delta)
+this.velocity.y = 0
+    movement.x += this.velocity.x * delta;
+    movement.z += this.velocity.z * delta;
+    movement.y += this.velocity.y * delta;
 
-      movement.x += this.velocity.x * delta;
-      movement.z += this.velocity.z * delta;
-      movement.y += this.velocity.y * delta;
-
-      //velocity->z = 0;
-
-      // movement = this.checkedMovement(movement);
-
-      // console.log(this.position)
-
-      this.translatePosition(movement)
-
+    this.translatePosition(this.checkedMovement(movement))
   }
 
   rotatePlayer = (delta) => {
 
-      var actualLookSpeed = delta * this.lookSpeed;
+    var actualLookSpeed = delta * this.lookSpeed;
 
-      if (!this.activeLook) {
-        actualLookSpeed = 0;
-      }
+    if (!this.activeLook) {
+      actualLookSpeed = 0;
+    }
 
-      var verticalLookRatio = 1;
+    var verticalLookRatio = 1;
 
-      if (this.constrainVertical) {
-        verticalLookRatio = Math.PI / ( this.verticalMax - this.verticalMin );
-      }
+    if (this.constrainVertical) {
+      verticalLookRatio = Math.PI / ( this.verticalMax - this.verticalMin );
+    }
 
-      this.lon += this.touchX * actualLookSpeed;
-      if ( this.lookVertical ) this.lat -= this.touchY * actualLookSpeed * verticalLookRatio;
+    this.lon += this.touchX * actualLookSpeed;
+    if ( this.lookVertical ) this.lat -= this.touchY * actualLookSpeed * verticalLookRatio;
 
-      this.lat = Math.max( - 85, Math.min( 85, this.lat ) );
-      this.phi = THREE.Math.degToRad( 90 - this.lat );
+    this.lat = Math.max( - 85, Math.min( 85, this.lat ) );
+    this.phi = THREE.Math.degToRad( 90 - this.lat );
 
-      this.theta = THREE.Math.degToRad( this.lon );
+    this.theta = THREE.Math.degToRad( this.lon );
 
-      if (this.constrainVertical) {
-        this.phi = THREE.Math.mapLinear( this.phi, 0, Math.PI, this.verticalMin, this.verticalMax );
-      }
+    if (this.constrainVertical) {
+      this.phi = THREE.Math.mapLinear( this.phi, 0, Math.PI, this.verticalMin, this.verticalMax );
+    }
 
-      var targetPosition = this.target, position = this.camera.position;
+    var targetPosition = this.target, position = this.camera.position;
 
-      targetPosition.x = (position.x) + 1 * Math.sin( this.phi ) * Math.cos( this.theta );
-      targetPosition.y = (position.y) + 1 * Math.cos( this.phi );
-      targetPosition.z = (position.z) + 1 * Math.sin( this.phi ) * Math.sin( this.theta );
+    targetPosition.x = (position.x) + 1 * Math.sin( this.phi ) * Math.cos( this.theta );
+    targetPosition.y = (position.y) + 1 * Math.cos( this.phi );
+    targetPosition.z = (position.z) + 1 * Math.sin( this.phi ) * Math.sin( this.theta );
 
-      this.camera.lookAt( targetPosition );
+    this.camera.lookAt( targetPosition );
 
   }
 
@@ -256,6 +250,5 @@ export default class Player {
     const damp = 0.95
     this.touchX *= damp
     this.touchY *= damp
-
   }
 }

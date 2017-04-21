@@ -55,12 +55,19 @@ export default class Scene extends React.Component {
   setupControls = () => {
     this.controls = new Player( this.camera, this.physics );
     this.controls.setSize(width, height);
-    this.controls.movementSpeed = 1000;
+    this.controls.movementSpeed = 10;
     this.controls.lookSpeed = 0.3;
     this.controls.lookVertical = true;
-    this.controls.constrainVertical = true;
+    this.controls.constrainVertical = false;
     this.controls.verticalMin = 1.1;
     this.controls.verticalMax = 2.2;
+
+    this.controls.setPosition(new THREE.Vector3(
+      0,
+      (this.world.getY( worldSize/2, worldSize/2 ) * 1 + 1),
+      0
+    ))
+    // this.camera.position.y = this.world.getY( worldSize/2, worldSize/2 ) * 1 + 1;
     /// Setup Gestures after Controls
     this.setupGestures()
   }
@@ -108,7 +115,8 @@ export default class Scene extends React.Component {
   setupCamera = (fov = 60, zNear = 1, zFar = 20000) => {
 
     this.camera = new THREE.PerspectiveCamera( fov, width / height, zNear, zFar );
-    this.camera.position.y = this.world.getY( worldSize/2, worldSize/2 ) * 100 + 100;
+
+
   }
 
   setupScene = (fogColor = 0x7394a0, fogFalloff = 0.00015) => {

@@ -25,7 +25,7 @@ export default class Player {
     this.enabled = true;
 
     this.movementSpeed = 1.0;
-    this.lookSpeed = 0.005;
+    this.lookSpeed = 0.05;
 
     this.lookVertical = true;
     this.activeLook = true;
@@ -58,14 +58,15 @@ export default class Player {
     if( !this.physics.world.isValidBlock(this.position.x, this.position.y, this.position.z - 0.01) || this.physics.world.getBlock(this.position.x, this.position.y, this.position.z - 0.01) ) this.velocity.z += 9.0;
   }
 
-  look = (vertical, horizontal) => {
-    this.touchY = vertical;
+  look = (horizontal, vertical) => {
     this.touchX = horizontal;
+    this.touchY = vertical;
   }
 
 
   checkDeath = () => {
-    if (this.position.y < -5) {
+    if (this.position.y < -1) {
+      console.log("Dead", this.position)
       this.position.y = 50
       this.position.x = 0
       this.position.z = 0
@@ -73,14 +74,29 @@ export default class Player {
   }
 
   setPosition = (position) => {
+    const {x, y, z} = osition
+    this.position.set(x,y,z)
+    this.object.position.set(x, y + 1, z)
+
+  }
+
+  translatePosition = (position) => {
     // this.position = position
 
+    this.position.translateX(position.x)
+    this.position.translateX(position.x)
+    this.position.translateX(position.x)
 
-    this.object.translateX(position.x * 100)
-    this.object.translateY(position.y * 100)
-    this.object.translateZ(position.z * 100)
 
-    this.position = position
+    const {x, y, z} = this.position
+    this.object.position.set(x, y + 1, z)
+
+
+
+    // this.position = this.object.position
+
+    console.log(this.position, this.object.position)
+
     // this.position = new THREE.Vector3(
     //   this.position.x + position.x,
     //   this.position.y + position.y,
@@ -102,7 +118,7 @@ export default class Player {
       case GestureType.began:
       break;
       case GestureType.moved:
-      this.look(gestureState.dy, gestureState.dx)
+      this.look(gestureState.dx, gestureState.dy)
       break;
       case GestureType.ended:
       break;
@@ -141,8 +157,10 @@ export default class Player {
   		let oldPos = this.position;
   		// this.position = this.physics.checkMovement2(this.position, direction, HEIGHT, RADIUS);
 
-      this.setPosition(this.physics.checkMovement2(this.position, direction, HEIGHT, RADIUS))
+      // this.translatePosition(this.physics.checkMovement2(this.position, direction, HEIGHT, RADIUS))
 
+      this.translatePosition(this.position)
+      // console.log("Moved by", oldPos.x - this.position.x, oldPos.y - this.position.y, oldPos.z - this.position.z)
   		if( Math.abs( oldPos.y - this.position.y ) < 0.00001 ) // set velocity to zero if we stopped moving vertically
   			this.velocity.y = 0;
   	}
@@ -193,17 +211,19 @@ export default class Player {
 
 
     	const GRAVITY = -20;
-      this.velocity.y += (GRAVITY * delta)
-      movement.x += this.velocity.x * delta;
-      movement.z += this.velocity.z * delta;
-    	movement.y += this.velocity.y * delta;
+      // this.velocity.y += (GRAVITY * delta)
+
+      // movement.x += this.velocity.x * delta;
+      // movement.z += this.velocity.z * delta;
+    	// movement.y += this.velocity.y * delta;
 
     	//velocity->z = 0;
 
-      movement = this.checkedMovement(movement);
+      // movement = this.checkedMovement(movement);
 
       // console.log(this.position)
-      // this.setPosition(movement)
+
+      this.translatePosition(movement)
 
     var actualLookSpeed = delta * this.lookSpeed;
 
@@ -231,9 +251,9 @@ export default class Player {
 
     var targetPosition = this.target, position = this.object.position;
 
-    targetPosition.x = (this.position.x * 100) + 100 * Math.sin( this.phi ) * Math.cos( this.theta );
-    targetPosition.y = (this.position.y * 100) + 100 * Math.cos( this.phi );
-    targetPosition.z = (this.position.z * 100) + 100 * Math.sin( this.phi ) * Math.sin( this.theta );
+    targetPosition.x = (position.x) + 1 * Math.sin( this.phi ) * Math.cos( this.theta );
+    targetPosition.y = (position.y) + 1 * Math.cos( this.phi );
+    targetPosition.z = (position.z) + 1 * Math.sin( this.phi ) * Math.sin( this.theta );
 
     this.object.lookAt( targetPosition );
 

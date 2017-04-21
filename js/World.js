@@ -45,7 +45,7 @@ export default class World {
 
   generateHeight( width, height ) {
     var data = [], perlin = new ImprovedNoise(),
-    size = width * height, quality = 2, z = Math.random() * 100;
+    size = width * height, quality = 2, z = Math.random() * 1;
     for ( var j = 0; j < 4; j ++ ) {
       if ( j == 0 ) for ( var i = 0; i < size; i ++ ) data[ i ] = 0;
       for ( var i = 0; i < size; i ++ ) {
@@ -63,7 +63,7 @@ export default class World {
 
   _buildTerrain = (texture) => {
     // // sides
-    const size = 100
+    const size = 1
     const half = size * 0.5
     var light = new THREE.Color( 0xffffff );
     var shadow = new THREE.Color( 0x505050 );

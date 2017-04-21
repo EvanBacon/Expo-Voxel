@@ -249,7 +249,8 @@ checkMovement2 = (pos, dir, height, radius) => {
 	dY = fdest.y;
 	let dZ = fdest.z;
 
-  console.log(yMovement, dir.y, pos.y)
+  // console.log(yMovement, dir.y, pos.y, posX,dY, posZ-1, this.world.isValidBlock(posX,dY, posZ-1), this.world.getBlock(posX,dY, posZ-1))
+
 	//then, once moved into the z position, perform the xy-movements
 	fdest = this.checkStack(fdest, dX, dY, dZ, height, radius); //center :: ANNOTATION IS PLAYER POSITION RELATIVE TO COLLIDING BLOCK
 	if (fdest.x + radius > dX + 1){

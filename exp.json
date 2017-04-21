@@ -3,13 +3,13 @@
   "description": "Beautiful Voxel Terrain",
   "slug": "voxel",
   "privacy": "public",
-  "sdkVersion": "15.0.0",
+  "sdkVersion": "16.0.0",
   "version": "1.0.0",
   "orientation": "default",
   "primaryColor": "#46bd00",
   "icon": "./assets/icons/app-icon.png",
   "notification": {
-    "icon": "./assets/icons/notification-icon.png",
+    "icon": "./assets/icons/app-icon.png",
     "color": "#000000"
   },
   "loading": {

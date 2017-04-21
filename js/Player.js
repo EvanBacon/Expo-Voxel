@@ -14,9 +14,9 @@ import DirectionType from './DirectionType'
 
 export default class Player {
 
-  constructor( object, physics ) {
+  constructor( camera, physics ) {
     this.physics = physics
-    this.object = object;
+    this.camera = camera;
     this.position = new THREE.Vector3( 0, 0, 0 );
     this.velocity = new THREE.Vector3( 0, 0, 0 );
     this.action = -1
@@ -55,7 +55,7 @@ export default class Player {
   }
 
   jump = () => {
-    if( !this.physics.world.isValidBlock(this.position.x, this.position.y, this.position.z - 0.01) || this.physics.world.getBlock(this.position.x, this.position.y, this.position.z - 0.01) ) this.velocity.z += 9.0;
+    if( !this.physics.world.isValidBlock(this.position.x, this.position.y - 0.01, this.position.z) || this.physics.world.getBlock(this.position.x, this.position.y - 0.01, this.position.z ) ) this.velocity.z += 9.0;
   }
 
   look = (horizontal, vertical) => {
@@ -67,41 +67,29 @@ export default class Player {
   checkDeath = () => {
     if (this.position.y < -1) {
       console.log("Dead", this.position)
-      this.position.y = 50
-      this.position.x = 0
-      this.position.z = 0
+      this.setPosition(new THREE.Vector3(0, 50, 0))
+      // this.position.y = 50
+      // this.position.x = 0
+      // this.position.z = 0
     }
   }
 
   setPosition = (position) => {
-    const {x, y, z} = osition
-    this.position.set(x,y,z)
-    this.object.position.set(x, y + 1, z)
-
+    const {x, y, z} = position
+    // this.position.set(x,y,z)
+    this.camera.position.set(x, y + 1, z)
+    this.position = position
   }
 
-  translatePosition = (position) => {
+  translatePosition = (translation) => {
     // this.position = position
 
-    this.position.translateX(position.x)
-    this.position.translateX(position.x)
-    this.position.translateX(position.x)
+    this.camera.translateX(translation.x)
+    this.camera.translateY(translation.y)
+    this.camera.translateZ(translation.z)
 
-
-    const {x, y, z} = this.position
-    this.object.position.set(x, y + 1, z)
-
-
-
-    // this.position = this.object.position
-
-    console.log(this.position, this.object.position)
-
-    // this.position = new THREE.Vector3(
-    //   this.position.x + position.x,
-    //   this.position.y + position.y,
-    //   this.position.z + position.z
-    // )
+    this.position = this.camera.position
+    this.position.y -= 1
 
     ///Update Camera
     this.checkDeath()
@@ -173,7 +161,7 @@ export default class Player {
     if ( this.enabled === false ) return;
 
     if ( this.heightSpeed ) {
-      var y = THREE.Math.clamp( this.object.position.y, this.heightMin, this.heightMax );
+      var y = THREE.Math.clamp( this.camera.position.y, this.heightMin, this.heightMax );
       var heightDelta = y - this.heightMin;
       this.autoSpeedFactor = delta * ( heightDelta * this.heightCoef );
     } else {
@@ -249,13 +237,13 @@ export default class Player {
       this.phi = THREE.Math.mapLinear( this.phi, 0, Math.PI, this.verticalMin, this.verticalMax );
     }
 
-    var targetPosition = this.target, position = this.object.position;
+    var targetPosition = this.target, position = this.camera.position;
 
     targetPosition.x = (position.x) + 1 * Math.sin( this.phi ) * Math.cos( this.theta );
     targetPosition.y = (position.y) + 1 * Math.cos( this.phi );
     targetPosition.z = (position.z) + 1 * Math.sin( this.phi ) * Math.sin( this.theta );
 
-    this.object.lookAt( targetPosition );
+    this.camera.lookAt( targetPosition );
 
     const damp = 0.95
     this.touchX *= damp

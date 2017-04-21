@@ -15,12 +15,12 @@ import Physics from '../js/Physics'
 import Sky from '../js/SkyShader'
 import Dpad from './Dpad'
 import World from '../js/World'
-console.ignoredYellowBox = ['THREE.WebGLRenderer'];
-
-var sky, sunSphere;
 import GestureType from '../js/GestureType'
 
+
+var sky, sunSphere;
 const worldSize = 200
+
 export default class Scene extends React.Component {
   world;
   state = {

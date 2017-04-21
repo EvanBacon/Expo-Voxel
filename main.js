@@ -3,6 +3,8 @@ import React from 'react';
 import { Platform, StatusBar, StyleSheet, View } from 'react-native';
 import Scene from './components/Scene';
 
+console.ignoredYellowBox = ['THREE.WebGLRenderer'];
+
 class AppContainer extends React.Component {
   render = () => (
       <View style={styles.container}>

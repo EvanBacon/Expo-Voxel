@@ -33,10 +33,14 @@ export default class World {
     if (isNaN(x) || isNaN(y) || isNaN(z)) {
       return null
     }
-    x = Math.round(x)
-    y = Math.round(y)
-    z = Math.round(z)
-    return y > (( this.data[ x + z * this.width ] * 0.2 ) | 0) ? null : 1;
+    // x = Math.round(x)
+    // y = Math.round(y)
+    // z = Math.round(z)
+    let key = `${x|0},${y|0},${z|0}`
+    console.log("VOXEL:: get block", this.blocks[key], key)
+    return this.blocks[key];
+
+    // return y > (( this.data[ x + z * this.width ] * 0.2 ) | 0) ? null : 1;
 
     // return blocks[(z*MAP_BLOCK_WIDTH*MAP_BLOCK_HEIGHT)+(y*MAP_BLOCK_WIDTH)+x];
     //
@@ -55,17 +59,18 @@ export default class World {
 
   generateHeight( width, height ) {
     var data = [], perlin = new ImprovedNoise(),
-    size = width * height, quality = 2, z = Math.random() * 1;
+    size = width * height, quality = 2, z = Math.random() * 100;
     for ( var j = 0; j < 4; j ++ ) {
       if ( j == 0 ) for ( var i = 0; i < size; i ++ ) data[ i ] = 0;
       for ( var i = 0; i < size; i ++ ) {
         var x = i % width, y = ( i / width ) | 0;
-        data[ i ] += perlin.noise( x / quality, y / quality, z ) * quality;
+        data[ i ] += Math.max(0, perlin.noise( x / quality, y / quality, z + 64 ) * quality);
       }
       quality *= 4
     }
     return data;
   }
+  blocks = {}
 
   getY = ( x, z ) => {
     return ( this.data[ x + z * this.width ] * 0.2 ) | 0;
@@ -141,10 +146,15 @@ export default class World {
     for ( var z = 0; z < this.depth; z ++ ) {
       for ( var x = 0; x < this.width; x ++ ) {
         var h = getY( x, z );
+        // console.log("VOXEL:: build env",h, {x,z})
+        for ( var y = 0; y < this.width; y ++ ) {
+          this.blocks[`${x},${y},${z}`] = (h < y ? 1 : 0)
+        }
+
         matrix.makeTranslation(
-          x * size - worldHalfWidth * size,
-          h * size,
-          z * size - worldHalfDepth * size
+          x,
+          h,
+          z
         );
 
         var px = getY( x + 1, z );

@@ -1,5 +1,5 @@
 
-
+'use-strict';
 
 import * as THREE from 'three';
 
@@ -29,7 +29,7 @@ export default class Physics {
     else if(!this.world.isValidBlock(delta.x, dYhead, delta.z) || this.world.getBlock(delta.x, dYhead, delta.z )) blockStackFull = true;
 
     if (this.frame % 10 == 0) {
-     console.log("VOXEL:: Blockstack", blockStackFull)
+    //  console.log("VOXEL:: Blockstack", blockStackFull)
     }
 
 
@@ -43,7 +43,7 @@ export default class Physics {
     let zCollide = (dest.z + radius > delta.z && dest.z - radius < delta.z + 1);
     //if we miss one of the easy axes, there's no collision
     if( !xCollide || !zCollide) return dest;
-
+    // console.log("VOXEL:: collision", delta, this.world.getBlock(delta.x, delta.y, delta.z))
     //there might be a collision, so the x and y depths are now useful
     let circleXMin = dest.x - radius;
     let circleXMax = dest.x + radius;
@@ -159,101 +159,108 @@ export default class Physics {
   checkMovement2 = (pos, dir, height, radius) => {
     // console.log(pos, dir)
 
-    let posX = Math.round(pos.x);
-    let posZ = Math.round(pos.z);
+    let posX = pos.x|0;
+    let posZ = pos.z|0;
 
 
     const EPSILON = 0.001;
     let yMovement = dir.y;
-    let dY = Math.round(pos.y + dir.y);
+    let dY = Math.round(pos.y + dir.y)|0;
     let yOffset = 1;
 
     // if (this.frame % 10 == 0) {
 
-    console.log("VOXEL::", pos, this.world.isValidBlock(posX, dY, posZ), this.world.getBlock(posX, dY, posZ))
+    // console.log("VOXEL::", pos, this.world.isValidBlock(posX, dY, posZ), this.world.getBlock(posX, dY, posZ))
 // }
 
     //first, check to see if there's y movement
     if(Math.abs(dir.y) > 0) {
       //then determine the correct Y-layer to test
 
-      if(dir.y > 0)
-      dY = Math.round(pos.y + height + dir.y); //check head location
+      if(dir.y > 0) {
+        dY = Math.round(pos.y + height + dir.y)|0; //check head location
+      }
+
       //check the location we're in
       if( !this.world.isValidBlock(posX, dY, posZ) || this.world.getBlock(posX, dY, posZ) ){
         yMovement = (dY + yOffset) - pos.y;
-        if(dir.y > 0)
-        yMovement = dY - (pos.y + height + EPSILON);
+        if(dir.y > 0) {
+          yMovement = dY - (pos.y + height + EPSILON);
+        }
       }
       //check the block to the right
-      else if( (pos.x + radius > posX + 1) && (!this.world.isValidBlock(posX+1, posY, dZ) || this.world.getBlock(posX+1, dY, posZ)) ){
+      else if( (pos.x + radius > posX + 1) && (!this.world.isValidBlock(posX+1, dY, posZ) || this.world.getBlock(posX+1, dY, posZ)) ){
 
         yMovement = (dY + yOffset) - pos.y;
-        if(dir.y > 0)
-        yMovement = dY - (pos.y + height + EPSILON);
+        if(dir.y > 0) {
+          yMovement = dY - (pos.y + height + EPSILON);
+        }
       }
       //check the block to the left
       else if( (pos.x - radius < posX) && (!this.world.isValidBlock(posX-1, dY, posZ) || this.world.getBlock(posX-1,dY, posZ)) ){
 
         yMovement = (dY + yOffset) - pos.y;
-        if(dir.y > 0)
-        yMovement = dY - (pos.y + height + EPSILON);
+        if(dir.y > 0) {
+          yMovement = dY - (pos.y + height + EPSILON);
+        }
       }
       //check the block to the back
-      else if( (pos.z + radius > posZ + 1) && (!this.world.isValidBlock(posX, posY+1, dY) || this.world.getBlock(posX,posY+1, dZ)) ){
+      else if( (pos.z + radius > posZ + 1) && (!this.world.isValidBlock(posX, dY, posZ+1) || this.world.getBlock(posX, dY, posZ+1)) ){
 
         yMovement = (dY + yOffset) - pos.y;
-        if(dir.y > 0)
-        yMovement = dY - (pos.y + height + EPSILON);
+        if(dir.y > 0) {
+          yMovement = dY - (pos.y + height + EPSILON);
+        }
       }
       //check the block to the front
       else if( (pos.z - radius < posZ) && (!this.world.isValidBlock(posX,dY, posZ-1) || this.world.getBlock(posX, dY, posZ-1)) ){
         yMovement = (dY + yOffset) - pos.y;
-        if(dir.y > 0)
-        yMovement = dY - (pos.y + height + EPSILON);
+        if(dir.y > 0) {
+          yMovement = dY - (pos.y + height + EPSILON);
+        }
       }
     }
 
     //correct for the actual yMovement performed
     let fdest = new THREE.Vector3(pos.x + dir.x, pos.y + yMovement, pos.z + dir.z);
-    let dX = Math.round(fdest.x);
-    dY = Math.round(fdest.y);
-    let dZ = Math.round(fdest.z);
+    let dX = Math.round(fdest.x)|0;
+    dY = Math.round(fdest.y)|0;
+    let dZ = Math.round(fdest.z)|0;
 
     // console.log(yMovement, dir.y, pos.y, posX,dY, posZ-1, this.world.isValidBlock(posX,dY, posZ-1), this.world.getBlock(posX,dY, posZ-1))
 
-    // //then, once moved into the y position, perform the xz-movements
-    // fdest = this.checkStack(fdest, new THREE.Vector3( dX, dY, dZ), height, radius); //center :: ANNOTATION IS PLAYER POSITION RELATIVE TO COLLIDING BLOCK
-    //
-    // if (fdest.x + radius > dX + 1){
-    //   fdest = this.checkStack(fdest, new THREE.Vector3( dX+1, dY, dZ), height, radius); //left
-    //   dX = Math.round(fdest.x);
-    //   dY = Math.round(fdest.y);
-    //   dZ = Math.round(fdest.z);
-    // }
-    // else if( fdest.x - radius < dX ){
-    //   fdest = this.checkStack(fdest, new THREE.Vector3( dX-1, dY, dZ), height, radius); //right BROKEN
-    //   dX =  Math.round(fdest.x);
-    //   dY =  Math.round(fdest.y);
-    //   dZ =  Math.round(fdest.z);
-    // }
-    //
-    // if( fdest.z + radius > dZ + 1){
-    //   fdest = this.checkStack(fdest, new THREE.Vector3( dX, dY, dZ+1), height, radius); //front
-    //   dX =  Math.round(fdest.x);
-    //   dY =  Math.round(fdest.y);
-    //   dZ =  Math.round(fdest.z);
-    // }
-    // else if( fdest.z - radius < dZ ){
-    //   fdest = this.checkStack(fdest, new THREE.Vector3( dX, dY, dZ-1), height, radius); //back BROKEN
-    //   dX =  Math.round(fdest.x);
-    //   dY =  Math.round(fdest.y);
-    //   dZ =  Math.round(fdest.z);
-    // }
-    // fdest.y *= -1
-    //TODO: check the diagonals too!!!
+    //then, once moved into the y position, perform the xz-movements
+    fdest = this.checkStack(fdest, new THREE.Vector3( dX, dY, dZ), height, radius); //center :: ANNOTATION IS PLAYER POSITION RELATIVE TO COLLIDING BLOCK
 
-    console.log("VOXEL:: output", fdest, yMovement)
+    if (fdest.x + radius > dX + 1){
+      fdest = this.checkStack(fdest, new THREE.Vector3( dX+1, dY, dZ), height, radius); //left
+      dX = Math.round(fdest.x)|0;
+      dY = Math.round(fdest.y)|0;
+      dZ = Math.round(fdest.z)|0;
+    }
+    else if( fdest.x - radius < dX ){
+      fdest = this.checkStack(fdest, new THREE.Vector3( dX-1, dY, dZ), height, radius); //right BROKEN
+      dX =  Math.round(fdest.x)|0;
+      dY =  Math.round(fdest.y)|0;
+      dZ =  Math.round(fdest.z)|0;
+    }
+
+    if( fdest.z + radius > dZ + 1){
+      fdest = this.checkStack(fdest, new THREE.Vector3( dX, dY, dZ+1), height, radius); //front
+      dX =  Math.round(fdest.x)|0;
+      dY =  Math.round(fdest.y)|0;
+      dZ =  Math.round(fdest.z)|0;
+    }
+    else if( fdest.z - radius < dZ ){
+      fdest = this.checkStack(fdest, new THREE.Vector3( dX, dY, dZ-1), height, radius); //back BROKEN
+      dX =  Math.round(fdest.x)|0;
+      dY =  Math.round(fdest.y)|0;
+      dZ =  Math.round(fdest.z)|0;
+    }
+    // fdest.y *= -1
+    // TODO: check the diagonals too!!!
+
+    // console.log("VOXEL:: output", fdest, yMovement)
 
 
     return fdest;

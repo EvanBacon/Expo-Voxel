@@ -55,7 +55,7 @@ export default class Player {
   }
 
   jump = () => {
-    if( !this.physics.world.isValidBlock(this.position.x, this.position.y - 0.01, this.position.z) || this.physics.world.getBlock(this.position.x, this.position.y - 0.01, this.position.z ) ) this.velocity.z += 9.0;
+    if( !this.physics.world.isValidBlock(this.position.x, this.position.y - 0.01, this.position.z) || this.physics.world.getBlock(this.position.x, this.position.y - 0.01, this.position.z ) ) this.velocity.z -= 9.0;
   }
 
   look = (horizontal, vertical) => {
@@ -66,8 +66,8 @@ export default class Player {
 
   checkDeath = () => {
     if (this.position.y < -1 || this.position.y > 200) {
-      console.log("Dead", this.position)
-      this.setPosition(new THREE.Vector3(0, 50, 0))
+      console.log("VOXEL:: Dead", this.position)
+      // this.setPosition(new THREE.Vector3(50, 50, 50))
       // this.position.y = 50
       // this.position.x = 0
       // this.position.z = 0
@@ -121,7 +121,7 @@ export default class Player {
     //for any input movement, break it down into granular chunks so the displacement
     //of a chunk in any axis is less than the radius of the player
 
-    const HEIGHT = 1.7;
+    const HEIGHT = 1;
     const RADIUS = .3;
     //const int X_AXIS = 0, Y_AXIS = 1, Z_AXIS = 2;
 
@@ -140,8 +140,11 @@ export default class Player {
     direction.x *= piece; direction.z *= piece; direction.y *= piece;
 
     let pieces = Math.round(1 / piece);
+    console.log("VOXEL::", pieces, piece);
 
-    let _position = this.camera.position
+    const {position} = this.camera
+    let _position = new THREE.Vector3(position.x, position.y, position.z)
+
     for(let i = 0; i < pieces; i++){
       // collide that shizzle
       let oldPos = _position;
@@ -174,19 +177,33 @@ export default class Player {
 
     switch (directionType) {
       case DirectionType.front: //Top
-      movement.z += -(actualMoveSpeed + this.autoSpeedFactor);
+      movement.x += (actualMoveSpeed + this.autoSpeedFactor) * Math.sin(this.theta);
+      movement.z += (actualMoveSpeed + this.autoSpeedFactor) * Math.cos(this.theta);
+
       break;
       case DirectionType.left: //Left
-      movement.x += - actualMoveSpeed;
+      {
+      let angle = Math.PI / 2
+      movement.x += (actualMoveSpeed + this.autoSpeedFactor) * Math.sin(this.theta + angle);
+      movement.z += (actualMoveSpeed + this.autoSpeedFactor) * Math.cos(this.theta + angle);
+      }
+
       break;
       case DirectionType.up: //Center
-      movement.y += actualMoveSpeed;
+      this.jump()
+      // movement.y += actualMoveSpeed;
       break;
       case DirectionType.right: //Right
-      movement.x += actualMoveSpeed;
+      {
+        let angle = Math.PI / 2
+        movement.x -= (actualMoveSpeed + this.autoSpeedFactor) * Math.sin(this.theta + angle);
+        movement.z -= (actualMoveSpeed + this.autoSpeedFactor) * Math.cos(this.theta + angle);
+      }
       break;
       case DirectionType.back: //Bottom
-      movement.z += actualMoveSpeed;
+      // movement.z += actualMoveSpeed;
+      movement.x -= (actualMoveSpeed + this.autoSpeedFactor) * Math.sin(this.theta);
+      movement.z -= (actualMoveSpeed + this.autoSpeedFactor) * Math.cos(this.theta);
       break;
       case DirectionType.down: //Down
       movement.y += -actualMoveSpeed;
@@ -196,14 +213,15 @@ export default class Player {
     }
 
 
-    const GRAVITY = -0.01;
-    // this.velocity.y += (GRAVITY * delta)
-this.velocity.y = 0
+    const GRAVITY = 0.01;
+    this.velocity.y += (GRAVITY * delta)
+// this.velocity.y = 0
     movement.x += this.velocity.x * delta;
     movement.z += this.velocity.z * delta;
     movement.y += this.velocity.y * delta;
+    // this.translatePosition(movement)
 
-    this.translatePosition(this.checkedMovement(movement))
+    this.setPosition(this.checkedMovement(movement))
   }
 
   rotatePlayer = (delta) => {

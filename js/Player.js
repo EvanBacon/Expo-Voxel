@@ -206,8 +206,8 @@ export default class Player {
       break;
       case DirectionType.back: //Bottom
       // movement.z += actualMoveSpeed;
-      movement.x += (actualMoveSpeed) * Math.sin( this.phi ) * Math.cos( this.theta );
-      movement.z += (actualMoveSpeed) * Math.sin( this.phi ) * Math.sin( this.theta );
+      movement.x -= (actualMoveSpeed) * Math.sin( this.phi ) * Math.cos( this.theta );
+      movement.z -= (actualMoveSpeed) * Math.sin( this.phi ) * Math.sin( this.theta );
       break;
       case DirectionType.down: //Down
       movement.y += -actualMoveSpeed;

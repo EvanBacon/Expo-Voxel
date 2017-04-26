@@ -144,7 +144,7 @@ export default class Player {
     let piece = xMult < zMult ? (xMult < yMult ? xMult : yMult) : (zMult < yMult ? zMult : yMult);
     direction.x *= piece; direction.z *= piece; direction.y *= piece;
 
-    let pieces = Math.round(1 / piece);
+    let pieces = Math.floor(1 / piece);
 
     const {position} = this.camera
     let _position = new THREE.Vector3(position.x, position.y, position.z)

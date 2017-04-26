@@ -21,8 +21,8 @@ export default class Physics {
   //NOTE: for this method to be accurate on our grid, the maginute of the motion must be LESS THAN the radius of the player
   checkStack = (dest, delta, height, radius) => {
     let blockStackFull = false;
-    let dYtorso = Math.round(dest.y + height/2);
-    let dYhead = Math.round(dest.y + height);
+    let dYtorso = Math.floor(dest.y + height/2);
+    let dYhead = Math.floor(dest.y + height);
 
     if(!this.world.isValidBlock(delta.x, delta.y, delta.z) || this.world.getBlock(delta.x, delta.y, delta.z)) blockStackFull = true;
     else if(!this.world.isValidBlock(delta.x, dYtorso, delta.z) || this.world.getBlock(delta.x, dYtorso, delta.z)) blockStackFull = true;
@@ -165,11 +165,10 @@ export default class Physics {
 
     const EPSILON = 0.001;
     let yMovement = dir.y;
-    let dY = Math.round(pos.y + dir.y);
+    let dY = Math.floor(pos.y + dir.y);
     let yOffset = 1;
 
     // if (this.frame % 10 == 0) {
-
     // console.log("VOXEL::", pos, this.world.isValidBlock(posX, dY, posZ), this.world.getBlock(posX, dY, posZ))
 // }
 
@@ -178,7 +177,7 @@ export default class Physics {
       //then determine the correct Y-layer to test
 
       if(dir.y > 0) {
-        dY = Math.round(pos.y + height + dir.y); //check head location
+        dY = Math.floor(pos.y + height + dir.y); //check head location
       }
 
       //check the location we're in
@@ -223,9 +222,9 @@ export default class Physics {
 
     //correct for the actual yMovement performed
     let fdest = new THREE.Vector3(pos.x + dir.x, pos.y + yMovement, pos.z + dir.z);
-    let dX = Math.round(fdest.x);
-    dY = Math.round(fdest.y);
-    let dZ = Math.round(fdest.z);
+    let dX = Math.floor(fdest.x);
+    dY = Math.floor(fdest.y);
+    let dZ = Math.floor(fdest.z);
 
     // console.log(yMovement, dir.y, pos.y, posX,dY, posZ-1, this.world.isValidBlock(posX,dY, posZ-1), this.world.getBlock(posX,dY, posZ-1))
 
@@ -234,28 +233,28 @@ export default class Physics {
 
     if (fdest.x + radius > dX + 1){
       fdest = this.checkStack(fdest, new THREE.Vector3( dX+1, dY, dZ), height, radius); //left
-      dX = Math.round(fdest.x);
-      dY = Math.round(fdest.y);
-      dZ = Math.round(fdest.z);
+      dX = Math.floor(fdest.x);
+      dY = Math.floor(fdest.y);
+      dZ = Math.floor(fdest.z);
     }
     else if( fdest.x - radius < dX ){
       fdest = this.checkStack(fdest, new THREE.Vector3( dX-1, dY, dZ), height, radius); //right BROKEN
-      dX =  Math.round(fdest.x);
-      dY =  Math.round(fdest.y);
-      dZ =  Math.round(fdest.z);
+      dX =  Math.floor(fdest.x);
+      dY =  Math.floor(fdest.y);
+      dZ =  Math.floor(fdest.z);
     }
 
     if( fdest.z + radius > dZ + 1){
       fdest = this.checkStack(fdest, new THREE.Vector3( dX, dY, dZ+1), height, radius); //front
-      dX =  Math.round(fdest.x);
-      dY =  Math.round(fdest.y);
-      dZ =  Math.round(fdest.z);
+      dX =  Math.floor(fdest.x);
+      dY =  Math.floor(fdest.y);
+      dZ =  Math.floor(fdest.z);
     }
     else if( fdest.z - radius < dZ ){
       fdest = this.checkStack(fdest, new THREE.Vector3( dX, dY, dZ-1), height, radius); //back BROKEN
-      dX =  Math.round(fdest.x);
-      dY =  Math.round(fdest.y);
-      dZ =  Math.round(fdest.z);
+      dX =  Math.floor(fdest.x);
+      dY =  Math.floor(fdest.y);
+      dZ =  Math.floor(fdest.z);
     }
     // fdest.y *= -1
     // TODO: check the diagonals too!!!

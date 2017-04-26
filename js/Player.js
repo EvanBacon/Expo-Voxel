@@ -13,6 +13,7 @@ import GestureType from './GestureType'
 import DirectionType from './DirectionType'
 
 export default class Player {
+  HEIGHT = 1.7;
 
   constructor( camera, physics ) {
     this.physics = physics
@@ -72,7 +73,7 @@ export default class Player {
   checkDeath = () => {
     if (this.position.y < -1 || this.position.y > 200) {
       console.log("VOXEL:: Dead", this.position)
-      // this.setPosition(new THREE.Vector3(50, 50, 50))
+      this.setPosition(new THREE.Vector3(50, 50, 50))
       // this.position.y = 50
       // this.position.x = 0
       // this.position.z = 0
@@ -81,20 +82,8 @@ export default class Player {
 
   setPosition = (position) => {
     const {x, y, z} = position
-    // this.position.set(x,y,z)
-    this.camera.position.set(x, y, z) //TODO: Add Player Height
+    this.camera.position.set(x, y + (this.HEIGHT - 1), z)
     this.position = position
-  }
-
-  translatePosition = (translation) => {
-    // this.position = position
-
-    this.camera.translateX(translation.x)
-    this.camera.translateY(translation.y)
-    this.camera.translateZ(translation.z)
-
-    this.position = this.camera.position
-    // this.position.y -= 1
 
     ///Update Camera
     this.checkDeath()
@@ -121,12 +110,11 @@ export default class Player {
     }
   }
 
-
   checkedMovement = (direction) => {
     //for any input movement, break it down into granular chunks so the displacement
     //of a chunk in any axis is less than the radius of the player
 
-    const HEIGHT = 1.7;
+    const {HEIGHT} = this;
     const RADIUS = 0.3;
     //const int X_AXIS = 0, Y_AXIS = 1, Z_AXIS = 2;
 
@@ -146,7 +134,7 @@ export default class Player {
 
     let pieces = Math.floor(1 / piece);
 
-    const {position} = this.camera
+    const {position} = this
     let _position = new THREE.Vector3(position.x, position.y, position.z)
 
     for(let i = 0; i < pieces; i++){
@@ -154,7 +142,6 @@ export default class Player {
       let oldPos = _position;
       _position = this.physics.checkMovement2(_position, direction, HEIGHT, RADIUS);
 
-      // this.translatePosition(_translation)
       // console.log("Moved by", oldPos.x - this.position.x, oldPos.y - this.position.y, oldPos.z - this.position.z)
       if( Math.abs( oldPos.y - _position.y ) < 0.00001 ) { // set velocity to zero if we stopped moving vertically
         this.velocity.y = 0;
@@ -166,7 +153,7 @@ export default class Player {
 
   movePlayer = (delta, directionType) => {
     if ( this.heightSpeed ) {
-      var y = THREE.Math.clamp( this.camera.position.y, this.heightMin, this.heightMax );
+      var y = THREE.Math.clamp( this.position.y, this.heightMin, this.heightMax );
       var heightDelta = y - this.heightMin;
       this.autoSpeedFactor = delta * ( heightDelta * this.heightCoef );
     } else {
@@ -223,7 +210,6 @@ export default class Player {
     movement.x += this.velocity.x * delta;
     movement.z += this.velocity.z * delta;
     movement.y += this.velocity.y * delta;
-    // this.translatePosition(movement)
 
     this.setPosition(this.checkedMovement(movement))
   }

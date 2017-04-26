@@ -112,7 +112,7 @@ export default class Scene extends React.Component {
     sky.uniforms.sunPosition.value.copy( sunSphere.position );
   }
 
-  setupCamera = (fov = 60, zNear = 1, zFar = 20000) => {
+  setupCamera = (fov = 60, zNear = 0.01, zFar = 20000) => {
 
     this.camera = new THREE.PerspectiveCamera( fov, width / height, zNear, zFar );
 

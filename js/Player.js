@@ -55,7 +55,12 @@ export default class Player {
   }
 
   jump = () => {
-    if( !this.physics.world.isValidBlock(this.position.x, this.position.y - 0.01, this.position.z) || this.physics.world.getBlock(this.position.x, this.position.y - 0.01, this.position.z ) ) this.velocity.z -= 9.0;
+    if (
+      !this.physics.world.isValidBlock(this.position.x, this.position.y - 0.01, this.position.z) ||
+      this.physics.world.getBlock(this.position.x, this.position.y - 0.01, this.position.z )
+    ) {
+      this.velocity.y = 9.0;
+    }
   }
 
   look = (horizontal, vertical) => {
@@ -177,15 +182,18 @@ export default class Player {
 
     switch (directionType) {
       case DirectionType.front: //Top
-      movement.x += (actualMoveSpeed + this.autoSpeedFactor) * Math.sin(this.theta);
-      movement.z += (actualMoveSpeed + this.autoSpeedFactor) * Math.cos(this.theta);
+
+      movement.x += (actualMoveSpeed + this.autoSpeedFactor) * Math.sin( this.phi ) * Math.cos( this.theta );
+      movement.z += (actualMoveSpeed + this.autoSpeedFactor) * Math.sin( this.phi ) * Math.sin( this.theta );
 
       break;
       case DirectionType.left: //Left
       {
       let angle = Math.PI / 2
-      movement.x += (actualMoveSpeed + this.autoSpeedFactor) * Math.sin(this.theta + angle);
-      movement.z += (actualMoveSpeed + this.autoSpeedFactor) * Math.cos(this.theta + angle);
+
+      movement.x += (actualMoveSpeed) * Math.sin( this.phi ) * Math.cos( this.theta + angle);
+      movement.z += (actualMoveSpeed) * Math.sin( this.phi ) * Math.sin( this.theta + angle);
+
       }
 
       break;
@@ -195,15 +203,15 @@ export default class Player {
       break;
       case DirectionType.right: //Right
       {
-        let angle = Math.PI / 2
-        movement.x -= (actualMoveSpeed + this.autoSpeedFactor) * Math.sin(this.theta + angle);
-        movement.z -= (actualMoveSpeed + this.autoSpeedFactor) * Math.cos(this.theta + angle);
+        let angle = -(Math.PI / 2)
+        movement.x += (actualMoveSpeed) * Math.sin( this.phi ) * Math.cos( this.theta + angle);
+        movement.z += (actualMoveSpeed) * Math.sin( this.phi ) * Math.sin( this.theta + angle);
       }
       break;
       case DirectionType.back: //Bottom
       // movement.z += actualMoveSpeed;
-      movement.x -= (actualMoveSpeed + this.autoSpeedFactor) * Math.sin(this.theta);
-      movement.z -= (actualMoveSpeed + this.autoSpeedFactor) * Math.cos(this.theta);
+      movement.x += (actualMoveSpeed) * Math.sin( this.phi ) * Math.cos( this.theta );
+      movement.z += (actualMoveSpeed) * Math.sin( this.phi ) * Math.sin( this.theta );
       break;
       case DirectionType.down: //Down
       movement.y += -actualMoveSpeed;
@@ -213,7 +221,7 @@ export default class Player {
     }
 
 
-    const GRAVITY = 0.01;
+    const GRAVITY = 20;
     this.velocity.y += (GRAVITY * delta)
 // this.velocity.y = 0
     movement.x += this.velocity.x * delta;

@@ -63,7 +63,7 @@ export default class Physics {
     if(dest.x < delta.x){
       //bottom grid square
       if(dest.z < delta.z){
-        let BLDepth = radius - Math.sqrt( (delta.x - dest.x)*(delta.x - dest.x) + (delta.z - dest.z)*(delta.z - dest.z) ); //bottom left
+        let BLDepth = radius - Math.sqrt( ((delta.x - dest.x)*(delta.x - dest.x)) + ((delta.z - dest.z)*(delta.z - dest.z)) ); //bottom left
         if( (circleZMax > delta.z) && (circleXMax > delta.x) && (BLDepth > 0.0) ){
           //we collided with the BL corner of the cube, so project outward along the BL axis
           let proj = new THREE.Vector2(dest.x - delta.x, dest.z - delta.z);
@@ -72,11 +72,11 @@ export default class Physics {
         }
       }
       //top grid square
-      else if (dest.z > delta.z + 1) {
-        let TLDepth = radius - Math.sqrt( (delta.x - dest.x)*(delta.x - dest.x) + (delta.z + 1 - dest.z)*(delta.z + 1 - dest.z) ); //top left
-        if( (circleZMin > delta.z + 1) && (circleXMax > delta.x)  && (TLDepth > 0) ){
+      else if (dest.z > delta.z + 1.0) {
+        let TLDepth = radius - Math.sqrt( ((delta.x - dest.x)*(delta.x - dest.x)) + ((delta.z + 1 - dest.z)*(delta.z + 1 - dest.z)) ); //top left
+        if( (circleZMin > delta.z + 1.0) && (circleXMax > delta.x)  && (TLDepth > 0.0) ){
           //we collided with the TL corner of the cube, so project outward along the TL axis
-          let proj = new THREE.Vector2(dest.x - delta.x, dest.z - (delta.z + 1));
+          let proj = new THREE.Vector2(dest.x - delta.x, dest.z - (delta.z + 1.0));
           proj.normalize()
           dest.x = proj.x * TLDepth; dest.z = proj.z * TLDepth;
         }
@@ -89,31 +89,31 @@ export default class Physics {
       }
     }
     //right side of cube
-    else if (dest.x > delta.x + 1) {
+    else if (dest.x > delta.x + 1.0) {
       //bottom grid square
       if (dest.z < delta.z) {
-        let BRDepth = radius - Math.sqrt( (delta.x + 1 - dest.x)*(delta.x + 1- dest.x) + (delta.z - dest.z)*(delta.z - dest.z) ); //bottom right
-        if( (circleZMax > delta.z) && (circleXMin < delta.x + 1) && ( BRDepth > 0) ){
+        let BRDepth = radius - Math.sqrt( ((delta.x + 1.0 - dest.x)*(delta.x + 1.0 - dest.x)) + ((delta.z - dest.z)*(delta.z - dest.z)) ); //bottom right
+        if( (circleZMax > delta.z) && (circleXMin < delta.x + 1.0) && ( BRDepth > 0.0) ){
           //we collided with the BR corner of the cube, so project outward along the BR axis
-          let proj = new THREE.Vector2(dest.x - (delta.x + 1), dest.z);
+          let proj = new THREE.Vector2(dest.x - (delta.x + 1.0), dest.z);
           proj.normalize()
 
           dest.x = proj.x * BRDepth; dest.z = proj.z * BRDepth;
         }
       }
       //top grid square
-      else if (dest.z > delta.z + 1) {
-        let TRDepth = radius - Math.sqrt( (delta.x + 1 - dest.x)*(delta.x + 1- dest.x) + (delta.z + 1 - dest.z)*(delta.z + 1 - dest.z) ); //top right
-        if ( (circleZMin < delta.z + 1) && (circleXMin < delta.x + 1) && (TRDepth < 0) ){
+      else if (dest.z > delta.z + 1.0) {
+        let TRDepth = radius - Math.sqrt( (delta.x + 1.0 - dest.x)*(delta.x + 1.0 - dest.x) + (delta.z + 1.0 - dest.z)*(delta.z + 1.0 - dest.z) ); //top right
+        if ( (circleZMin < delta.z + 1.0) && (circleXMin < delta.x + 1.0) && (TRDepth < 0.0) ){
           //we collided with the TR corner of the cube, so project outward along the TR axis
-          let proj = new THREE.Vector2(dest.x - (delta.x + 1), dest.z + (delta.z + 1));
+          let proj = new THREE.Vector2(dest.x - (delta.x + 1.0), dest.z + (delta.z + 1.0));
           proj.normalize()
           dest.x = proj.x * TRDepth; dest.z = proj.z * TRDepth;
         }
       }
       //dest.y in cube's y-axis
       else {
-        if( ( circleXMin < delta.x + 1) ) {
+        if( ( circleXMin < delta.x + 1.0) ) {
           dest.x += xDepth; //we collided with the right side of the cube, so project right along the X-axis
         }
       }
@@ -127,8 +127,8 @@ export default class Physics {
         }
       }
       //top grid square
-      else if (dest.z > delta.z + 1) {
-        if( (circleZMin < delta.z + 1) ) {
+      else if (dest.z > delta.z + 1.0) {
+        if( (circleZMin < delta.z + 1.0) ) {
         dest.z += zDepth; //we collided with the top side of the cube, so project up along the Y-axis
         }
 
@@ -136,14 +136,14 @@ export default class Physics {
       //INSIDE the cube
       else {
         if (xDepth < zDepth) { //project out of x-axis
-          if (dest.x > delta.x + 0.5) {
+          if (dest.x > delta.x + 0.500) {
           dest.x += xDepth; //right half goes right
           } else {
           dest.x -= xDepth;
           }
 
         } else {
-          if(dest.z > delta.z + 0.5) {
+          if(dest.z > delta.z + 0.500) {
           dest.z += zDepth; //top side goes up
         } else {
           dest.z -= zDepth;
@@ -159,13 +159,13 @@ export default class Physics {
   checkMovement2 = (pos, dir, height, radius) => {
     // console.log(pos, dir)
 
-    let posX = pos.x|0;
-    let posZ = pos.z|0;
+    let posX = pos.x;
+    let posZ = pos.z;
 
 
     const EPSILON = 0.001;
     let yMovement = dir.y;
-    let dY = Math.round(pos.y + dir.y)|0;
+    let dY = Math.round(pos.y + dir.y);
     let yOffset = 1;
 
     // if (this.frame % 10 == 0) {
@@ -178,7 +178,7 @@ export default class Physics {
       //then determine the correct Y-layer to test
 
       if(dir.y > 0) {
-        dY = Math.round(pos.y + height + dir.y)|0; //check head location
+        dY = Math.round(pos.y + height + dir.y); //check head location
       }
 
       //check the location we're in
@@ -223,9 +223,9 @@ export default class Physics {
 
     //correct for the actual yMovement performed
     let fdest = new THREE.Vector3(pos.x + dir.x, pos.y + yMovement, pos.z + dir.z);
-    let dX = Math.round(fdest.x)|0;
-    dY = Math.round(fdest.y)|0;
-    let dZ = Math.round(fdest.z)|0;
+    let dX = Math.round(fdest.x);
+    dY = Math.round(fdest.y);
+    let dZ = Math.round(fdest.z);
 
     // console.log(yMovement, dir.y, pos.y, posX,dY, posZ-1, this.world.isValidBlock(posX,dY, posZ-1), this.world.getBlock(posX,dY, posZ-1))
 
@@ -234,28 +234,28 @@ export default class Physics {
 
     if (fdest.x + radius > dX + 1){
       fdest = this.checkStack(fdest, new THREE.Vector3( dX+1, dY, dZ), height, radius); //left
-      dX = Math.round(fdest.x)|0;
-      dY = Math.round(fdest.y)|0;
-      dZ = Math.round(fdest.z)|0;
+      dX = Math.round(fdest.x);
+      dY = Math.round(fdest.y);
+      dZ = Math.round(fdest.z);
     }
     else if( fdest.x - radius < dX ){
       fdest = this.checkStack(fdest, new THREE.Vector3( dX-1, dY, dZ), height, radius); //right BROKEN
-      dX =  Math.round(fdest.x)|0;
-      dY =  Math.round(fdest.y)|0;
-      dZ =  Math.round(fdest.z)|0;
+      dX =  Math.round(fdest.x);
+      dY =  Math.round(fdest.y);
+      dZ =  Math.round(fdest.z);
     }
 
     if( fdest.z + radius > dZ + 1){
       fdest = this.checkStack(fdest, new THREE.Vector3( dX, dY, dZ+1), height, radius); //front
-      dX =  Math.round(fdest.x)|0;
-      dY =  Math.round(fdest.y)|0;
-      dZ =  Math.round(fdest.z)|0;
+      dX =  Math.round(fdest.x);
+      dY =  Math.round(fdest.y);
+      dZ =  Math.round(fdest.z);
     }
     else if( fdest.z - radius < dZ ){
       fdest = this.checkStack(fdest, new THREE.Vector3( dX, dY, dZ-1), height, radius); //back BROKEN
-      dX =  Math.round(fdest.x)|0;
-      dY =  Math.round(fdest.y)|0;
-      dZ =  Math.round(fdest.z)|0;
+      dX =  Math.round(fdest.x);
+      dY =  Math.round(fdest.y);
+      dZ =  Math.round(fdest.z);
     }
     // fdest.y *= -1
     // TODO: check the diagonals too!!!

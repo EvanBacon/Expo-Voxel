@@ -63,9 +63,9 @@ export default class Scene extends React.Component {
     this.controls.verticalMax = 2.2;
 
     this.controls.setPosition(new THREE.Vector3(
-      10,
-      (this.world.getY( 10, 10 ) * 1 + 1),
-      10
+      100,
+      (this.world.getY( 100, 100 ) + 10),
+      100
     ))
     // this.camera.position.y = this.world.getY( worldSize/2, worldSize/2 ) * 1 + 1;
     /// Setup Gestures after Controls

@@ -20,6 +20,33 @@ export default class World {
     this.data = this.generateHeight( width, depth );
   }
 
+  isValidBlock = (x,y,z) => {
+    if (isNaN(x) || isNaN(y) || isNaN(z)) {
+      return false
+    }
+
+    return (x >= 0 && x < this.width &&
+  			y >= 0 && y < this.width &&
+  			z >= 0 && z < this.depth);
+  }
+  getBlock = (x,y,z) => {
+    if (isNaN(x) || isNaN(y) || isNaN(z)) {
+      return null
+    }
+    // x = Math.round(x)
+    // y = Math.round(y)
+    // z = Math.round(z)
+    let key = `${x|0},${y|0},${z|0}`
+    // console.log("VOXEL:: get block", this.blocks[key], key)
+    return this.blocks[key];
+
+    // return y > (( this.data[ x + z * this.width ] * 0.2 ) | 0) ? null : 1;
+
+    // return blocks[(z*MAP_BLOCK_WIDTH*MAP_BLOCK_HEIGHT)+(y*MAP_BLOCK_WIDTH)+x];
+    //
+    // return null
+  }
+
   getGeometry = async () => {
     if (this.mesh) {
       return this.mesh
@@ -37,12 +64,13 @@ export default class World {
       if ( j == 0 ) for ( var i = 0; i < size; i ++ ) data[ i ] = 0;
       for ( var i = 0; i < size; i ++ ) {
         var x = i % width, y = ( i / width ) | 0;
-        data[ i ] += perlin.noise( x / quality, y / quality, z ) * quality;
+        data[ i ] += Math.max(0, perlin.noise( x / quality, y / quality, z + 64 ) * quality);
       }
       quality *= 4
     }
     return data;
   }
+  blocks = {}
 
   getY = ( x, z ) => {
     return ( this.data[ x + z * this.width ] * 0.2 ) | 0;
@@ -50,7 +78,7 @@ export default class World {
 
   _buildTerrain = (texture) => {
     // // sides
-    const size = 100
+    const size = 1
     const half = size * 0.5
     var light = new THREE.Color( 0xffffff );
     var shadow = new THREE.Color( 0x505050 );
@@ -118,10 +146,15 @@ export default class World {
     for ( var z = 0; z < this.depth; z ++ ) {
       for ( var x = 0; x < this.width; x ++ ) {
         var h = getY( x, z );
+        // console.log("VOXEL:: build env",h, {x,z})
+        for ( var y = 0; y < this.width; y ++ ) {
+          this.blocks[`${x},${y},${z}`] = (h < y ? 0 : 1)
+        }
+
         matrix.makeTranslation(
-          x * size - worldHalfWidth * size,
-          h * size,
-          z * size - worldHalfDepth * size
+          x,
+          h,
+          z
         );
 
         var px = getY( x + 1, z );

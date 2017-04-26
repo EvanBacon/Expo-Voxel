@@ -9,17 +9,18 @@ import * as THREE from 'three';
 const THREEView = Expo.createTHREEViewClass(THREE);
 
 import ImprovedNoise from '../js/ImprovedNoise'
-import FirstPersonControls from '../js/FirstPersonControls'
+import Player from '../js/Player'
+import Physics from '../js/Physics'
 
 import Sky from '../js/SkyShader'
 import Dpad from './Dpad'
 import World from '../js/World'
-console.ignoredYellowBox = ['THREE.WebGLRenderer'];
-
-var sky, sunSphere;
 import GestureType from '../js/GestureType'
 
+
+var sky, sunSphere;
 const worldSize = 200
+
 export default class Scene extends React.Component {
   world;
   state = {
@@ -52,14 +53,21 @@ export default class Scene extends React.Component {
   }
 
   setupControls = () => {
-    this.controls = new FirstPersonControls( this.camera );
+    this.controls = new Player( this.camera, this.physics );
     this.controls.setSize(width, height);
-    this.controls.movementSpeed = 1000;
+    this.controls.movementSpeed = 10;
     this.controls.lookSpeed = 0.3;
     this.controls.lookVertical = true;
-    this.controls.constrainVertical = true;
+    this.controls.constrainVertical = false;
     this.controls.verticalMin = 1.1;
     this.controls.verticalMax = 2.2;
+
+    this.controls.setPosition(new THREE.Vector3(
+      100,
+      (this.world.getY( 100, 100 ) + 10),
+      100
+    ))
+    // this.camera.position.y = this.world.getY( worldSize/2, worldSize/2 ) * 1 + 1;
     /// Setup Gestures after Controls
     this.setupGestures()
   }
@@ -107,7 +115,8 @@ export default class Scene extends React.Component {
   setupCamera = (fov = 60, zNear = 1, zFar = 20000) => {
 
     this.camera = new THREE.PerspectiveCamera( fov, width / height, zNear, zFar );
-    this.camera.position.y = this.world.getY( worldSize/2, worldSize/2 ) * 100 + 100;
+
+
   }
 
   setupScene = (fogColor = 0x7394a0, fogFalloff = 0.00015) => {
@@ -131,6 +140,7 @@ export default class Scene extends React.Component {
 
     this.mesh = await this.world.getGeometry()
 
+    this.physics = new Physics(this.world)
     this.setupWorld()
 
     this.scene.add( this.mesh );
@@ -147,8 +157,13 @@ export default class Scene extends React.Component {
     this.setupSky()
   }
 
+  frame = 0
   tick = (dt) => {
-    this.controls.update( dt, this.moveID );
+    // if (this.frame % 60 == 0) {
+      this.controls.update( dt, this.moveID );
+    // }
+    this.frame += 1
+
   }
 
   render() {

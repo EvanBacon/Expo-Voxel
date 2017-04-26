@@ -126,8 +126,8 @@ export default class Player {
     //for any input movement, break it down into granular chunks so the displacement
     //of a chunk in any axis is less than the radius of the player
 
-    const HEIGHT = 1;
-    const RADIUS = .3;
+    const HEIGHT = 1.7;
+    const RADIUS = 0.3;
     //const int X_AXIS = 0, Y_AXIS = 1, Z_AXIS = 2;
 
     // determine which axis has the most displacement
@@ -217,7 +217,7 @@ export default class Player {
     }
 
 
-    const GRAVITY = 20;
+    const GRAVITY = -20;
     this.velocity.y += (GRAVITY * delta)
 // this.velocity.y = 0
     movement.x += this.velocity.x * delta;

@@ -148,7 +148,7 @@ export default class World {
         var h = getY( x, z );
         // console.log("VOXEL:: build env",h, {x,z})
         for ( var y = 0; y < this.width; y ++ ) {
-          this.blocks[`${x},${y},${z}`] = (h < y ? 1 : 0)
+          this.blocks[`${x},${y},${z}`] = (h < y ? 0 : 1)
         }
 
         matrix.makeTranslation(

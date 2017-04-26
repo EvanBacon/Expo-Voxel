@@ -23,6 +23,9 @@ const worldSize = 200
 
 export default class Scene extends React.Component {
   world;
+  terrain;
+  raycaster = new THREE.Raycaster();
+
   state = {
     ready: false
   }
@@ -31,6 +34,13 @@ export default class Scene extends React.Component {
     const {controls} = this
     const touchesBegan = (event, gestureState) => {
       this.controls.onGesture(event, gestureState, GestureType.began)
+
+      const {nativeEvent} = event
+      this.raycaster.setFromCamera( new THREE.Vector2(nativeEvent.locationX, nativeEvent.locationY), this.camera );
+
+      var intersections = this.raycaster.intersectObjects( this.mesh );
+      // intersection = ( intersections.length ) > 0 ? intersections[ 0 ] : null;
+      console.log("VOXEL:: intersection", intersections)
     }
 
     const touchesMoved = (event, gestureState) => {
@@ -119,7 +129,7 @@ export default class Scene extends React.Component {
 
   }
 
-  setupScene = (fogColor = 0x7394a0, fogFalloff = 0.00015) => {
+  setupScene = (fogColor = 0xffffff, fogFalloff = 0.00015) => {
     this.scene = new THREE.Scene();
     this.scene.fog = new THREE.FogExp2(fogColor, fogFalloff);
   }
@@ -138,7 +148,13 @@ export default class Scene extends React.Component {
   async componentWillMount() {
     this.world = new World(worldSize, worldSize)
 
-    this.mesh = await this.world.getGeometry()
+
+    const textureAsset = Expo.Asset.fromModule(require('../assets/images/material.png'));
+    await textureAsset.downloadAsync();
+
+    this.world.textureAsset = textureAsset
+
+    this.mesh = this.world.getGeometry()
 
     this.physics = new Physics(this.world)
     this.setupWorld()

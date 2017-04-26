@@ -7,22 +7,8 @@ const {width, height} = Dimensions.get('window')
 import * as THREE from 'three';
 import ImprovedNoise from './ImprovedNoise'
 const THREEView = Expo.createTHREEViewClass(THREE);
-
-
-export const MAP_BLOCK_WIDTH = (128);
-export const MAP_BLOCK_HEIGHT = (128);
-export const MAP_BLOCK_DEPTH = (128);
-
-export const CHUNK_WIDTH  = 16;
-export const CHUNK_HEIGHT = 16;
-export const CHUNK_DEPTH  = 16;
-export const TOTAL_CHUNK_BLOCKS = (CHUNK_WIDTH*CHUNK_HEIGHT*CHUNK_DEPTH);
-export const CHUNKS_WIDTH = MAP_BLOCK_WIDTH/CHUNK_WIDTH;
-export const CHUNKS_HEIGHT = MAP_BLOCK_HEIGHT/CHUNK_HEIGHT;
-export const CHUNKS_DEPTH = MAP_BLOCK_DEPTH/CHUNK_DEPTH;
-
-
-export default class World {
+import * as World from './World'
+export default class Chunk {
   width;
   height;
   data;
@@ -47,19 +33,58 @@ export default class World {
     if (isNaN(x) || isNaN(y) || isNaN(z)) {
       return null
     }
-    // x = Math.round(x)
-    // y = Math.round(y)
-    // z = Math.round(z)
     let key = `${x|0},${y|0},${z|0}`
-    // console.log("VOXEL:: get block", this.blocks[key], key)
     return this.blocks[key];
-
-    // return y > (( this.data[ x + z * this.width ] * 0.2 ) | 0) ? null : 1;
-
-    // return blocks[(z*MAP_BLOCK_WIDTH*MAP_BLOCK_HEIGHT)+(y*MAP_BLOCK_WIDTH)+x];
-    //
-    // return null
   }
+  setBlock = (x,y,z, type) => {
+    if (isNaN(x) || isNaN(y) || isNaN(z)) {
+      return null
+    }
+    let key = `${x|0},${y|0},${z|0}`
+    this.blocks[key] = type;
+  }
+
+  changeBlock = (x,y,z, type) => {
+    this.setBlock(x, y, z, type);
+
+    let cx = x / World.CHUNK_WIDTH;
+    let cy = y / World.CHUNK_HEIGHT;
+    let cz = z / World.CHUNK_DEPTH;
+
+  	let chunk = getChunk(cx, cy, cz);
+    chunk.hasChanged();
+
+    //x neighbors
+	if( x%World.CHUNK_WIDTH == 0 && isValidChunk(cx-1, cy, cz) ){
+		chunk = getChunk(cx - 1, cy, cz);
+    chunk.hasChanged();
+	}
+	else if( x%World.CHUNK_WIDTH == World.CHUNK_WIDTH-1 && isValidChunk(cx+1, cy, cz) ){
+		chunk = getChunk(cx + 1, cy, cz);
+    chunk.hasChanged();
+	}
+	//y neighbors
+	if( y%World.CHUNK_HEIGHT == 0 && isValidChunk(cx, cy-1, cz) ){
+		chunk = getChunk(cx, cy - 1, cz);
+    chunk.hasChanged();
+	}
+	else if( y%World.CHUNK_HEIGHT == World.CHUNK_HEIGHT-1 && isValidChunk(cx, cy+1, cz) ){
+		chunk = getChunk(cx, cy + 1, cz);
+    chunk.hasChanged();
+	}
+	//z neighbors
+	if( z%World.CHUNK_DEPTH == 0 && isValidChunk(cx, cy, cz-1) ){
+		chunk = getChunk(cx, cy, cz - 1);
+    chunk.hasChanged();
+	}
+	else if( z%World.CHUNK_DEPTH == World.CHUNK_DEPTH-1 && isValidChunk(cx, cy, cz+1) ){
+		chunk = getChunk(cx, cy, cz + 1);
+    chunk.hasChanged();
+	}
+
+
+  }
+
 
   getGeometry = () => {
     if (this.mesh) {

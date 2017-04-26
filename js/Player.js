@@ -145,7 +145,6 @@ export default class Player {
     direction.x *= piece; direction.z *= piece; direction.y *= piece;
 
     let pieces = Math.round(1 / piece);
-    console.log("VOXEL::", pieces, piece);
 
     const {position} = this.camera
     let _position = new THREE.Vector3(position.x, position.y, position.z)
@@ -176,8 +175,6 @@ export default class Player {
 
     let movement = new THREE.Vector3( 0, 0, 0 );
 
-
-
     var actualMoveSpeed = delta * this.movementSpeed;
 
     switch (directionType) {
@@ -189,11 +186,10 @@ export default class Player {
       break;
       case DirectionType.left: //Left
       {
-      let angle = Math.PI / 2
+      let angle = -(Math.PI / 2)
 
       movement.x += (actualMoveSpeed) * Math.sin( this.phi ) * Math.cos( this.theta + angle);
       movement.z += (actualMoveSpeed) * Math.sin( this.phi ) * Math.sin( this.theta + angle);
-
       }
 
       break;
@@ -203,7 +199,7 @@ export default class Player {
       break;
       case DirectionType.right: //Right
       {
-        let angle = -(Math.PI / 2)
+        let angle = (Math.PI / 2)
         movement.x += (actualMoveSpeed) * Math.sin( this.phi ) * Math.cos( this.theta + angle);
         movement.z += (actualMoveSpeed) * Math.sin( this.phi ) * Math.sin( this.theta + angle);
       }

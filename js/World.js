@@ -37,7 +37,7 @@ export default class World {
     // y = Math.round(y)
     // z = Math.round(z)
     let key = `${x|0},${y|0},${z|0}`
-    console.log("VOXEL:: get block", this.blocks[key], key)
+    // console.log("VOXEL:: get block", this.blocks[key], key)
     return this.blocks[key];
 
     // return y > (( this.data[ x + z * this.width ] * 0.2 ) | 0) ? null : 1;

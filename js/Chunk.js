@@ -2,22 +2,18 @@
 
 import Expo from 'expo';
 import React from 'react';
-import {View, Dimensions} from 'react-native'
-const {width, height} = Dimensions.get('window')
+import {View} from 'react-native'
 import * as THREE from 'three';
 import ImprovedNoise from './ImprovedNoise'
 const THREEView = Expo.createTHREEViewClass(THREE);
 import * as World from './World'
 export default class Chunk {
-  width;
-  height;
   data;
   mesh;
 
-  constructor(width, depth) {
-    this.width = width;
-    this.depth = depth;
-    this.data = this.generateHeight( width, depth );
+  constructor(x,y,z, perlin) {
+    /// TODO: Abstract Noise
+    this.data = this.generateHeight(new ImprovedNoise());
   }
 
   isValidBlock = (x,y,z) => {
@@ -25,9 +21,10 @@ export default class Chunk {
       return false
     }
 
-    return (x >= 0 && x < this.width &&
-  			y >= 0 && y < this.width &&
-  			z >= 0 && z < this.depth);
+    return (
+      x >= 0 && x < World.CHUNK_WIDTH &&
+  			y >= 0 && y < World.CHUNK_HEIGHT &&
+  			z >= 0 && z < World.CHUNK_DEPTH);
   }
   getBlock = (x,y,z) => {
     if (isNaN(x) || isNaN(y) || isNaN(z)) {
@@ -36,12 +33,18 @@ export default class Chunk {
     let key = `${x|0},${y|0},${z|0}`
     return this.blocks[key];
   }
+
   setBlock = (x,y,z, type) => {
-    if (isNaN(x) || isNaN(y) || isNaN(z)) {
+    if (!isValidBlock(x,y,z)) {
       return null
     }
+
     let key = `${x|0},${y|0},${z|0}`
     this.blocks[key] = type;
+  }
+
+  hasChanged = () => {
+
   }
 
   changeBlock = (x,y,z, type) => {
@@ -96,13 +99,13 @@ export default class Chunk {
     return this.mesh
   }
 
-  generateHeight( width, height ) {
-    var data = [], perlin = new ImprovedNoise(),
-    size = width * height, quality = 2, z = Math.random() * 100;
+  generateHeight(perlin ) {
+    var data = [],
+    size = World.CHUNK_WIDTH * World.CHUNK_HEIGHT, quality = 2, z = Math.random() * 100;
     for ( var j = 0; j < 4; j ++ ) {
       if ( j == 0 ) for ( var i = 0; i < size; i ++ ) data[ i ] = 0;
       for ( var i = 0; i < size; i ++ ) {
-        var x = i % width, y = ( i / width ) | 0;
+        var x = i % World.CHUNK_WIDTH, y = ( i / World.CHUNK_WIDTH ) | 0;
         data[ i ] += Math.max(0, perlin.noise( x / quality, y / quality, z + 64 ) * quality);
       }
       quality *= 4
@@ -112,7 +115,7 @@ export default class Chunk {
   blocks = {}
 
   getY = ( x, z ) => {
-    return ( this.data[ x + z * this.width ] * 0.2 ) | 0;
+    return ( this.data[ x + z * World.CHUNK_WIDTH ] * 0.2 ) | 0;
   }
 
   _buildTerrain = (texture) => {
@@ -178,15 +181,15 @@ export default class Chunk {
     nzGeometry.rotateY( Math.PI );
     nzGeometry.translate( 0, 0, -half );
 
-    const worldHalfWidth = this.width / 2
-    const worldHalfDepth = this.depth / 2
+    const worldHalfWidth = World.CHUNK_WIDTH / 2
+    const worldHalfDepth = World.CHUNK_DEPTH / 2
     const { getY } = this
     var geometry = new THREE.Geometry();
-    for ( var z = 0; z < this.depth; z ++ ) {
-      for ( var x = 0; x < this.width; x ++ ) {
+    for ( var z = 0; z < World.CHUNK_DEPTH; z ++ ) {
+      for ( var x = 0; x < World.CHUNK_WIDTH; x ++ ) {
         var h = getY( x, z );
         // console.log("VOXEL:: build env",h, {x,z})
-        for ( var y = 0; y < this.width; y ++ ) {
+        for ( var y = 0; y < World.CHUNK_HEIGHT; y ++ ) {
           this.blocks[`${x},${y},${z}`] = (h < y ? 0 : 1)
         }
 
@@ -240,20 +243,20 @@ export default class Chunk {
           colors[ 2 ] = pxnz > px && x > 0 ? shadow : light;
           geometry.merge( pxGeometry, matrix );
         }
-        if ( ( nx != h && nx != h + 1 ) || x == this.width - 1 ) {
+        if ( ( nx != h && nx != h + 1 ) || x == World.CHUNK_WIDTH - 1 ) {
           var colors = nxGeometry.faces[ 0 ].vertexColors;
-          colors[ 0 ] = nxnz > nx && x < this.width - 1 ? shadow : light;
-          colors[ 2 ] = nxpz > nx && x < this.width - 1 ? shadow : light;
+          colors[ 0 ] = nxnz > nx && x < World.CHUNK_WIDTH - 1 ? shadow : light;
+          colors[ 2 ] = nxpz > nx && x < World.CHUNK_WIDTH - 1 ? shadow : light;
           var colors = nxGeometry.faces[ 1 ].vertexColors;
-          colors[ 2 ] = nxpz > nx && x < this.width - 1 ? shadow : light;
+          colors[ 2 ] = nxpz > nx && x < World.CHUNK_WIDTH - 1 ? shadow : light;
           geometry.merge( nxGeometry, matrix );
         }
-        if ( ( pz != h && pz != h + 1 ) || z == this.depth - 1 ) {
+        if ( ( pz != h && pz != h + 1 ) || z == World.CHUNK_DEPTH - 1 ) {
           var colors = pzGeometry.faces[ 0 ].vertexColors;
-          colors[ 0 ] = nxpz > pz && z < this.depth - 1 ? shadow : light;
-          colors[ 2 ] = pxpz > pz && z < this.depth - 1 ? shadow : light;
+          colors[ 0 ] = nxpz > pz && z < World.CHUNK_DEPTH - 1 ? shadow : light;
+          colors[ 2 ] = pxpz > pz && z < World.CHUNK_DEPTH - 1 ? shadow : light;
           var colors = pzGeometry.faces[ 1 ].vertexColors;
-          colors[ 2 ] = pxpz > pz && z < this.depth - 1 ? shadow : light;
+          colors[ 2 ] = pxpz > pz && z < World.CHUNK_DEPTH - 1 ? shadow : light;
           geometry.merge( pzGeometry, matrix );
         }
         if ( ( nz != h && nz != h + 1 ) || z == 0 ) {
@@ -280,10 +283,11 @@ export default class Chunk {
   }
 
   buildTerrain() {
-
-    this.texture = THREEView.textureFromAsset(this.textureAsset);
-    this.texture.magFilter = THREE.NearestFilter;
-    this.texture.minFilter = THREE.LinearMipMapLinearFilter;
+    if (!this.texture) {
+      this.texture = THREEView.textureFromAsset(this.textureAsset);
+      this.texture.magFilter = THREE.NearestFilter;
+      this.texture.minFilter = THREE.LinearMipMapLinearFilter;
+    }
 
     return this._buildTerrain(this.texture)
   }

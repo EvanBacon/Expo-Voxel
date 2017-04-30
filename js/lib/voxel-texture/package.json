@@ -1,0 +1,99 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "voxel-texture@0.5.6",
+        "scope": null,
+        "escapedName": "voxel-texture",
+        "name": "voxel-texture",
+        "rawSpec": "0.5.6",
+        "spec": "0.5.6",
+        "type": "version"
+      },
+      "/Users/evan.bacon/GoogleDrive/react-native/exponent/SXM-Everest/voxeljs/node_modules/voxel-engine"
+    ]
+  ],
+  "_from": "voxel-texture@0.5.6",
+  "_id": "voxel-texture@0.5.6",
+  "_inCache": true,
+  "_location": "/voxel-texture",
+  "_npmUser": {
+    "name": "shama",
+    "email": "kyle@dontkry.com"
+  },
+  "_npmVersion": "1.2.21",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "voxel-texture@0.5.6",
+    "scope": null,
+    "escapedName": "voxel-texture",
+    "name": "voxel-texture",
+    "rawSpec": "0.5.6",
+    "spec": "0.5.6",
+    "type": "version"
+  },
+  "_requiredBy": [
+    "/voxel-engine"
+  ],
+  "_resolved": "https://registry.npmjs.org/voxel-texture/-/voxel-texture-0.5.6.tgz",
+  "_shasum": "76c516a7cc4a9491db25c731230ada5c0898c288",
+  "_shrinkwrap": null,
+  "_spec": "voxel-texture@0.5.6",
+  "_where": "/Users/evan.bacon/GoogleDrive/react-native/exponent/SXM-Everest/voxeljs/node_modules/voxel-engine",
+  "author": {
+    "name": "Kyle Robinson Young",
+    "email": "kyle@dontkry.com",
+    "url": "http://dontkry.com"
+  },
+  "bugs": {
+    "url": "https://github.com/shama/voxel-texture/issues"
+  },
+  "dependencies": {
+    "atlaspack": "~0.2.4",
+    "tic": "~0.2.0"
+  },
+  "description": "A texture helper for voxeljs",
+  "devDependencies": {
+    "browservefy": "0.0.10",
+    "voxel-debris": "~0.0.4",
+    "voxel-engine": "~0.17.1",
+    "voxel-player": "~0.1.0"
+  },
+  "directories": {},
+  "dist": {
+    "shasum": "76c516a7cc4a9491db25c731230ada5c0898c288",
+    "tarball": "https://registry.npmjs.org/voxel-texture/-/voxel-texture-0.5.6.tgz"
+  },
+  "engines": {
+    "node": ">= 0.8.0"
+  },
+  "homepage": "https://github.com/shama/voxel-texture",
+  "keywords": [
+    "voxel",
+    "texture"
+  ],
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/shama/voxel-texture/blob/master/LICENSE-MIT"
+    }
+  ],
+  "maintainers": [
+    {
+      "name": "shama",
+      "email": "kyle@dontkry.com"
+    }
+  ],
+  "name": "voxel-texture",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/shama/voxel-texture.git"
+  },
+  "scripts": {
+    "gh-pages": "cp -R ./example/* ./ && browserify world.js -o world.js",
+    "start": "cd example && ../node_modules/.bin/browservefy world.js 8080 -- -d"
+  },
+  "version": "0.5.6"
+}

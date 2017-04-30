@@ -1,0 +1,82 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "voxel-control@0.0.7",
+        "scope": null,
+        "escapedName": "voxel-control",
+        "name": "voxel-control",
+        "rawSpec": "0.0.7",
+        "spec": "0.0.7",
+        "type": "version"
+      },
+      "/Users/evan.bacon/GoogleDrive/react-native/exponent/SXM-Everest/voxeljs/node_modules/voxel-engine"
+    ]
+  ],
+  "_from": "voxel-control@0.0.7",
+  "_id": "voxel-control@0.0.7",
+  "_inCache": true,
+  "_location": "/voxel-control",
+  "_npmUser": {
+    "name": "chrisdickinson",
+    "email": "chris@neversaw.us"
+  },
+  "_npmVersion": "1.1.69",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "voxel-control@0.0.7",
+    "scope": null,
+    "escapedName": "voxel-control",
+    "name": "voxel-control",
+    "rawSpec": "0.0.7",
+    "spec": "0.0.7",
+    "type": "version"
+  },
+  "_requiredBy": [
+    "/voxel-engine"
+  ],
+  "_resolved": "https://registry.npmjs.org/voxel-control/-/voxel-control-0.0.7.tgz",
+  "_shasum": "63a47ad1deae4d99b4f7475c76b401bbe6efb9c7",
+  "_shrinkwrap": null,
+  "_spec": "voxel-control@0.0.7",
+  "_where": "/Users/evan.bacon/GoogleDrive/react-native/exponent/SXM-Everest/voxeljs/node_modules/voxel-engine",
+  "author": {
+    "name": "Chris Dickinson",
+    "email": "chris@neversaw.us"
+  },
+  "bugs": {
+    "url": "https://github.com/chrisdickinson/voxel-control/issues"
+  },
+  "dependencies": {},
+  "description": "manipulate voxel-physical objects in a fps-style fashion",
+  "devDependencies": {},
+  "directories": {},
+  "dist": {
+    "shasum": "63a47ad1deae4d99b4f7475c76b401bbe6efb9c7",
+    "tarball": "https://registry.npmjs.org/voxel-control/-/voxel-control-0.0.7.tgz"
+  },
+  "homepage": "https://github.com/chrisdickinson/voxel-control#readme",
+  "keywords": [
+    "voxeljs",
+    "controls"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "maintainers": [
+    {
+      "name": "chrisdickinson",
+      "email": "chris@neversaw.us"
+    }
+  ],
+  "name": "voxel-control",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/chrisdickinson/voxel-control.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "0.0.7"
+}

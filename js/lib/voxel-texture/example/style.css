@@ -1,0 +1,20 @@
+body {
+  margin: 0px;
+  font-family: Arial, sans-serif;
+  font-size: 80%;
+}
+#container {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+#crosshair {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  margin: -2px 0 0 -2px;
+  width: 4px;
+  height: 4px;
+  background-color: #d00;
+  opacity: 0.5;
+}

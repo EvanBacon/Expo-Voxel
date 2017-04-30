@@ -1,14 +1,15 @@
 import Expo from 'expo';
 import React from 'react';
 import { Platform, StatusBar, StyleSheet, View } from 'react-native';
-import Scene from './components/Scene';
+// import Scene from './components/Scene';
+import Voxel from './components/Voxel';
 
 console.ignoredYellowBox = ['THREE.WebGLRenderer'];
 
 class AppContainer extends React.Component {
   render = () => (
       <View style={styles.container}>
-        <Scene
+        <Voxel
         />
         {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
         {Platform.OS === 'android' && <View style={styles.statusBarUnderlay} />}

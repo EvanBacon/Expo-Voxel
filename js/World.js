@@ -8,6 +8,7 @@ import * as THREE from 'three';
 import ImprovedNoise from './ImprovedNoise'
 const THREEView = Expo.createTHREEViewClass(THREE);
 
+import Chunk from './Chunk'
 
 export const MAP_BLOCK_WIDTH = (128);
 export const MAP_BLOCK_HEIGHT = (128);
@@ -23,15 +24,20 @@ export const CHUNKS_DEPTH = MAP_BLOCK_DEPTH/CHUNK_DEPTH;
 
 
 export default class World {
-  width;
-  height;
   data;
   mesh;
+  chunks = [];
+  perlin new ImprovedNoise();
 
-  constructor(width, depth) {
-    this.width = width;
-    this.depth = depth;
+  constructor() {
     this.data = this.generateHeight( width, depth );
+
+
+  }
+
+  createChunk = (x, y, z) => {
+    let chunk = new Chunk(x,y,z,this.perlin);
+    chunks.push(chunk)
   }
 
   isValidBlock = (x,y,z) => {
@@ -262,4 +268,100 @@ export default class World {
 
     return this._buildTerrain(this.texture)
   }
+
+
+chunkToWorld = (x,y,z) => {
+  return [
+    x * CHUNK_WIDTH,
+    y * CHUNK_HEIGHT,
+    z * CHUNK_DEPTH
+  ]
+}
+
+removeFarChunks = (playerPosition) => {
+
+  playerPosition = playerPosition || this.playerPosition()
+  var nearbyChunks = this.voxels.nearbyChunks(playerPosition, this.removeDistance).map(function(chunkPos) {
+    return chunkPos.join('|')
+  })
+  Object.keys(this.voxels.chunks).map(function(chunkIndex) {
+    if (nearbyChunks.indexOf(chunkIndex) > -1) return
+    var chunk = this.voxels.chunks[chunkIndex]
+    var mesh = this.voxels.meshes[chunkIndex]
+    var pendingIndex = this.pendingChunks.indexOf(chunkIndex)
+    if (pendingIndex !== -1) this.pendingChunks.splice(pendingIndex, 1)
+    if (!chunk) return
+    var chunkPosition = chunk.position
+    if (mesh) {
+      this.scene.remove(mesh[this.meshType])
+      mesh[this.meshType].geometry.dispose()
+      delete mesh.data
+      delete mesh.geometry
+      delete mesh.meshed
+      delete mesh.surfaceMesh
+    }
+    delete this.voxels.chunks[chunkIndex]
+    this.emit('removeChunk', chunkPosition)
+  })
+  this.voxels.requestMissingChunks(playerPosition)
+}
+
+addChunkToNextUpdate = (chunk) => {
+  this.chunksNeedsUpdate[chunk.position.join('|')] = chunk
+}
+
+updateDirtyChunks = () => {
+  Object.keys(this.chunksNeedsUpdate).forEach(function showChunkAtIndex(chunkIndex) {
+    var chunk = this.chunksNeedsUpdate[chunkIndex]
+    this.emit('dirtyChunkUpdate', chunk)
+    this.showChunk(chunk)
+  })
+  this.chunksNeedsUpdate = {}
+}
+
+loadPendingChunks = (count) => {
+  var pendingChunks = this.pendingChunks
+
+  if (!this.asyncChunkGeneration) {
+    count = pendingChunks.length
+  } else {
+    count = count || (pendingChunks.length * 0.1)
+    count = Math.max(1, Math.min(count, pendingChunks.length))
+  }
+
+  for (var i = 0; i < count; i += 1) {
+    var chunkPos = pendingChunks[i].split('|')
+    var chunk = this.voxels.generateChunk(chunkPos[0]|0, chunkPos[1]|0, chunkPos[2]|0)
+
+    if (process.browser) this.showChunk(chunk)
+  }
+
+  if (count) pendingChunks.splice(0, count)
+}
+
+getChunkAtPosition = (pos) => {
+  var chunkID = this.voxels.chunkAtPosition(pos).join('|')
+  var chunk = this.voxels.chunks[chunkID]
+  return chunk
+}
+
+showChunk = (chunk) => {
+  var chunkIndex = chunk.position.join('|')
+  var bounds = this.voxels.getBounds.apply(this.voxels, chunk.position)
+  var scale = new THREE.Vector3(1, 1, 1)
+  var mesh = voxelMesh(chunk, this.mesher, scale, this.THREE)
+  this.voxels.chunks[chunkIndex] = chunk
+  if (this.voxels.meshes[chunkIndex]) this.scene.remove(this.voxels.meshes[chunkIndex][this.meshType])
+  this.voxels.meshes[chunkIndex] = mesh
+  if (process.browser) {
+    if (this.meshType === 'wireMesh') mesh.createWireMesh()
+    else mesh.createSurfaceMesh(this.materials.material)
+    this.materials.paint(mesh)
+  }
+  mesh.setPosition(bounds[0][0], bounds[0][1], bounds[0][2])
+  mesh.addToScene(this.scene)
+  this.emit('renderChunk', chunk)
+  return mesh
+}
+
 }

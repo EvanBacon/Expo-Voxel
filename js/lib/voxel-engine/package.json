@@ -1,0 +1,95 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "voxel-engine@~0.18.0",
+        "scope": null,
+        "escapedName": "voxel-engine",
+        "name": "voxel-engine",
+        "rawSpec": "~0.18.0",
+        "spec": ">=0.18.0 <0.19.0",
+        "type": "range"
+      },
+      "/Users/evan.bacon/GoogleDrive/react-native/exponent/SXM-Everest/voxeljs"
+    ]
+  ],
+  "_from": "voxel-engine@>=0.18.0 <0.19.0",
+  "_id": "voxel-engine@0.18.4",
+  "_inCache": true,
+  "_location": "/voxel-engine",
+  "_npmUser": {
+    "name": "maxogden",
+    "email": "max@maxogden.com"
+  },
+  "_npmVersion": "1.2.30",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "voxel-engine@~0.18.0",
+    "scope": null,
+    "escapedName": "voxel-engine",
+    "name": "voxel-engine",
+    "rawSpec": "~0.18.0",
+    "spec": ">=0.18.0 <0.19.0",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/voxel-engine/-/voxel-engine-0.18.4.tgz",
+  "_shasum": "dc1e8b2c4ef03c342348049c1e23a096c3b1f6b1",
+  "_shrinkwrap": null,
+  "_spec": "voxel-engine@~0.18.0",
+  "_where": "/Users/evan.bacon/GoogleDrive/react-native/exponent/SXM-Everest/voxeljs",
+  "bugs": {
+    "url": "https://github.com/maxogden/voxel-engine/issues"
+  },
+  "dependencies": {
+    "aabb-3d": "0.0.0",
+    "collide-3d-tilemap": "0.0.1",
+    "gl-matrix": "2.0.0",
+    "inherits": "1.0.0",
+    "interact": "0.0.2",
+    "kb-controls": "0.0.2",
+    "pin-it": "0.0.1",
+    "raf": "0.0.1",
+    "spatial-events": "0.0.1",
+    "spatial-trigger": "0.0.0",
+    "three": "0.56.0",
+    "tic": "0.2.1",
+    "voxel": "0.3.1",
+    "voxel-control": "0.0.7",
+    "voxel-mesh": "0.2.1",
+    "voxel-physical": "0.0.10",
+    "voxel-raycast": "0.2.1",
+    "voxel-region-change": "0.1.0",
+    "voxel-texture": "0.5.6",
+    "voxel-view": "0.0.6"
+  },
+  "description": "make games with voxel.js",
+  "devDependencies": {
+    "tape": "0.2.2"
+  },
+  "directories": {},
+  "dist": {
+    "shasum": "dc1e8b2c4ef03c342348049c1e23a096c3b1f6b1",
+    "tarball": "https://registry.npmjs.org/voxel-engine/-/voxel-engine-0.18.4.tgz"
+  },
+  "homepage": "https://github.com/maxogden/voxel-engine#readme",
+  "maintainers": [
+    {
+      "name": "maxogden",
+      "email": "max@maxogden.com"
+    }
+  ],
+  "name": "voxel-engine",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/maxogden/voxel-engine.git"
+  },
+  "scripts": {
+    "test": "node test.js"
+  },
+  "version": "0.18.4"
+}

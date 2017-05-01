@@ -57,15 +57,16 @@ function Game(opts) {
   this.materialParams = opts.materialParams || {}
   this.items = []
   this.voxels = voxel(this)
-  this.scene = new THREE.Scene()
   this.view = opts.view || new voxelView(THREE, { width: this.width, height: this.height })
-  this.view.bindToScene(this.scene)
+  this.scene = this.view.scene;
+
+  // this.view.bindToScene(this.scene)
   this.camera = this.view.getCamera()
-  if (!opts.lightsDisabled) this.addLights(this.scene)
+  if (!opts.lightsDisabled) this.addLights(this.view.scene)
 
   this.skyColor = opts.skyColor || 0xBFD1E5
   this.fogScale = opts.fogScale || 32
-  if (!opts.fogDisabled) this.scene.fog = new THREE.Fog( this.skyColor, 0.00025, this.worldWidth() * this.fogScale )
+  if (!opts.fogDisabled) this.view.scene.fog = new THREE.Fog( this.skyColor, 0.00025, this.worldWidth() * this.fogScale )
 
   this.collideVoxels = collisions(
     this.getBlock.bind(this),

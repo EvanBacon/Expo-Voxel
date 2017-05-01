@@ -1,106 +1,15 @@
-var THREE, temporaryPosition, temporaryVector
+'use strict';
 
 import React, { PropTypes } from 'react';
-import { View, Dimensions } from 'react-native';
-import {GLView} from 'expo'
+import { View } from 'react-native';
 
-const {width, height} = Dimensions.get('window');
-// module.exports = function(three, opts) {
-//   temporaryPosition = new three.Vector3
-//   temporaryVector = new three.Vector3
-//
-//   return new View(three, opts)
-// }
+import {GLView} from 'expo';
 
-
-// <VoxelView tick={}  />
-export default (three, opts) => class VoxelView extends React.Component {
-
-  constructor(props) {
-    super(props)
-    temporaryPosition = new three.Vector3
-    temporaryVector = new three.Vector3
-
-    THREE = three // three.js doesn't support multiple instances on a single page
-    this.fov = opts.fov || 60
-    this.aspectRatio = opts.aspectRatio || width/height
-    this.nearPlane = opts.nearPlane || 1
-    this.farPlane = opts.farPlane || 10000
-    this.skyColor = opts.skyColor || 0xBFD1E5
-    this.ortho = opts.ortho
-    this.camera = this.ortho ? (new THREE.OrthographicCamera(width/-2, width/2, height/2, height/-2, this.nearPlane, this.farPlane)) : (new THREE.PerspectiveCamera(this.fov, this.aspectRatio, this.nearPlane, this.farPlane))
-    this.camera.lookAt(new THREE.Vector3(0, 0, 0))
-
-    // if (!process.browser) return
-
-    this.createRenderer()
-    // this.element = this.renderer.domElement
-  }
-
-  createRenderer = () => {
-    // this.renderer = new THREE.WebGLRenderer({
-    //   antialias: true
-    // })
-    // this.renderer.setSize(this.width, this.height)
-    // this.renderer.setClearColorHex(this.skyColor, 1.0)
-    // this.renderer.clear()
-  }
-
-  // bindToScene = (scene) => {
-  //   scene.add(this.camera)
-  // }
-
-  getCamera = () => this.camera;
-  
-  getScene = () => this.scene;
-
-  cameraPosition = () => {
-    temporaryPosition.multiplyScalar(0)
-    temporaryPosition.applyMatrix4(this.camera.matrixWorld)
-    return [temporaryPosition.x, temporaryPosition.y, temporaryPosition.z]
-  }
-
-  cameraVector = () => {
-    temporaryVector.multiplyScalar(0)
-    temporaryVector.z = -1
-    this.camera.matrixWorld.rotateAxis(temporaryVector)
-    return [temporaryVector.x, temporaryVector.y, temporaryVector.z]
-  }
-
-  // resizeWindow = () => {
-  //
-  //   this.camera.aspect = this.aspectRatio = width/height
-  //   this.width = width
-  //   this.height = height
-  //
-  //   this.camera.updateProjectionMatrix()
-  //
-  //   this.renderer.setSize( width, height )
-  // }
-  //
-  // render = (scene) => {
-  //   this.renderer.render(scene, this.camera)
-  // }
-
-  // appendTo = (element) => {
-  //   if (typeof element === 'object') {
-  //     element.appendChild(this.element)
-  //   }
-  //   else {
-  //     document.querySelector(element).appendChild(this.element)
-  //   }
-  //
-  //   this.resizeWindow(this.width,this.height)
-  // }
-
-
-
-
-
+export default THREE => class THREEView extends React.Component {
   static propTypes = {
     // Parameters to http://threejs.org/docs/?q=webgl#Reference/Renderers/WebGLRenderer.render
     scene: PropTypes.object,
-    // camera: PropTypes.object,
+    camera: PropTypes.object,
 
     // Whether to automatically set the aspect ratio of the camera from
     // the viewport. Defaults to `true`.
@@ -144,7 +53,6 @@ export default (three, opts) => class VoxelView extends React.Component {
 
   _onContextCreate = gl => {
     const renderer = new THREE.WebGLRenderer({
-      antialias: true,
       canvas: {
         width: gl.drawingBufferWidth,
         height: gl.drawingBufferHeight,
@@ -175,8 +83,8 @@ export default (three, opts) => class VoxelView extends React.Component {
         this.props.tick(dt);
       }
 
-      if (this.props.scene && this.camera) {
-        const {camera} = this;
+      if (this.props.scene && this.props.camera) {
+        const camera = this.props.camera;
         if (this.props.autoAspect && camera.aspect) {
           const desiredAspect = gl.drawingBufferWidth / gl.drawingBufferHeight;
           if (camera.aspect !== desiredAspect) {
@@ -205,5 +113,4 @@ export default (three, opts) => class VoxelView extends React.Component {
     const { scene, camera, autoAspect, tick, ...viewProps } = this.props;
     return <GLView {...viewProps} onContextCreate={this._onContextCreate} />;
   }
-
-}
+};

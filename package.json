@@ -13,6 +13,7 @@
   "dependencies": {
     "aabb-3d": "^0.1.0",
     "collide-3d-tilemap": "^1.0.0",
+    "events": "^1.1.1",
     "expo": "16.0.0",
     "gl-matrix": "^2.3.2",
     "inherits": "^2.0.3",

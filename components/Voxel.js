@@ -4,18 +4,29 @@ import Expo from 'expo';
 import React from 'react';
 import {PanResponder,View, Dimensions} from 'react-native'
 const {width, height} = Dimensions.get('window')
+var voxel = require('voxel')
 
 import Engine from '../js/lib/voxel-engine';
-
+import voxelView from '../js/lib/voxel-view';
 import * as THREE from 'three';
 const THREEView = Expo.createTHREEViewClass(THREE);
+const VoxelView = voxelView(THREE, {});
 
 import Dpad from './Dpad'
 import GestureType from '../js/GestureType'
 
 export default class Voxel extends React.Component {
   // world;
-  engine = new Engine({});
+
+  engine = new Engine({
+    view: voxelView,
+    generate: voxel.generator['Valley'],
+    chunkDistance: 2,
+    materials: ['#fff', '#000'],
+    materialFlatColor: true,
+    worldOrigin: [0, 0, 0],
+    controls: { discreteFire: true }
+  });
   state = {
     ready: false
   }
@@ -113,7 +124,7 @@ export default class Voxel extends React.Component {
   // }
 
   setupCamera = (fov = 60, zNear = 0.01, zFar = 20000) => {
-    this.camera = new THREE.PerspectiveCamera( fov, width / height, zNear, zFar );
+    // this.camera = new THREE.PerspectiveCamera( fov, width / height, zNear, zFar );
   }
 
   setupScene = (fogColor = 0xffffff, fogFalloff = 0.00015) => {
@@ -144,6 +155,10 @@ export default class Voxel extends React.Component {
     // this.mesh = this.world.getGeometry()
 
     // this.physics = new Physics(this.world)
+
+
+    engine
+
     this.setupWorld()
 
     // this.scene.add( this.mesh );
@@ -187,15 +202,12 @@ export default class Voxel extends React.Component {
       }}/>
     )
 
-
-
     return (
       <View style={{flex: 1}}>
-        <THREEView
+        <VoxelView
           {...this.panResponder.panHandlers}
           style={{ flex: 1 }}
           scene={this.scene}
-          camera={this.camera}
           tick={this.tick}
         />
         {dPad}

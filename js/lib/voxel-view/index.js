@@ -4,6 +4,8 @@ import React, { PropTypes } from 'react';
 import { View, Dimensions } from 'react-native';
 import {GLView} from 'expo'
 
+import Game from '../voxel-engine';
+
 const {width, height} = Dimensions.get('window');
 // module.exports = function(three, opts) {
 //   temporaryPosition = new three.Vector3
@@ -12,9 +14,11 @@ const {width, height} = Dimensions.get('window');
 //   return new View(three, opts)
 // }
 
+var voxel = require('voxel')
 
 // <VoxelView tick={}  />
 export default (three, opts) => class VoxelView extends React.Component {
+
 
   constructor(props) {
     super(props)
@@ -22,6 +26,11 @@ export default (three, opts) => class VoxelView extends React.Component {
     temporaryVector = new three.Vector3
 
     THREE = three // three.js doesn't support multiple instances on a single page
+
+    this.scene = new THREE.Scene();
+    this.scene.fog = new THREE.FogExp2(0xBFD1E5, 0.00015);
+
+
     this.fov = opts.fov || 60
     this.aspectRatio = opts.aspectRatio || width/height
     this.nearPlane = opts.nearPlane || 1
@@ -33,8 +42,22 @@ export default (three, opts) => class VoxelView extends React.Component {
 
     // if (!process.browser) return
 
+    this.engine = new Game({
+      view: this,
+      generate: voxel.generator['Valley'],
+      chunkDistance: 2,
+      materials: ['#fff', '#000'],
+      materialFlatColor: true,
+      worldOrigin: [0, 0, 0],
+      controls: { discreteFire: true }
+    });
+
+
     this.createRenderer()
     // this.element = this.renderer.domElement
+
+
+
   }
 
   createRenderer = () => {
@@ -51,8 +74,8 @@ export default (three, opts) => class VoxelView extends React.Component {
   // }
 
   getCamera = () => this.camera;
-  
-  getScene = () => this.scene;
+
+  getScene = () => this.props.scene;
 
   cameraPosition = () => {
     temporaryPosition.multiplyScalar(0)
@@ -171,9 +194,9 @@ export default (three, opts) => class VoxelView extends React.Component {
         ? now - lastFrameTime
         : 0.16666;
 
-      if (this.props.tick) {
-        this.props.tick(dt);
-      }
+      // if (this.tick) {
+        this.tick(dt);
+      // }
 
       if (this.props.scene && this.camera) {
         const {camera} = this;
@@ -200,9 +223,17 @@ export default (three, opts) => class VoxelView extends React.Component {
     }
   }
 
+  tick = (dt) => {
+    this.engine.update(dt);
+    // if (this.frame % 60 == 0) {
+      // this.controls.update( dt, this.moveID );
+    // }
+    // this.frame += 1
+  }
+
   render() {
     // eslint-disable-next-line no-unused-vars
-    const { scene, camera, autoAspect, tick, ...viewProps } = this.props;
+    const { scene, camera, autoAspect, ...viewProps } = this.props;
     return <GLView {...viewProps} onContextCreate={this._onContextCreate} />;
   }
 

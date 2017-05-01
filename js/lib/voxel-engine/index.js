@@ -10,7 +10,10 @@ var THREE = require('three')
 var inherits = require('inherits') //THIS
 // var path = require('path')
 var EventEmitter = require('EventEmitter') //THIS
-if (process.browser) var interact = require('../interact') //THIS
+
+//// TODO: ADD CONTROLS
+// if (process.browser) var interact = require('../interact') //THIS
+
 // var requestAnimationFrame = require('raf') //THIS
 var collisions = require('collide-3d-tilemap')
 var aabb = require('aabb-3d')
@@ -26,9 +29,11 @@ var tic = require('tic')()
 
 import {Dimensions} from 'react-native'
 const {width, height} = Dimensions.get('window');
-module.exports = Game
 
-function Game(opts) {
+export default class Game {
+  constructor(opts) {
+
+
   if (!(this instanceof Game)) return new Game(opts)
   var self = this
   if (!opts) opts = {}
@@ -41,6 +46,7 @@ function Game(opts) {
   this.THREE = THREE
   this.vector = vector
   this.glMatrix = glMatrix
+  this.pin = pin;
   this.arrayType = opts.arrayType || Uint8Array
   this.cubeSize = 1 // backwards compat
   this.chunkSize = opts.chunkSize || 32
@@ -61,7 +67,7 @@ function Game(opts) {
   this.scene = this.view.scene;
 
   // this.view.bindToScene(this.scene)
-  this.camera = this.view.getCamera()
+  this.camera = this.view.camera
   if (!opts.lightsDisabled) this.addLights(this.view.scene)
 
   this.skyColor = opts.skyColor || 0xBFD1E5
@@ -120,13 +126,12 @@ function Game(opts) {
   }, 2000)
 
   this.initializeControls(opts)
+
+  inherits(Game, EventEmitter)
+
 }
 
-inherits(Game, EventEmitter)
-
-// # External API
-
-Game.prototype.voxelPosition = function(gamePosition) {
+voxelPosition = (gamePosition) => {
   var _ = Math.floor
   var p = gamePosition
   var v = []
@@ -136,23 +141,27 @@ Game.prototype.voxelPosition = function(gamePosition) {
   return v
 }
 
-Game.prototype.cameraPosition = function() {
+cameraPosition = () => {
   return this.view.cameraPosition()
 }
 
-Game.prototype.cameraVector = function() {
+
+
+// # External API
+
+
+cameraVector = () => {
   return this.view.cameraVector()
 }
 
-Game.prototype.makePhysical = function(target, envelope, blocksCreation) {
+makePhysical = (target, envelope, blocksCreation) => {
   var vel = this.terminalVelocity
   envelope = envelope || [2/3, 1.5, 2/3]
   var obj = physical(target, this.potentialCollisionSet(), envelope, {x: vel[0], y: vel[1], z: vel[2]})
   obj.blocksCreation = !!blocksCreation
   return obj
 }
-
-Game.prototype.addItem = function(item) {
+addItem = (item) => {
   if (!item.tick) {
     var newItem = physical(
       item.mesh,
@@ -165,7 +174,7 @@ Game.prototype.addItem = function(item) {
       newItem.subjectTo(this.gravity)
     }
 
-    newItem.repr = function() { return 'debris' }
+    newItem.repr = () => { return 'debris' }
     newItem.mesh = item.mesh
     newItem.blocksCreation = item.blocksCreation
 
@@ -177,7 +186,7 @@ Game.prototype.addItem = function(item) {
   return this.items[this.items.length - 1]
 }
 
-Game.prototype.removeItem = function(item) {
+removeItem = (item) => {
   var ix = this.items.indexOf(item)
   if (ix < 0) return
   this.items.splice(ix, 1)
@@ -185,8 +194,8 @@ Game.prototype.removeItem = function(item) {
 }
 
 // only intersects voxels, not items (for now)
-Game.prototype.raycast = // backwards compat
-Game.prototype.raycastVoxels = function(start, direction, maxDistance, epilson) {
+// raycast = // backwards compat
+raycastVoxels = (start, direction, maxDistance, epilson) => {
   if (!start) return this.raycastVoxels(this.cameraPosition(), this.cameraVector(), 10)
 
   var hitNormal = [0, 0, 0]
@@ -209,7 +218,7 @@ Game.prototype.raycastVoxels = function(start, direction, maxDistance, epilson) 
   }
 }
 
-Game.prototype.canCreateBlock = function(pos) {
+canCreateBlock = (pos) => {
   pos = this.parseVectorArguments(arguments)
   var floored = pos.map(function(i) { return Math.floor(i) })
   var bbox = aabb(floored, [1, 1, 1])
@@ -223,14 +232,14 @@ Game.prototype.canCreateBlock = function(pos) {
   return true
 }
 
-Game.prototype.createBlock = function(pos, val) {
+createBlock = (pos, val) => {
   if (typeof val === 'string') val = this.materials.find(val)
   if (!this.canCreateBlock(pos)) return false
   this.setBlock(pos, val)
   return true
 }
 
-Game.prototype.setBlock = function(pos, val) {
+setBlock = (pos, val) => {
   if (typeof val === 'string') val = this.materials.find(val)
   var old = this.voxels.voxelAtPosition(pos, val)
   var c = this.voxels.chunkAtPosition(pos)
@@ -241,12 +250,12 @@ Game.prototype.setBlock = function(pos, val) {
   this.emit('setBlock', pos, val, old)
 }
 
-Game.prototype.getBlock = function(pos) {
+getBlock = (pos) => {
   pos = this.parseVectorArguments(arguments)
   return this.voxels.voxelAtPosition(pos)
 }
 
-Game.prototype.blockPosition = function(pos) {
+blockPosition = (pos) => {
   pos = this.parseVectorArguments(arguments)
   var ox = Math.floor(pos[0])
   var oy = Math.floor(pos[1])
@@ -254,7 +263,7 @@ Game.prototype.blockPosition = function(pos) {
   return [ox, oy, oz]
 }
 
-Game.prototype.blocks = function(low, high, iterator) {
+blocks = (low, high, iterator) => {
   var l = low, h = high
   var d = [ h[0]-l[0], h[1]-l[1], h[2]-l[2] ]
   if (!iterator) var voxels = new this.arrayType(d[0]*d[1]*d[2])
@@ -269,22 +278,18 @@ Game.prototype.blocks = function(low, high, iterator) {
 }
 
 // backwards compat
-Game.prototype.createAdjacent = function(hit, val) {
+createAdjacent = (hit, val) => {
   this.createBlock(hit.adjacent, val)
-}
-
-Game.prototype.appendTo = function (element) {
-  this.view.appendTo(element)
 }
 
 // # Defaults/options parsing
 
-Game.prototype.gravity = [0, -0.0000036, 0]
-Game.prototype.friction = 0.3
-Game.prototype.epilson = 1e-8
-Game.prototype.terminalVelocity = [0.9, 0.1, 0.9]
+gravity = [0, -0.0000036, 0]
+friction = 0.3
+epilson = 1e-8
+terminalVelocity = [0.9, 0.1, 0.9]
 
-Game.prototype.defaultButtons = {
+defaultButtons = {
   'W': 'forward'
 , 'A': 'left'
 , 'S': 'backward'
@@ -301,32 +306,32 @@ Game.prototype.defaultButtons = {
 }
 
 // used in methods that have identity function(pos) {}
-Game.prototype.parseVectorArguments = function(args) {
+parseVectorArguments = (args) => {
   if (!args) return false
   if (args[0] instanceof Array) return args[0]
   return [args[0], args[1], args[2]]
 }
 
-Game.prototype.setConfigurablePositions = function(opts) {
+setConfigurablePositions = (opts) => {
   var sp = opts.startingPosition
   this.startingPosition = sp || [35, 1024, 35]
   var wo = opts.worldOrigin
   this.worldOrigin = wo || [0, 0, 0]
 }
 
-Game.prototype.setDimensions = function(opts) {
+setDimensions = (opts) => {
   this.height = height;
   this.width = width;
 }
 
 // # Physics/collision related methods
 
-Game.prototype.control = function(target) {
+control = (target) => {
   this.controlling = target
   return this.controls.target(target)
 }
 
-Game.prototype.potentialCollisionSet = function() {
+potentialCollisionSet = () => {
   return [{ collide: this.collideTerrain.bind(this) }]
 }
 
@@ -338,7 +343,7 @@ Game.prototype.potentialCollisionSet = function() {
  * @return {Array} an [x, y, z] tuple
  */
 
-Game.prototype.playerPosition = function() {
+playerPosition = () => {
   var target = this.controls.target()
   var position = target
     ? target.avatar.position
@@ -346,7 +351,7 @@ Game.prototype.playerPosition = function() {
   return [position.x, position.y, position.z]
 }
 
-Game.prototype.playerAABB = function(position) {
+playerAABB = (position) => {
   var pos = position || this.playerPosition()
   var lower = []
   var upper = [1/2, this.playerHeight, 1/2]
@@ -356,7 +361,7 @@ Game.prototype.playerAABB = function(position) {
   return bbox
 }
 
-Game.prototype.collideTerrain = function(other, bbox, vec, resting) {
+collideTerrain = (other, bbox, vec, resting) => {
   var self = this
   var axes = ['x', 'y', 'z']
   var vec3 = [vec.x, vec.y, vec.z]
@@ -373,14 +378,14 @@ Game.prototype.collideTerrain = function(other, bbox, vec, resting) {
 
 // # Three.js specific methods
 
-// Game.prototype.addStats = function() {
+// addStats = () {
 //   stats = new Stats()
 //   stats.domElement.style.position  = 'absolute'
 //   stats.domElement.style.bottom  = '0px'
 //   document.body.appendChild( stats.domElement )
 // }
 
-Game.prototype.addLights = function(scene) {
+addLights = (scene) => {
   var ambientLight, directionalLight
   ambientLight = new THREE.AmbientLight(0xcccccc)
   scene.add(ambientLight)
@@ -391,11 +396,11 @@ Game.prototype.addLights = function(scene) {
 
 // # Chunk related methods
 
-Game.prototype.configureChunkLoading = function(opts) {
+configureChunkLoading = (opts) => {
   var self = this
   if (!opts.generateChunks) return
   if (!opts.generate) {
-    this.generate = function(x,y,z) {
+    this.generate = (x,y,z) => {
       return x*x+y*y+z*z <= 15*15 ? 1 : 0 // sphere world
     }
   } else {
@@ -404,17 +409,17 @@ Game.prototype.configureChunkLoading = function(opts) {
   if (opts.generateVoxelChunk) {
     this.generateVoxelChunk = opts.generateVoxelChunk
   } else {
-    this.generateVoxelChunk = function(low, high) {
+    this.generateVoxelChunk = (low, high) => {
       return voxel.generate(low, high, self.generate, self)
     }
   }
 }
 
-Game.prototype.worldWidth = function() {
+worldWidth = () => {
   return this.chunkSize * 2 * this.chunkDistance
 }
 
-Game.prototype.chunkToWorld = function(pos) {
+chunkToWorld = (pos) => {
   return [
     pos[0] * this.chunkSize,
     pos[1] * this.chunkSize,
@@ -422,7 +427,7 @@ Game.prototype.chunkToWorld = function(pos) {
   ]
 }
 
-Game.prototype.removeFarChunks = function(playerPosition) {
+removeFarChunks = (playerPosition) => {
   var self = this
   playerPosition = playerPosition || this.playerPosition()
   var nearbyChunks = this.voxels.nearbyChunks(playerPosition, this.removeDistance).map(function(chunkPos) {
@@ -450,11 +455,11 @@ Game.prototype.removeFarChunks = function(playerPosition) {
   self.voxels.requestMissingChunks(playerPosition)
 }
 
-Game.prototype.addChunkToNextUpdate = function(chunk) {
+addChunkToNextUpdate = (chunk) => {
   this.chunksNeedsUpdate[chunk.position.join('|')] = chunk
 }
 
-Game.prototype.updateDirtyChunks = function() {
+updateDirtyChunks = () => {
   var self = this
   Object.keys(this.chunksNeedsUpdate).forEach(function showChunkAtIndex(chunkIndex) {
     var chunk = self.chunksNeedsUpdate[chunkIndex]
@@ -464,7 +469,7 @@ Game.prototype.updateDirtyChunks = function() {
   this.chunksNeedsUpdate = {}
 }
 
-Game.prototype.loadPendingChunks = function(count) {
+loadPendingChunks = (count) => {
   var pendingChunks = this.pendingChunks
 
   if (!this.asyncChunkGeneration) {
@@ -484,13 +489,13 @@ Game.prototype.loadPendingChunks = function(count) {
   if (count) pendingChunks.splice(0, count)
 }
 
-Game.prototype.getChunkAtPosition = function(pos) {
+getChunkAtPosition = (pos) => {
   var chunkID = this.voxels.chunkAtPosition(pos).join('|')
   var chunk = this.voxels.chunks[chunkID]
   return chunk
 }
 
-Game.prototype.showChunk = function(chunk) {
+showChunk = (chunk) => {
   var chunkIndex = chunk.position.join('|')
   var bounds = this.voxels.getBounds.apply(this.voxels, chunk.position)
   var scale = new THREE.Vector3(1, 1, 1)
@@ -511,7 +516,7 @@ Game.prototype.showChunk = function(chunk) {
 
 // # Debugging methods
 
-Game.prototype.addMarker = function(position) {
+addMarker = (position) => {
   var geometry = new THREE.SphereGeometry( 0.1, 10, 10 )
   var material = new THREE.MeshPhongMaterial( { color: 0xffffff, shading: THREE.FlatShading } )
   var mesh = new THREE.Mesh( geometry, material )
@@ -519,7 +524,7 @@ Game.prototype.addMarker = function(position) {
   this.scene.add(mesh)
 }
 
-Game.prototype.addAABBMarker = function(aabb, color) {
+addAABBMarker = (aabb, color) => {
   var geometry = new THREE.CubeGeometry(aabb.width(), aabb.height(), aabb.depth())
   var material = new THREE.MeshBasicMaterial({ color: color || 0xffffff, wireframe: true, transparent: true, opacity: 0.5, side: THREE.DoubleSide })
   var mesh = new THREE.Mesh(geometry, material)
@@ -528,16 +533,16 @@ Game.prototype.addAABBMarker = function(aabb, color) {
   return mesh
 }
 
-Game.prototype.addVoxelMarker = function(x, y, z, color) {
+addVoxelMarker = (x, y, z, color) => {
   var bbox = aabb([x, y, z], [1, 1, 1])
   return this.addAABBMarker(bbox, color)
 }
 
-Game.prototype.pin = pin
+
 
 // # Misc internal methods
 
-Game.prototype.onControlChange = function(gained, stream) {
+onControlChange = (gained, stream) => {
   this.paused = false
 
   if (!gained && !this.optout) {
@@ -549,18 +554,18 @@ Game.prototype.onControlChange = function(gained, stream) {
   stream.pipe(this.controls.createWriteRotationStream())
 }
 
-Game.prototype.onControlOptOut = function() {
+onControlOptOut = () => {
   this.optout = true
 }
 
-Game.prototype.onFire = function(state) {
+onFire = (state) => {
   this.emit('fire', this.controlling, state)
 }
 
-Game.prototype.setInterval = tic.interval.bind(tic)
-Game.prototype.setTimeout = tic.timeout.bind(tic)
+setInterval = tic.interval.bind(tic)
+setTimeout = tic.timeout.bind(tic)
 
-Game.prototype.tick = function(delta) {
+tick = (delta) => {
   for(var i = 0, len = this.items.length; i < len; ++i) {
     this.items[i].tick(delta)
   }
@@ -579,11 +584,11 @@ Game.prototype.tick = function(delta) {
   this.spatial.emit('position', playerPos, playerPos)
 }
 
-Game.prototype.render = function(delta) {
+render = (delta) => {
   this.view.render(this.scene)
 }
 
-Game.prototype.initializeTimer = function(rate) {
+initializeTimer = (rate) => {
   var self = this
   var accum = 0
   var now = 0
@@ -617,27 +622,30 @@ Game.prototype.initializeTimer = function(rate) {
   }
 }
 
-Game.prototype.update = function(dt) {
+update = (dt) => {
   self.emit('prerender', dt)
   self.render(dt)
   self.emit('postrender', dt)
 }
 
-Game.prototype.initializeControls = function(opts) {
+initializeControls = (opts) => {
   // player control
   this.keybindings = opts.keybindings || this.defaultButtons
   // this.buttons = kb(document.body, this.keybindings)
   // this.buttons.disable()
   this.optout = false
-  this.interact = interact(opts.interactElement || this.view.element, opts.interactMouseDrag)
-  this.interact
-      .on('attain', this.onControlChange.bind(this, true))
-      .on('release', this.onControlChange.bind(this, false))
-      .on('opt-out', this.onControlOptOut.bind(this))
+
+//// TODO: ADD CONTROLS
+  // this.interact = interact(opts.interactElement || this.view.element, opts.interactMouseDrag)
+  // this.interact
+  //     .on('attain', this.onControlChange.bind(this, true))
+  //     .on('release', this.onControlChange.bind(this, false))
+  //     .on('opt-out', this.onControlOptOut.bind(this))
+
   this.hookupControls(this.buttons, opts)
 }
 
-Game.prototype.hookupControls = function(buttons, opts) {
+hookupControls = (buttons, opts) => {
   opts = opts || {}
   opts.controls = opts.controls || {}
   opts.controls.onfire = this.onFire.bind(this)
@@ -646,7 +654,7 @@ Game.prototype.hookupControls = function(buttons, opts) {
   this.controlling = null
 }
 
-Game.prototype.handleChunkGeneration = function() {
+handleChunkGeneration = () => {
   var self = this
   this.voxels.on('missingChunk', function(chunkPos) {
     self.pendingChunks.push(chunkPos.join('|'))
@@ -656,6 +664,10 @@ Game.prototype.handleChunkGeneration = function() {
 }
 
 // teardown methods
-Game.prototype.destroy = function() {
+destroy = () => {
   clearInterval(this.timer)
+}
+
+
+
 }

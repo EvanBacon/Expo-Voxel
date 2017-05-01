@@ -50,9 +50,13 @@ this.addLights()
 
     // if (!process.browser) return
 
+    console.log("VOX.js:: Terrain", voxel.generator['Valley']());
+
     this.engine = new Game({
       view: this,
       generate: voxel.generator['Valley'],
+
+      mesher: voxel.meshers.greedy,
       chunkDistance: 2,
       materials: ['#fff', '#000'],
       materialFlatColor: true,

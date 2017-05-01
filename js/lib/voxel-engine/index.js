@@ -111,8 +111,9 @@ export default class Game {
 
   this.materials.load(this.materialNames)
 
-  if (this.generateChunks) this.handleChunkGeneration()
-
+  if (this.generateChunks) {
+    this.handleChunkGeneration()
+  }
   // client side only after this point
   // if (!process.browser) return
 
@@ -495,7 +496,13 @@ showChunk = (chunk) => {
   var chunkIndex = chunk.position.join('|')
   var bounds = this.voxels.getBounds.apply(this.voxels, chunk.position)
   var scale = new THREE.Vector3(1, 1, 1)
+
+  console.log("VOX.js:: before", Object.keys(chunk),  chunk.dims);
+
   var mesh = voxelMesh(chunk, this.mesher, scale, this.THREE)
+
+  console.log("VOX.js:: Then", chunk.dims);
+
   this.voxels.chunks[chunkIndex] = chunk
   if (this.voxels.meshes[chunkIndex]) this.scene.remove(this.voxels.meshes[chunkIndex][this.meshType])
   this.voxels.meshes[chunkIndex] = mesh

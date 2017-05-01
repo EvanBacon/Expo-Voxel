@@ -181,9 +181,11 @@ Texture.prototype._powerof2 = function(done) {
     return x;
   }
   if (h > w) w = h;
-  var old = this.canvas.getContext('2d').getImageData(0, 0, this.canvas.width, this.canvas.height);
-  this.canvas.width = this.canvas.height = pow2(w);
-  this.canvas.getContext('2d').putImageData(old, 0, 0);
+
+  ////TODO: Add this back - fix canvas image
+  // var old = this.canvas.getContext('2d').getImageData(0, 0, this.canvas.width, this.canvas.height);
+  // this.canvas.width = this.canvas.height = pow2(w);
+  // this.canvas.getContext('2d').putImageData(old, 0, 0);
   done();
 };
 
@@ -259,11 +261,13 @@ Texture.prototype.sprite = function(name, w, h, cb) {
     var canvases = [];
     for (var x = 0; x < img.width; x += w) {
       for (var y = 0; y < img.height; y += h) {
-        var canvas = document.createElement('canvas');
-        canvas.width = w; canvas.height = h;
-        canvas.name = name + '_' + x + '_' + y;
-        canvas.getContext('2d').drawImage(img, x, y, w, h, 0, 0, w, h);
-        canvases.push(canvas);
+        ////TODO: Add this back - fix canvas image
+        
+        // var canvas = document.createElement('canvas');
+        // canvas.width = w; canvas.height = h;
+        // canvas.name = name + '_' + x + '_' + y;
+        // canvas.getContext('2d').drawImage(img, x, y, w, h, 0, 0, w, h);
+        // canvases.push(canvas);
       }
     }
     var textures = [];

@@ -19,6 +19,14 @@ var voxel = require('voxel')
 // <VoxelView tick={}  />
 export default (three, opts) => class VoxelView extends React.Component {
 
+  addLights = () => {
+    var ambientLight, directionalLight
+    ambientLight = new THREE.AmbientLight(0xcccccc)
+    this.scene.add(ambientLight)
+    var light	= new THREE.DirectionalLight( 0xffffff , 1)
+    light.position.set( 1, 1, 0.5 ).normalize()
+    this.scene.add( light )
+  }
 
   constructor(props) {
     super(props)
@@ -30,7 +38,7 @@ export default (three, opts) => class VoxelView extends React.Component {
     this.scene = new THREE.Scene();
     this.scene.fog = new THREE.FogExp2(0xBFD1E5, 0.00015);
 
-
+this.addLights()
     this.fov = opts.fov || 60
     this.aspectRatio = opts.aspectRatio || width/height
     this.nearPlane = opts.nearPlane || 1

@@ -68,7 +68,7 @@ export default class Game {
 
   // this.view.bindToScene(this.scene)
   this.camera = this.view.camera
-  if (!opts.lightsDisabled) this.addLights(this.view.scene)
+  // if (!opts.lightsDisabled) this.addLights(this.view.scene)
 
   this.skyColor = opts.skyColor || 0xBFD1E5
   this.fogScale = opts.fogScale || 32
@@ -117,7 +117,7 @@ export default class Game {
   // if (!process.browser) return
 
   this.paused = true
-  this.initializeRendering(opts)
+  // this.initializeRendering(opts)
 
   for (var chunkIndex in this.voxels.chunks) this.showChunk(this.voxels.chunks[chunkIndex])
 
@@ -385,14 +385,6 @@ collideTerrain = (other, bbox, vec, resting) => {
 //   document.body.appendChild( stats.domElement )
 // }
 
-addLights = (scene) => {
-  var ambientLight, directionalLight
-  ambientLight = new THREE.AmbientLight(0xcccccc)
-  scene.add(ambientLight)
-  var light	= new THREE.DirectionalLight( 0xffffff , 1)
-  light.position.set( 1, 1, 0.5 ).normalize()
-  scene.add( light )
-}
 
 // # Chunk related methods
 
@@ -453,6 +445,10 @@ removeFarChunks = (playerPosition) => {
     self.emit('removeChunk', chunkPosition)
   })
   self.voxels.requestMissingChunks(playerPosition)
+}
+
+emit = (tag, ...args) => {
+  console.log(tag, ...args);
 }
 
 addChunkToNextUpdate = (chunk) => {

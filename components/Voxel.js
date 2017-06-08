@@ -205,6 +205,7 @@ this.setupGestures();
     return (
       <View style={{flex: 1}}>
         <VoxelView
+          backgroundColor={'red'}
           {...this.panResponder.panHandlers}
           style={{ flex: 1 }}
         />

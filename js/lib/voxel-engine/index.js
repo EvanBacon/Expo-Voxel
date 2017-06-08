@@ -1,10 +1,12 @@
-var voxel = require('voxel')
+var voxel = require('../voxel')
 var voxelMesh = require('voxel-mesh')
 var ray = require('voxel-raycast')
 var texture = require('../voxel-texture') //THIS
 var control = require('../voxel-control') //THIS
 var voxelView = require('../voxel-view')
-var THREE = require('three')
+// var THREE = require('three')
+import * as THREE from 'three';
+
 // var Stats = require('./lib/stats') //THIS
 // var Detector = require('./lib/detector') //THIS
 var inherits = require('inherits') //THIS
@@ -35,9 +37,8 @@ export default class Game {
 
 
   if (!(this instanceof Game)) return new Game(opts)
-  var self = this
   if (!opts) opts = {}
-
+  //
   if (!('generateChunks' in opts)) opts.generateChunks = true
   this.generateChunks = opts.generateChunks
   this.setConfigurablePositions(opts)
@@ -58,12 +59,12 @@ export default class Game {
 
   this.playerHeight = opts.playerHeight || 1.62
   this.meshType = opts.meshType || 'surfaceMesh'
-  this.mesher = opts.mesher || voxel.meshers.culled
+  this.mesher = opts.mesher || voxel.meshers.greedy
   this.materialType = opts.materialType || THREE.MeshLambertMaterial
   this.materialParams = opts.materialParams || {}
   this.items = []
   this.voxels = voxel(this)
-  this.view = opts.view || new voxelView(THREE, { width: this.width, height: this.height })
+  this.view = opts.view
   this.scene = this.view.scene;
 
   // this.view.bindToScene(this.scene)
@@ -80,10 +81,10 @@ export default class Game {
     [Infinity, Infinity, Infinity],
     [-Infinity, -Infinity, -Infinity]
   )
-
+  //
   this.timer = this.initializeTimer((opts.tickFPS || 16))
   this.paused = false
-
+  //
   this.spatial = new SpatialEventEmitter
   this.region = regionChange(this.spatial, aabb([0, 0, 0], [1, 1, 1]), this.chunkSize)
   this.voxelRegion = regionChange(this.spatial, 1)
@@ -94,7 +95,7 @@ export default class Game {
   this.chunksNeedsUpdate = {}
   // contains new chunks yet to be generated. Handled by game.loadPendingChunks
   this.pendingChunks = []
-
+  //
   this.materials = texture({
     game: this,
     texturePath: opts.texturePath || './textures/',
@@ -102,15 +103,15 @@ export default class Game {
     materialParams: opts.materialParams || {},
     materialFlatColor: opts.materialFlatColor === true
   })
-
+  //
   this.materialNames = opts.materials || [['grass', 'dirt', 'grass_dirt'], 'brick', 'dirt']
-
-  self.chunkRegion.on('change', function(newChunk) {
-    self.removeFarChunks()
+  //
+  this.chunkRegion.on('change', (newChunk) => {
+    this.removeFarChunks()
   })
-
+  //
   this.materials.load(this.materialNames)
-
+  //
   if (this.generateChunks) {
     this.handleChunkGeneration()
   }
@@ -118,12 +119,15 @@ export default class Game {
   // if (!process.browser) return
 
   this.paused = true
-  // this.initializeRendering(opts)
+  this.update(opts)
 
-  for (var chunkIndex in this.voxels.chunks) this.showChunk(this.voxels.chunks[chunkIndex])
+  for (var chunkIndex in this.voxels.chunks) {
+    console.log("VOX.js:: render Chunk", chunkIndex)
+    this.showChunk(this.voxels.chunks[chunkIndex]);
+  }
 
-  setTimeout(function() {
-    self.asyncChunkGeneration = 'asyncChunkGeneration' in opts ? opts.asyncChunkGeneration : true
+  this.setTimeout(_=> {
+    this.asyncChunkGeneration = 'asyncChunkGeneration' in opts ? opts.asyncChunkGeneration : true
   }, 2000)
 
   this.initializeControls(opts)
@@ -131,6 +135,27 @@ export default class Game {
   inherits(Game, EventEmitter)
 
 }
+
+// initializeRendering = (opts) => {
+//
+//
+//   // if (!opts.statsDisabled) self.addStats()
+//
+//   // window.addEventListener('resize', self.onWindowResize.bind(self), false)
+//
+//   requestAnimationFrame(window).on('data', function(dt) {
+//     self.emit('prerender', dt)
+//     self.render(dt)
+//     self.emit('postrender', dt)
+//   })
+//   if (typeof stats !== 'undefined') {
+//     self.on('postrender', function() {
+//       stats.update()
+//     })
+//   }
+// }
+
+
 
 voxelPosition = (gamePosition) => {
   var _ = Math.floor
@@ -390,7 +415,7 @@ collideTerrain = (other, bbox, vec, resting) => {
 // # Chunk related methods
 
 configureChunkLoading = (opts) => {
-  var self = this
+
   if (!opts.generateChunks) return
   if (!opts.generate) {
     this.generate = (x,y,z) => {
@@ -403,7 +428,7 @@ configureChunkLoading = (opts) => {
     this.generateVoxelChunk = opts.generateVoxelChunk
   } else {
     this.generateVoxelChunk = (low, high) => {
-      return voxel.generate(low, high, self.generate, self)
+      return voxel.generate(low, high, this.generate, this)
     }
   }
 }
@@ -426,7 +451,7 @@ removeFarChunks = (playerPosition) => {
   var nearbyChunks = this.voxels.nearbyChunks(playerPosition, this.removeDistance).map(function(chunkPos) {
     return chunkPos.join('|')
   })
-  Object.keys(self.voxels.chunks).map(function(chunkIndex) {
+  Object.keys(this.voxels.chunks).map(function(chunkIndex) {
     if (nearbyChunks.indexOf(chunkIndex) > -1) return
     var chunk = self.voxels.chunks[chunkIndex]
     var mesh = self.voxels.meshes[chunkIndex]
@@ -445,7 +470,7 @@ removeFarChunks = (playerPosition) => {
     delete self.voxels.chunks[chunkIndex]
     self.emit('removeChunk', chunkPosition)
   })
-  self.voxels.requestMissingChunks(playerPosition)
+  this.voxels.requestMissingChunks(playerPosition)
 }
 
 emit = (tag, ...args) => {
@@ -480,7 +505,8 @@ loadPendingChunks = (count) => {
     var chunkPos = pendingChunks[i].split('|')
     var chunk = this.voxels.generateChunk(chunkPos[0]|0, chunkPos[1]|0, chunkPos[2]|0)
 
-    if (process.browser) this.showChunk(chunk)
+    // if (process.browser)
+    this.showChunk(chunk)
   }
 
   if (count) pendingChunks.splice(0, count)
@@ -497,22 +523,23 @@ showChunk = (chunk) => {
   var bounds = this.voxels.getBounds.apply(this.voxels, chunk.position)
   var scale = new THREE.Vector3(1, 1, 1)
 
-  console.log("VOX.js:: before", Object.keys(chunk),  chunk.dims);
-
+  console.log("VOX.js:: before", Object.keys(chunk), chunk.position);
+chunk.dims = chunk.position;
   var mesh = voxelMesh(chunk, this.mesher, scale, this.THREE)
 
   console.log("VOX.js:: Then", chunk.dims);
 
   this.voxels.chunks[chunkIndex] = chunk
-  if (this.voxels.meshes[chunkIndex]) this.scene.remove(this.voxels.meshes[chunkIndex][this.meshType])
+  if (this.voxels.meshes[chunkIndex]) this.view.scene.remove(this.voxels.meshes[chunkIndex][this.meshType])
   this.voxels.meshes[chunkIndex] = mesh
-  if (process.browser) {
+  // if (process.browser) {
     if (this.meshType === 'wireMesh') mesh.createWireMesh()
     else mesh.createSurfaceMesh(this.materials.material)
     this.materials.paint(mesh)
-  }
+  // }
   mesh.setPosition(bounds[0][0], bounds[0][1], bounds[0][2])
-  mesh.addToScene(this.scene)
+  mesh.addToScene(this.view.scene)
+  // this.scene.add(mesh)
   this.emit('renderChunk', chunk)
   return mesh
 }
@@ -592,19 +619,18 @@ render = (delta) => {
 }
 
 initializeTimer = (rate) => {
-  var self = this
   var accum = 0
   var now = 0
   var last = null
   var dt = 0
   var wholeTick
 
-  self.frameUpdated = true
-  self.interval = setInterval(timer, 0)
-  return self.interval
+  this.frameUpdated = true
+  this.interval = this.setInterval(timer, 0)
+  return this.interval
 
-  function timer() {
-    if (self.paused) {
+  const timer = () => {
+    if (this.paused) {
       last = Date.now()
       accum = 0
       return
@@ -618,17 +644,17 @@ initializeTimer = (rate) => {
     if (wholeTick <= 0) return
     wholeTick *= rate
 
-    self.tick(wholeTick)
+    this.tick(wholeTick)
     accum -= wholeTick
 
-    self.frameUpdated = true
+    this.frameUpdated = true
   }
 }
 
 update = (dt) => {
-  self.emit('prerender', dt)
-  self.render(dt)
-  self.emit('postrender', dt)
+  this.emit('prerender', dt)
+  this.render(dt)
+  this.emit('postrender', dt)
 }
 
 initializeControls = (opts) => {
@@ -645,7 +671,7 @@ initializeControls = (opts) => {
   //     .on('release', this.onControlChange.bind(this, false))
   //     .on('opt-out', this.onControlOptOut.bind(this))
 
-  this.hookupControls(this.buttons, opts)
+  // this.hookupControls(this.buttons, opts)
 }
 
 hookupControls = (buttons, opts) => {
@@ -658,9 +684,8 @@ hookupControls = (buttons, opts) => {
 }
 
 handleChunkGeneration = () => {
-  var self = this
-  this.voxels.on('missingChunk', function(chunkPos) {
-    self.pendingChunks.push(chunkPos.join('|'))
+  this.voxels.on('missingChunk', (chunkPos) => {
+    this.pendingChunks.push(chunkPos.join('|'))
   })
   this.voxels.requestMissingChunks(this.worldOrigin)
   this.loadPendingChunks(this.pendingChunks.length)

@@ -1,4 +1,8 @@
-var THREE, temporaryPosition, temporaryVector
+import '../FakeBrowser';
+
+
+var temporaryPosition, temporaryVector
+import * as THREE from 'three';
 
 import React, { PropTypes } from 'react';
 import { View, Dimensions } from 'react-native';
@@ -14,10 +18,11 @@ const {width, height} = Dimensions.get('window');
 //   return new View(three, opts)
 // }
 
-var voxel = require('voxel')
+var voxel = require('../voxel')
 
 // <VoxelView tick={}  />
 export default (three, opts) => class VoxelView extends React.Component {
+  scene = new THREE.Scene();
 
   addLights = () => {
     var ambientLight, directionalLight
@@ -30,12 +35,11 @@ export default (three, opts) => class VoxelView extends React.Component {
 
   constructor(props) {
     super(props)
-    temporaryPosition = new three.Vector3
-    temporaryVector = new three.Vector3
+    temporaryPosition = new THREE.Vector3
+    temporaryVector = new THREE.Vector3
 
-    THREE = three // three.js doesn't support multiple instances on a single page
+    // THREE = three // three.js doesn't support multiple instances on a single page
 
-    this.scene = new THREE.Scene();
     this.scene.fog = new THREE.FogExp2(0xBFD1E5, 0.00015);
 
 this.addLights()
@@ -54,9 +58,8 @@ this.addLights()
 
     this.engine = new Game({
       view: this,
-      generate: voxel.generator['Valley'],
-
-      mesher: voxel.meshers.greedy,
+      // generate: voxel.generator['Valley'],
+      // mesher: voxel.meshers.greedy,
       chunkDistance: 2,
       materials: ['#fff', '#000'],
       materialFlatColor: true,
@@ -237,6 +240,7 @@ this.addLights()
 
   tick = (dt) => {
     this.engine.update(dt);
+
     // if (this.frame % 60 == 0) {
       // this.controls.update( dt, this.moveID );
     // }

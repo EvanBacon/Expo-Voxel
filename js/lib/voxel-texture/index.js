@@ -1,11 +1,12 @@
 var tic = require('tic')();
 var createAtlas = require('atlaspack');
+import * as THREE from 'three';
 
 function Texture(opts) {
   if (!(this instanceof Texture)) return new Texture(opts || {});
   var self = this;
   this.game = opts.game; delete opts.game;
-  this.THREE = this.game.THREE;
+  // this.THREE = this.game.THREE;
   this.materials = [];
   this.texturePath = opts.texturePath || '/textures/';
   this.loading = 0;
@@ -18,10 +19,10 @@ function Texture(opts) {
     materialParams: defaults(opts.materialParams || {}, {
       ambient: 0xbbbbbb
     }),
-    materialType: this.THREE.MeshLambertMaterial,
+    materialType: THREE.MeshLambertMaterial,
     applyTextureParams: function(map) {
-      map.magFilter = self.THREE.NearestFilter;
-      map.minFilter = self.THREE.LinearMipMapLinearFilter;
+      map.magFilter = THREE.NearestFilter;
+      map.minFilter = THREE.LinearMipMapLinearFilter;
     }
   });
 
@@ -35,13 +36,13 @@ function Texture(opts) {
   this.atlas.tilepad = true;
   this._atlasuv = false;
   this._atlaskey = false;
-  this.texture = new this.THREE.Texture(this.canvas);
+  this.texture = new THREE.Texture(this.canvas);
   this.options.applyTextureParams(this.texture);
 
   if (useFlatColors) {
     // If were using simple colors
-    this.material = new this.THREE.MeshBasicMaterial({
-      vertexColors: this.THREE.VertexColors
+    this.material = new THREE.MeshBasicMaterial({
+      vertexColors: THREE.VertexColors
     });
   } else {
     // load a first material for easy application to meshes
@@ -262,7 +263,7 @@ Texture.prototype.sprite = function(name, w, h, cb) {
     for (var x = 0; x < img.width; x += w) {
       for (var y = 0; y < img.height; y += h) {
         ////TODO: Add this back - fix canvas image
-        
+
         // var canvas = document.createElement('canvas');
         // canvas.width = w; canvas.height = h;
         // canvas.name = name + '_' + x + '_' + y;
@@ -329,7 +330,7 @@ Texture.prototype.setColor = function(face, color) {
 };
 
 Texture.prototype._lightDark = memoize(function(color) {
-  var light = new this.THREE.Color(color);
+  var light = new THREE.Color(color);
   var hsl = light.getHSL();
   var dark = light.clone();
   dark.setHSL(hsl.h, hsl.s, hsl.l - 0.1);

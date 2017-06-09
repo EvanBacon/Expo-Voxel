@@ -1,8 +1,6 @@
 Expo Voxel
 ========
 
-__[Voxel Terrain](https://threejs.org/examples/?q=mine#webgl_geometry_minecraft_ao) by [Mr. Doob](https://github.com/mrdoob)__
-
 Expo: https://exp.host/@bacon/voxel
 
 ![voxel gif should be here. yolo](/demo.gif?raw=true "Preview Gif 😀 ...I love you")
@@ -22,10 +20,10 @@ Stack:
 
 ## Special Thanks
 
+- [Voxel Terrain](https://threejs.org/examples/?q=mine#webgl_geometry_minecraft_ao) by [Mr. Doob](https://github.com/mrdoob)__
 - [Nikhilesh Sigatapu](https://github.com/nikki93)
 - [Charlie Cheever](https://github.com/ccheever)
 - [Expo Team](https://twitter.com/expo_io)
-
 
 ----
 

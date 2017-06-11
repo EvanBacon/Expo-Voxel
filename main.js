@@ -3,7 +3,7 @@ import React from 'react';
 import { Platform, StatusBar, StyleSheet, View } from 'react-native';
 // import Scene from './components/Scene';
 import Voxel from './components/Voxel';
-
+import './js/FakeBrowser';
 console.ignoredYellowBox = ['THREE.WebGLRenderer'];
 
 class AppContainer extends React.Component {

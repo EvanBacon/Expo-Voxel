@@ -53,9 +53,9 @@ game.on('tick', function(dt) {
 
 function createCube(i, materials) {
   // create a mesh
-  var obj = new game.THREE.Object3D();
-  var mesh = new game.THREE.Mesh(
-    new game.THREE.CubeGeometry(game.cubeSize, game.cubeSize, game.cubeSize),
+  var obj = new THREE.Object3D();
+  var mesh = new THREE.Mesh(
+    new THREE.CubeGeometry(game.cubeSize, game.cubeSize, game.cubeSize),
     game.materials.material
   );
   mesh.translateY(game.cubeSize/2);

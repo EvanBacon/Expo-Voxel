@@ -1,11 +1,8 @@
-import '../FakeBrowser';
-
-
 var temporaryPosition, temporaryVector
 import * as THREE from 'three';
 
 import React, { PropTypes } from 'react';
-import { View, Dimensions } from 'react-native';
+import { View,StyleSheet, Dimensions } from 'react-native';
 import {GLView} from 'expo'
 
 import Game from '../voxel-engine';
@@ -21,43 +18,36 @@ const {width, height} = Dimensions.get('window');
 var voxel = require('../voxel')
 
 // <VoxelView tick={}  />
-export default (three, opts) => class VoxelView extends React.Component {
-  scene = new THREE.Scene();
-
-  addLights = () => {
-    var ambientLight, directionalLight
-    ambientLight = new THREE.AmbientLight(0xcccccc)
-    this.scene.add(ambientLight)
-    var light	= new THREE.DirectionalLight( 0xffffff , 1)
-    light.position.set( 1, 1, 0.5 ).normalize()
-    this.scene.add( light )
-  }
+export default (opts) => class VoxelView extends React.Component {
 
   constructor(props) {
     super(props)
-    temporaryPosition = new THREE.Vector3
-    temporaryVector = new THREE.Vector3
+//     temporaryPosition = new THREE.Vector3
+//     temporaryVector = new THREE.Vector3
+//
+//     // THREE = three // three.js doesn't support multiple instances on a single page
+//
+//     this.scene.fog = new THREE.FogExp2(0xBFD1E5, 0.00015);
+//
 
-    // THREE = three // three.js doesn't support multiple instances on a single page
+//     this.fov = opts.fov || 60
+//     this.aspectRatio = opts.aspectRatio || width/height
+//     this.nearPlane = opts.nearPlane || 1
+//     this.farPlane = opts.farPlane || 10000
+//     this.skyColor = opts.skyColor || 0xBFD1E5
+//     this.ortho = opts.ortho
+//     this.camera = this.ortho ? (new THREE.OrthographicCamera(width/-2, width/2, height/2, height/-2, this.nearPlane, this.farPlane)) : (new THREE.PerspectiveCamera(this.fov, this.aspectRatio, this.nearPlane, this.farPlane))
+//     this.camera.lookAt(new THREE.Vector3(0, 0, 0))
+//
+//     // if (!process.browser) return
+//
+//     console.log("VOX.js:: Terrain", voxel.generator['Valley']());
+//
 
-    this.scene.fog = new THREE.FogExp2(0xBFD1E5, 0.00015);
-
-this.addLights()
-    this.fov = opts.fov || 60
-    this.aspectRatio = opts.aspectRatio || width/height
-    this.nearPlane = opts.nearPlane || 1
-    this.farPlane = opts.farPlane || 10000
-    this.skyColor = opts.skyColor || 0xBFD1E5
-    this.ortho = opts.ortho
-    this.camera = this.ortho ? (new THREE.OrthographicCamera(width/-2, width/2, height/2, height/-2, this.nearPlane, this.farPlane)) : (new THREE.PerspectiveCamera(this.fov, this.aspectRatio, this.nearPlane, this.farPlane))
-    this.camera.lookAt(new THREE.Vector3(0, 0, 0))
-
-    // if (!process.browser) return
-
-    console.log("VOX.js:: Terrain", voxel.generator['Valley']());
-
+    this.camera = new THREE.PerspectiveCamera(60, width/height, 1, 10000)
     this.engine = new Game({
-      view: this,
+      // view: this,
+      getCamera: ( _=> this.camera ),
       // generate: voxel.generator['Valley'],
       // mesher: voxel.meshers.greedy,
       chunkDistance: 2,
@@ -67,10 +57,13 @@ this.addLights()
       controls: { discreteFire: true }
     });
 
+    // this.addLights()
 
-    this.createRenderer()
-    // this.element = this.renderer.domElement
-
+//
+//
+//     this.createRenderer()
+//     // this.element = this.renderer.domElement
+//
 
 
   }
@@ -84,13 +77,12 @@ this.addLights()
     // this.renderer.clear()
   }
 
-  // bindToScene = (scene) => {
-  //   scene.add(this.camera)
-  // }
+  bindToScene = (scene) => {
+    this.scene = scene;
+    // scene.add(this.camera)
+  }
 
   getCamera = () => this.camera;
-
-  getScene = () => this.props.scene;
 
   cameraPosition = () => {
     temporaryPosition.multiplyScalar(0)
@@ -104,37 +96,6 @@ this.addLights()
     this.camera.matrixWorld.rotateAxis(temporaryVector)
     return [temporaryVector.x, temporaryVector.y, temporaryVector.z]
   }
-
-  // resizeWindow = () => {
-  //
-  //   this.camera.aspect = this.aspectRatio = width/height
-  //   this.width = width
-  //   this.height = height
-  //
-  //   this.camera.updateProjectionMatrix()
-  //
-  //   this.renderer.setSize( width, height )
-  // }
-  //
-  // render = (scene) => {
-  //   this.renderer.render(scene, this.camera)
-  // }
-
-  // appendTo = (element) => {
-  //   if (typeof element === 'object') {
-  //     element.appendChild(this.element)
-  //   }
-  //   else {
-  //     document.querySelector(element).appendChild(this.element)
-  //   }
-  //
-  //   this.resizeWindow(this.width,this.height)
-  // }
-
-
-
-
-
   static propTypes = {
     // Parameters to http://threejs.org/docs/?q=webgl#Reference/Renderers/WebGLRenderer.render
     scene: PropTypes.object,
@@ -196,8 +157,8 @@ this.addLights()
 
     renderer.setSize(gl.drawingBufferWidth, gl.drawingBufferHeight);
     renderer.setClearColor(
-      this.props.backgroundColor,
-      this.props.backgroundColorAlpha
+      'red',
+      1
     );
 
     let lastFrameTime;
@@ -213,7 +174,7 @@ this.addLights()
         this.tick(dt);
       // }
 
-      if (this.props.scene && this.camera) {
+      if (this.scene && this.camera) {
         const {camera} = this;
         if (this.props.autoAspect && camera.aspect) {
           const desiredAspect = gl.drawingBufferWidth / gl.drawingBufferHeight;
@@ -222,7 +183,8 @@ this.addLights()
             camera.updateProjectionMatrix();
           }
         }
-        renderer.render(this.props.scene, camera);
+
+        renderer.render(this.scene, camera);
       }
       gl.flush();
       gl.endFrameEXP();
@@ -239,7 +201,8 @@ this.addLights()
   }
 
   tick = (dt) => {
-    this.engine.update(dt);
+
+
 
     // if (this.frame % 60 == 0) {
       // this.controls.update( dt, this.moveID );
@@ -250,7 +213,13 @@ this.addLights()
   render() {
     // eslint-disable-next-line no-unused-vars
     const { scene, camera, autoAspect, ...viewProps } = this.props;
-    return <GLView {...viewProps} onContextCreate={this._onContextCreate} />;
+    return (
+      <GLView
+        {...viewProps}
+        style={StyleSheet.absoluteFill}
+        onContextCreate={this._onContextCreate}
+      />
+    );
   }
 
 }

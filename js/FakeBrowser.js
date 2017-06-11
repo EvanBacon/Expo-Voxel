@@ -46,9 +46,13 @@ class DOMDocument extends DOMNode {
   }
 }
 
+window.addEventListener = () => {
+
+}
 let { width, height } = Dimensions.get('window');
 window.innerWidth = width;
 window.innerHeight = height;
 window.document = new DOMDocument();
+
 
 global.performance = null;

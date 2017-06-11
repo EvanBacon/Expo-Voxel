@@ -42,12 +42,14 @@ function Texture(opts) {
   if (useFlatColors) {
     // If were using simple colors
     this.material = new THREE.MeshBasicMaterial({
-      vertexColors: THREE.VertexColors
+      vertexColors: THREE.VertexColors,
+      color: 'blue',
     });
   } else {
     // load a first material for easy application to meshes
     this.material = new this.options.materialType(this.options.materialParams);
-    this.material.map = this.texture;
+    // this.material.map = this.texture;
+    this.material.color = 'red';
     this.material.transparent = true;
   }
 

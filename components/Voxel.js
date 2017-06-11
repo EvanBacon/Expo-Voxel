@@ -46,20 +46,22 @@ export default class Voxel extends React.Component {
   onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
 
   onPanResponderGrant: (({nativeEvent}) => {
-
-    window.document.body.emitter.emit("mousedown", nativeEvent);
-
+    console.log("VOXEL:: synthetic down");
+window.document.body.emitter.emit("mousedown", {...nativeEvent, screenX: nativeEvent.pageX, screenY: nativeEvent.pageY });
     // onTouchStart(nativeEvent)}
   }),
   onPanResponderMove: (({nativeEvent}) => {
+    console.log("VOXEL:: synthetic move");
+    window.document.body.emitter.emit("mousemove", {...nativeEvent, screenX: nativeEvent.pageX, screenY: nativeEvent.pageY });
+
     // window.document.body.emitter.emit("keyup", {keyCode});
     // onTouchMove(nativeEvent)
   }),
   onPanResponderRelease: (({nativeEvent}) => {
-    window.document.body.emitter.emit("mouseup", nativeEvent);
-  }),
+    console.log("VOXEL:: synthetic up");
+window.document.body.emitter.emit("mouseup", {...nativeEvent, screenX: nativeEvent.pageX, screenY: nativeEvent.pageY });  }),
   onPanResponderTerminate: (({nativeEvent}) => {
-    window.document.body.emitter.emit("mouseup", nativeEvent);
+    window.document.body.emitter.emit("mouseup", {...nativeEvent, screenX: nativeEvent.pageX, screenY: nativeEvent.pageY });
   }),
 })
 
@@ -90,7 +92,7 @@ export default class Voxel extends React.Component {
               break;
               case DirectionType.up:
                 keyCode = 32;
-                this.avatar.toggle()
+                // this.avatar.toggle()
                 break;
       default:
 break;
@@ -123,22 +125,12 @@ break;
 
     return (
       <View style={{flex: 1}}>
-        {/* <VoxelView
-          backgroundColor={'red'}
-          {...this.panResponder.panHandlers}
-          style={{ flex: 1}}
-        /> */}
 
-        {/* <OrbitControls
-   style={{flex: 1}}
-   camera={this.state.camera}> */}
         <Expo.GLView
-          {...(this.state.panResponder || {}).panHandlers}
-          pointerEvents={'none'}
+          {...this.state.panResponder.panHandlers}
        style={StyleSheet.absoluteFill}
        onContextCreate={this._onGLContextCreate}
      />
-     {/* </OrbitControls> */}
         {dPad}
       </View>
     );
@@ -187,6 +179,7 @@ _onGLContextCreate = async (gl) => {
   this.game = new Engine({
     THREE,
     view: view,
+    interactMouseDrag: true,
     isClient: true,
     getCamera: (_ => view.getCamera()),
     mesher: voxel.meshers.culled,
@@ -213,7 +206,7 @@ var createPlayer = player(this.game)
 // game to use it as the main player
 this.avatar = createPlayer(this._texture)
 this.avatar.possess()
-this.avatar.yaw.position.set(2, 14, 4)
+this.avatar.yaw.position.set(10, 14, 4)
 
   this.defaultSetup(this.game, this.avatar)
 })()
@@ -240,7 +233,7 @@ this.avatar.yaw.position.set(2, 14, 4)
     // window.addEventListener('keydown', function (ev) {
     //   if (ev.keyCode === 'R'.charCodeAt(0)) avatar.toggle()
     // })
-
+    avatar.toggle()
     // block interaction stuff, uses highlight data
     var currentMaterial = 1
 

@@ -1,21 +1,21 @@
 var THREE
 
-module.exports = function(three, image, sizeRatio) {
-  return new Skin(three, image, sizeRatio)
+module.exports = function(three, texture, sizeRatio) {
+  return new Skin(three, texture, sizeRatio)
 }
 
-function Skin(three, image, opts) {
-  if (opts) opts.image = opts.image || image
-  else opts = { image: image }
-  if (typeof image === 'object') opts = image
+function Skin(three, texture, opts) {
+  if (opts) opts.texture = opts.texture || texture
+  else opts = { texture }
+  if (typeof texture === 'object') opts = texture
   THREE = three // hack until three.js fixes multiple instantiation
   this.sizeRatio = opts.sizeRatio || 8
   this.scale = opts.scale || new three.Vector3(1, 1, 1)
   this.fallbackImage = opts.fallbackImage || 'skin.png'
   // this.createCanvases()
-  this.charMaterial = this.getMaterial(this.skin, false)
-	this.charMaterialTrans = this.getMaterial(this.skin, true)
-  if (typeof opts.image === "string") this.fetchImage(opts.image)
+  this.charMaterial = this.getMaterial(texture, false)
+	this.charMaterialTrans = this.getMaterial(texture, true)
+  if (typeof opts.texture === "string") this.fetchImage(opts.texture)
   // if (opts.image instanceof HTMLElement) this.setImage(opts.image)
   this.mesh = this.createPlayerObject()
 }
@@ -114,17 +114,15 @@ Skin.prototype.setImage = function (skin) {
 
 };
 
-Skin.prototype.getMaterial = function(img, transparent) {
-  var texture    = new THREE.MeshLambertMaterial(img);
+Skin.prototype.getMaterial = function(texture, transparent) {
+  // var texture    = new THREE.MeshLambertMaterial(img);
   texture.magFilter  = THREE.NearestFilter;
   texture.minFilter  = THREE.NearestFilter;
   texture.format    = transparent ? THREE.RGBAFormat : THREE.RGBFormat;
   texture.needsUpdate  = true;
   var material  = new THREE.MeshBasicMaterial({
-    // map    : texture,
-    color: 0x00ff00,
-    opacity: 0.3,
-    transparent  : true //transparent ? true : false
+    map    : texture,
+    transparent  : transparent ? true : false
   });
   return material;
 }

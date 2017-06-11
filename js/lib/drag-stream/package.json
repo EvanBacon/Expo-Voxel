@@ -1,0 +1,86 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "drag-stream@0.0.2",
+        "scope": null,
+        "escapedName": "drag-stream",
+        "name": "drag-stream",
+        "rawSpec": "0.0.2",
+        "spec": "0.0.2",
+        "type": "version"
+      },
+      "/Users/evan.bacon/GoogleDrive/react-native/exponent/voxel/node_modules/interact"
+    ]
+  ],
+  "_from": "drag-stream@0.0.2",
+  "_id": "drag-stream@0.0.2",
+  "_inCache": true,
+  "_location": "/drag-stream",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "drag-stream@0.0.2",
+    "scope": null,
+    "escapedName": "drag-stream",
+    "name": "drag-stream",
+    "rawSpec": "0.0.2",
+    "spec": "0.0.2",
+    "type": "version"
+  },
+  "_requiredBy": [
+    "/interact"
+  ],
+  "_resolved": "https://registry.npmjs.org/drag-stream/-/drag-stream-0.0.2.tgz",
+  "_shasum": "52d6e40fa4b83178014a61e54eb25dc499d1fb0f",
+  "_shrinkwrap": null,
+  "_spec": "drag-stream@0.0.2",
+  "_where": "/Users/evan.bacon/GoogleDrive/react-native/exponent/voxel/node_modules/interact",
+  "author": {
+    "name": "Chris Dickinson",
+    "email": "chris@neversaw.us"
+  },
+  "bugs": {
+    "url": "https://github.com/chrisdickinson/drag-stream/issues"
+  },
+  "dependencies": {
+    "domnode-dom": "~0.0.X",
+    "through": "~1.1.1"
+  },
+  "description": "streamable mouse drag data",
+  "devDependencies": {
+    "jsdom": "0.2.19"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "dist": {
+    "shasum": "52d6e40fa4b83178014a61e54eb25dc499d1fb0f",
+    "tarball": "https://registry.npmjs.org/drag-stream/-/drag-stream-0.0.2.tgz"
+  },
+  "homepage": "https://github.com/chrisdickinson/drag-stream#readme",
+  "keywords": [
+    "readable",
+    "stream",
+    "browserify",
+    "drag"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "maintainers": [
+    {
+      "name": "chrisdickinson",
+      "email": "chris@neversaw.us"
+    }
+  ],
+  "name": "drag-stream",
+  "optionalDependencies": {},
+  "readme": "# drag-stream\n\nA readable stream of drag data for an element.\n\n```javascript\n\nvar drag = require('../index')\n  , el = document.getElementById('content')\n\ndrag(el)\n  .on('data', function(data) {\n    // data == {dx:int, dy:int, dt:int}\n  })\n  .pipe(\n    through(function(data) {\n      this.emit('data', [data.dx, data.dy, data.dt].join(', ')) \n    })\n  )\n\n```\n\n## API\n\n### require('drag-stream') -> drag(el)\n\n### drag(el) -> readable stream\n\nThe stream will emit data events between a mousedown on the target `el`\nand mouseup anywhere else on the page.\n\nThe data events take the form of an x-delta, y-delta, and time-delta.\n\nWhen a drag is started, its time-delta will be `0` and its x and y deltas\nwill be the screen offset of the initial mousedown event.\n\n",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/chrisdickinson/drag-stream.git"
+  },
+  "scripts": {
+    "test": "node test/index.js"
+  },
+  "version": "0.0.2"
+}

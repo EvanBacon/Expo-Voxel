@@ -6,6 +6,10 @@ class DOMNode {
     this.nodeName = nodeName;
   }
 
+  get ownerDocument() {
+    return window.document;
+  }
+
   appendChild(element) {
     // unimplemented
   }

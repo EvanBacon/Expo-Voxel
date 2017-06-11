@@ -1,0 +1,91 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "interact@0.0.2",
+        "scope": null,
+        "escapedName": "interact",
+        "name": "interact",
+        "rawSpec": "0.0.2",
+        "spec": "0.0.2",
+        "type": "version"
+      },
+      "/Users/evan.bacon/GoogleDrive/react-native/exponent/voxel/node_modules/voxel-engine"
+    ]
+  ],
+  "_from": "interact@0.0.2",
+  "_id": "interact@0.0.2",
+  "_inCache": true,
+  "_location": "/interact",
+  "_npmUser": {
+    "name": "chrisdickinson",
+    "email": "chris@neversaw.us"
+  },
+  "_npmVersion": "1.1.69",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "interact@0.0.2",
+    "scope": null,
+    "escapedName": "interact",
+    "name": "interact",
+    "rawSpec": "0.0.2",
+    "spec": "0.0.2",
+    "type": "version"
+  },
+  "_requiredBy": [
+    "/voxel-engine"
+  ],
+  "_resolved": "https://registry.npmjs.org/interact/-/interact-0.0.2.tgz",
+  "_shasum": "4823043dccbb145a320436caf0290a8cb9c0f973",
+  "_shrinkwrap": null,
+  "_spec": "interact@0.0.2",
+  "_where": "/Users/evan.bacon/GoogleDrive/react-native/exponent/voxel/node_modules/voxel-engine",
+  "author": {
+    "name": "Chris Dickinson",
+    "email": "chris@neversaw.us"
+  },
+  "bugs": {
+    "url": "https://github.com/chrisdickinson/interact/issues"
+  },
+  "dependencies": {
+    "drag-stream": "0.0.2",
+    "fullscreen": "0.0.1",
+    "pointer-lock": "0.0.3"
+  },
+  "description": "a readable stream of mouse view events, wrapping up pointer-lock and drag-stream",
+  "devDependencies": {},
+  "directories": {},
+  "dist": {
+    "shasum": "4823043dccbb145a320436caf0290a8cb9c0f973",
+    "tarball": "https://registry.npmjs.org/interact/-/interact-0.0.2.tgz"
+  },
+  "homepage": "https://github.com/chrisdickinson/interact#readme",
+  "keywords": [
+    "browserify",
+    "pointer",
+    "lock",
+    "drag",
+    "rotate",
+    "view"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "maintainers": [
+    {
+      "name": "chrisdickinson",
+      "email": "chris@neversaw.us"
+    }
+  ],
+  "name": "interact",
+  "optionalDependencies": {},
+  "readme": "# interact\n\nA wrapper module that provides a [drag-stream](https://github.com/chrisdickinson/drag-stream) fallback for [pointer-lock](https://github.com/chrisdickinson/pointer-lock).\n\nHandles the `requestFullScreen` pointer lock requirement of firefox.\n\n```javascript\n\nvar interact = require('interact')\n\ninteract(document.body)\n  .on('attain', function(stream) {\n    // stream attained! it'll emit \"move\"\n    // events with {dx, dy, dt} attributes.\n    // it also has an `initial` member with `{x, y, t}`\n    // marking the start position and start time.\n    // it's readable, and it'll clean up after itself. \n  })\n  .on('release', function() {\n    // stream has been released -- either the user\n    // left pointer-lock, or stopped dragging.\n  })\n  .on('opt-out', function() {\n    // user opted out of pointer lock,\n    // and will be using drag-stream instead.\n    // you can use this event to record a preference\n    // in localStorage.\n  })\n```\n\n# api\n\n### interact = require('interact')\n### interact(element[, skipLock=false]) -> ee\n\nsets a `click` listener on `element` that requests pointerLock (if `skipLock` is false and\npointerlock is available) on click. if the lock is declined (politely!) it'll switch to \n`drag-stream`-style events.\n\n### (ee.release|ee.request|ee.destroy)()\n\nforwards these commands to the internal handler (whether that be `pointer-lock` or `drag-stream`)\nif a corresponding method exists.\n\n### interact.pointerAvailable() -> boolean\n\nreturns whether or not pointer lock is available -- forwards from `require('pointer-lock').available()`.\n\n### interact.fullscreenAvailable() -> boolean\n\nreturns whether or not fullscreen is available -- forwards from `require('fullscreen').available()`.\n\n### stream.initial -> {x: int, y: int, t: timestamp int}\n\nthe initial position for streams.\n\n## events\n\n### ee.on('attain', function(stream) { })\n\na stream of movement data is ready for consumption.\n\n`stream` is a readable stream that closes appropriately, so you don't have to clean up after it.\n\n`stream.initial` has `{x: int, y: int, t: timestamp int}` members detailing the initial position\nand time of the stream.\n\n`stream`'s data events are in the form of `{dx: int, dy: int, dt: timedelta int}`.\n\nwhen in `drag-stream` mode, these'll be emitted every time there's a `mousedown` on the target element.\n\nin `pointer-lock` mode, it'll be emitted every time the user enters pointer lock -- that is to say, a *lot* less often.\n\n### ee.on('release')\n\nthe last stream has been released. you shouldn't really have to do anything here -- the\nstream will clean up after itself (it emits `close` and `end` events).\n\n### ee.on('opt-out')\n\nemitted when the `requestPointerLock` is declined by the user. use this to store a preference\nto send into `interact` later down the line!\n\n```javascript\n\ninteract(el, localStorage.getItem('no-pointer-lock'))\n  .on('opt-out', function() {\n    localStorage.setItem('no-pointer-lock', true)\n  })\n\n```\n\n### stream.on('data', function(datum) { })\n\n# license\n\nMIT\n",
+  "readmeFilename": "README.md",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/chrisdickinson/interact.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "0.0.2"
+}

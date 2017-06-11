@@ -1,7 +1,7 @@
 var voxel = require('../voxel')
 var voxelMesh = require('voxel-mesh')
 var ray = require('voxel-raycast')
-var texture = require('voxel-texture')
+var texture = require('../voxel-texture')
 var control = require('voxel-control')
 var voxelView = require('voxel-view')
 
@@ -10,7 +10,7 @@ var inherits = require('inherits')
 // var EventEmitter = require('events').EventEmitter
 import EventEmitter from 'EventEmitter';
 
-// if (process.browser) var interact = require('interact')
+var interact = require('../interact')
 var requestAnimationFrame = require('raf')
 var collisions = require('collide-3d-tilemap')
 var aabb = require('aabb-3d')
@@ -350,9 +350,9 @@ Game.prototype.notCapable = function(opts) {
 }
 
 Game.prototype.notCapableMessage = function() {
-  var wrapper = document.createElement('div')
+  var wrapper = window.document.createElement('div')
   wrapper.className = "errorMessage"
-  var a = document.createElement('a')
+  var a = window.document.createElement('a')
   a.title = "You need WebGL and Pointer Lock (Chrome 23/Firefox 14) to play this game. Click here for more information."
   a.innerHTML = a.title
   a.href = "http://get.webgl.org"
@@ -707,14 +707,14 @@ Game.prototype.initializeRendering = function(opts) {
 Game.prototype.initializeControls = function(opts) {
   // player control
   this.keybindings = opts.keybindings || this.defaultButtons
-  this.buttons = kb(document.body, this.keybindings)
+  this.buttons = kb(window.document.body, this.keybindings)
   this.buttons.disable()
   this.optout = false
-  // this.interact = interact(opts.interactElement || this.view.element, opts.interactMouseDrag)
-  // this.interact
-  //     .on('attain', this.onControlChange.bind(this, true))
-  //     .on('release', this.onControlChange.bind(this, false))
-  //     .on('opt-out', this.onControlOptOut.bind(this))
+  this.interact = interact(window.document.body, opts.interactMouseDrag)
+  this.interact
+      .on('attain', this.onControlChange.bind(this, true))
+      .on('release', this.onControlChange.bind(this, false))
+      .on('opt-out', this.onControlOptOut.bind(this))
   this.hookupControls(this.buttons, opts)
 }
 

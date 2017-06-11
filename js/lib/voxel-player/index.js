@@ -4,12 +4,12 @@ module.exports = function (game) {
     var mountPoint;
     var possessed;
 
-    return function (img, skinOpts) {
+    return function (texture, skinOpts) {
         if (!skinOpts) {
           skinOpts = {};
         }
         skinOpts.scale = skinOpts.scale || new game.THREE.Vector3(0.04, 0.04, 0.04);
-        var playerSkin = skin(game.THREE, img, skinOpts);
+        var playerSkin = skin(game.THREE, texture, skinOpts);
         var player = playerSkin.mesh;
         var physics = game.makePhysical(player);
         physics.playerSkin = playerSkin;

@@ -1,5 +1,7 @@
 //Naive meshing (with face culling)
 function CulledMesh(volume, dims) {
+  dims = dims || [[0,0,0], [32,32,32]];
+
   //Precalculate direction vectors for convenience
   var dir = new Array(3);
   for(var i=0; i<3; ++i) {
@@ -32,7 +34,7 @@ function CulledMesh(volume, dims) {
         , u = dir[d][s]
         , v = dir[d][s^1];
       ++t[d];
-      
+
       var vertex_count = vertices.length;
       vertices.push([t[0],           t[1],           t[2]          ]);
       vertices.push([t[0]+u[0],      t[1]+u[1],      t[2]+u[2]     ]);

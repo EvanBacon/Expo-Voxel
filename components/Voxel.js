@@ -4,11 +4,17 @@ import Expo from 'expo';
 import React from 'react';
 import {PanResponder,StyleSheet, View, Dimensions} from 'react-native'
 const {width, height} = Dimensions.get('window')
+import EventEmitter from 'EventEmitter';
+
+import TouchControls from '../js/lib/voxel-touchcontrols';
 
 global.THREE = THREE;
-
-
+import OrbitControls from 'expo-three-orbit-controls'
+var fly = require('voxel-fly')
+var highlight = require('voxel-highlight')
+var walk = require('voxel-walk')
 var voxel = require('../js/lib/voxel')
+var player = require('../js/lib/voxel-player')
 // var voxel = require('voxel')
 const examples = voxel.generateExamples();
 // import Engine from 'voxel-engine';
@@ -19,54 +25,41 @@ import voxelView from '../js/lib/voxel-view';
 import * as THREE from 'three';
 const THREEView = Expo.createTHREEViewClass(THREE);
 // const VoxelView = voxelView({});
+import ExpoTHREE from 'expo-three'
 
 import Dpad from './Dpad'
 import GestureType from '../js/GestureType'
 
-
-THREE.WebGLRenderer.setClearColorHex = function(color, alpha) {
-  this.setClearColor(color, hex);
-}
 
 export default class Voxel extends React.Component {
   // world;
 
 
   state = {
+    camera: null,
     ready: false
   }
 
-  setupGestures = () => {
-    // const {controls} = this
-    const touchesBegan = (event, gestureState) => {
-    }
+  buildGestures = ({onTouchStart, onTouchMove, onTouchEnd}) => PanResponder.create({
+  onStartShouldSetPanResponder: (evt, gestureState) => true,
+  onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
+  onMoveShouldSetPanResponder: (evt, gestureState) => true,
+  onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
 
-    const touchesMoved = (event, gestureState) => {
-      // this.controls.onGesture(event, gestureState, GestureType.moved)
-    }
+  onPanResponderGrant: (({nativeEvent}) => onTouchStart(nativeEvent)),
+  onPanResponderMove: (({nativeEvent}) => onTouchMove(nativeEvent)),
+  onPanResponderRelease: (({nativeEvent}) => onTouchEnd(nativeEvent)),
+  onPanResponderTerminate: (({nativeEvent}) => onTouchEnd(nativeEvent)),
+})
 
-    const touchesEnded = (event, gestureState) => {
-      // this.controls.onGesture(event, gestureState, GestureType.ended)
-    }
-
-    this.panResponder = PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onPanResponderGrant: touchesBegan,
-      onPanResponderMove: touchesMoved,
-      onPanResponderRelease: touchesEnded,
-      onPanResponderTerminate: touchesEnded, //cancel
-      onShouldBlockNativeResponder: () => false,
-    });
-
-  }
 
 
   async componentWillMount() {
 
-this.setupGestures();
-
-
-    this.setState({ready: true});
+    this.setState({
+      ready: true,
+      // panResponder: this.buildGestures(controls)
+    });
   }
 
   render() {
@@ -89,12 +82,17 @@ this.setupGestures();
           {...this.panResponder.panHandlers}
           style={{ flex: 1}}
         /> */}
-        <Expo.GLView
-          {...this.panResponder.panHandlers}
 
+        {/* <OrbitControls
+   style={{flex: 1}}
+   camera={this.state.camera}> */}
+        <Expo.GLView
+          {...(this.state.panResponder || {}).panHandlers}
+          pointerEvents={'none'}
        style={StyleSheet.absoluteFill}
        onContextCreate={this._onGLContextCreate}
      />
+     {/* </OrbitControls> */}
         {dPad}
       </View>
     );
@@ -139,24 +137,107 @@ _onGLContextCreate = async (gl) => {
   // const mesher = voxel.generate([0,0,0], [16,16,16], function(x,y,z) {
   //   return Math.round(Math.random() * 0xffffff)
   // });
-  engine = new Engine({
+  this.game = new Engine({
     THREE,
     view: view,
     isClient: true,
     getCamera: (_ => view.getCamera()),
-    mesher: voxel.meshers.greedy,
-    generate: voxel.generator['Valley'],
+    mesher: voxel.meshers.culled,
+    generate: voxel.generator['Hilly Terrain'],
     chunkDistance: 2,
-    materials: ['#fff', '#000'],
+    materials: ['#ff0000', '#000'],
     materialFlatColor: true,
     worldOrigin: [0, 0, 0],
     controls: { discreteFire: true },
   });
-  console.log("VOXEL:: init")
-  // engine.on('postrender', function(dt) {
+  this.setState({camera: this.game.camera});
+    // console.log("VOXEL::", voxel.generator['Hilly Terrain'])
+  // this.game.on('postrender', function(dt) {
+  //   // console.log("VOXEL:: postrender")
   // })
 
 //        gl.endFrameEXP();
+
+
+  // for (let _x = 0; _x < 20; _x += 1) {
+  //   for (let _y = 0; _y < 20; _y += 1) {
+  //     for (let _z = 0; _z < 20; _z += 1) {
+  //       this.game.addMarker(new THREE.Vector3(_x,_y,_z));
+  //     }
+  //   }
+  // }
+
+
+(async () => {
+
+
+  this._texture = await ExpoTHREE.createTextureAsync({
+    asset: Expo.Asset.fromModule(require('../assets/images/player.png')),
+  });
+
+
+var createPlayer = player(this.game)
+
+// create the player from a minecraft skin file and tell the
+// game to use it as the main player
+var avatar = createPlayer(this._texture)
+avatar.possess()
+avatar.yaw.position.set(2, 14, 4)
+
+  this.defaultSetup(this.game, avatar)
+})()
+
+  }
+
+
+
+  defaultSetup = (game, avatar) => {
+
+    var makeFly = fly(game)
+    var target = game.controls.target()
+    game.flyer = makeFly(target)
+
+    // highlight blocks when you look at them, hold <Ctrl> for block placement
+    var blockPosPlace, blockPosErase
+    var hl = game.highlighter = highlight(game, { color: 0xff0000 })
+    hl.on('highlight', function (voxelPos) { blockPosErase = voxelPos })
+    hl.on('remove', function (voxelPos) { blockPosErase = null })
+    hl.on('highlight-adjacent', function (voxelPos) { blockPosPlace = voxelPos })
+    hl.on('remove-adjacent', function (voxelPos) { blockPosPlace = null })
+
+    // toggle between first and third person modes
+    // window.addEventListener('keydown', function (ev) {
+    //   if (ev.keyCode === 'R'.charCodeAt(0)) avatar.toggle()
+    // })
+
+    // block interaction stuff, uses highlight data
+    var currentMaterial = 1
+
+    game.on('fire', function (target, state) {
+      console.log("VOXEL:: On Fire")
+
+      var position = blockPosPlace
+      if (position) {
+        game.createBlock(position, currentMaterial)
+      }
+      else {
+        position = blockPosErase
+        if (position) game.setBlock(position, 0)
+      }
+    })
+
+    game.on('tick', function() {
+      console.log("VOXEL:: On Tick")
+      walk.render(target.playerSkin)
+      var vx = Math.abs(target.velocity.x)
+      var vz = Math.abs(target.velocity.z)
+      if (vx > 0.001 || vz > 0.001) walk.stopWalking()
+      else walk.startWalking()
+    })
+
+
+
+    this.setState({panResponder: this.buildGestures( new TouchControls(game.controls) )  });
 
   }
 

@@ -1,4 +1,4 @@
-import Expo from 'expo';
+import Expo, {AppLoading} from 'expo';
 import React from 'react';
 import { Platform, StatusBar, StyleSheet, View } from 'react-native';
 // import Scene from './components/Scene';
@@ -7,7 +7,20 @@ import './js/FakeBrowser';
 console.ignoredYellowBox = ['THREE.WebGLRenderer'];
 
 class AppContainer extends React.Component {
-  render = () => (
+  state = {
+    isSetup: false
+  }
+  componentWillMount() {
+    this.setup();
+
+  }
+
+  setup = async () => {
+this.setState({isSetup: true})
+  }
+  render = () => {
+    if (this.state.isSetup)
+    return (
       <View style={styles.container}>
         <Voxel
         />
@@ -15,6 +28,9 @@ class AppContainer extends React.Component {
         {Platform.OS === 'android' && <View style={styles.statusBarUnderlay} />}
       </View>
     );
+
+    return <AppLoading />
+  }
 }
 
 const styles = StyleSheet.create({

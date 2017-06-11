@@ -127,7 +127,7 @@ gameTest(function createAdjacent(game, t) {
 test('onRenderChunk', function onRenderChunk(t) {
   t.plan(1)
   var game = createEngine(gameOptions)
-  game.on('renderChunk', function(chunk) {
+  game.emitter.addListener('renderChunk', function(chunk) {
     t.equal(JSON.stringify(chunk.position), JSON.stringify([1, 1, 1]))
     game.destroy()
   })

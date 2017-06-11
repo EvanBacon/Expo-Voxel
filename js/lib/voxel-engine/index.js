@@ -1,4 +1,4 @@
-var voxel = require('voxel')
+var voxel = require('../voxel')
 var voxelMesh = require('voxel-mesh')
 var ray = require('voxel-raycast')
 var texture = require('voxel-texture')
@@ -7,7 +7,9 @@ var voxelView = require('voxel-view')
 
 // var THREE = require('three')
 var inherits = require('inherits')
-var EventEmitter = require('events').EventEmitter
+// var EventEmitter = require('events').EventEmitter
+import EventEmitter from 'EventEmitter';
+
 // if (process.browser) var interact = require('interact')
 var requestAnimationFrame = require('raf')
 var collisions = require('collide-3d-tilemap')
@@ -29,8 +31,9 @@ function Game(opts) {
   if (!opts) opts = {}
   if (process.browser && this.notCapable(opts)) return
 
+  this.emitter = new EventEmitter();
+
   // is this a client or a headless server
-  // this.isClient = Boolean( (typeof opts.isClient !== 'undefined') ? opts.isClient : process.browser )
   this.isClient = Boolean( (typeof opts.isClient !== 'undefined') ? opts.isClient : process.browser )
 
   if (!('generateChunks' in opts)) opts.generateChunks = true
@@ -44,6 +47,9 @@ function Game(opts) {
   this.arrayType = opts.arrayType || Uint8Array
   this.cubeSize = 1 // backwards compat
   this.chunkSize = opts.chunkSize || 32
+
+
+  this.on = (type, callback) => this.emitter.addListener(type, callback);
 
   // chunkDistance and removeDistance should not be set to the same thing
   // as it causes lag when you go back and forth on a chunk boundary
@@ -68,6 +74,10 @@ function Game(opts) {
   })
   this.view.bindToScene(this.scene)
   this.camera = opts.getCamera()
+  let helper = new THREE.CameraHelper(this.camera);
+  this.scene.add(helper);
+
+
   if (!opts.lightsDisabled) this.addLights(this.scene)
 
   this.fogScale = opts.fogScale || 32
@@ -127,7 +137,7 @@ function Game(opts) {
   this.initializeControls(opts)
 }
 
-inherits(Game, EventEmitter)
+// inherits(Game, EventEmitter)
 
 // # External API
 
@@ -240,10 +250,10 @@ Game.prototype.setBlock = function(pos, val) {
   var old = this.voxels.voxelAtPosition(pos, val)
   var c = this.voxels.chunkAtPosition(pos)
   var chunk = this.voxels.chunks[c.join('|')]
-  if (!chunk) return// todo - does self.emit('missingChunk', c.join('|')) make sense here?
+  if (!chunk) return// todo - does self.emitter.emit('missingChunk', c.join('|')) make sense here?
   this.addChunkToNextUpdate(chunk)
   this.spatial.emit('change-block', pos, old, val)
-  this.emit('setBlock', pos, val, old)
+  this.emitter.emit('setBlock', pos, val, old)
 }
 
 Game.prototype.getBlock = function(pos) {
@@ -488,7 +498,7 @@ Game.prototype.removeFarChunks = function(playerPosition) {
       delete mesh.wireMesh
     }
     delete self.voxels.chunks[chunkIndex]
-    self.emit('removeChunk', chunkPosition)
+    self.emitter.emit('removeChunk', chunkPosition)
   })
   self.voxels.requestMissingChunks(playerPosition)
 }
@@ -501,7 +511,7 @@ Game.prototype.updateDirtyChunks = function() {
   var self = this
   Object.keys(this.chunksNeedsUpdate).forEach(function showChunkAtIndex(chunkIndex) {
     var chunk = self.chunksNeedsUpdate[chunkIndex]
-    self.emit('dirtyChunkUpdate', chunk)
+    self.emitter.emit('dirtyChunkUpdate', chunk)
     self.showChunk(chunk)
   })
   this.chunksNeedsUpdate = {}
@@ -557,9 +567,11 @@ Game.prototype.showChunk = function(chunk) {
   }
   mesh.setPosition(bounds[0][0], bounds[0][1], bounds[0][2])
   mesh.addToScene(this.scene)
-  this.emit('renderChunk', chunk)
+  this.emitter.emit('renderChunk', chunk)
   return mesh
 }
+
+
 
 // # Debugging methods
 
@@ -606,7 +618,7 @@ Game.prototype.onControlOptOut = function() {
 }
 
 Game.prototype.onFire = function(state) {
-  this.emit('fire', this.controlling, state)
+  this.emitter.emit('fire', this.controlling, state)
 }
 
 Game.prototype.setInterval = tic.interval.bind(tic)
@@ -624,7 +636,7 @@ Game.prototype.tick = function(delta) {
 
   tic.tick(delta)
 
-  this.emit('tick', delta)
+  this.emitter.emit('tick', delta)
 
   if (!this.controls) return
   var playerPos = this.playerPosition()
@@ -681,10 +693,10 @@ Game.prototype.initializeRendering = function(opts) {
         time = now;
         requestAnimationFrame(_render);
 
-        self.emit('prerender', dt)
+        self.emitter.emit('prerender', dt)
         self.render(dt)
         // console.log("VOXEL:: render", dt)
-        self.emit('postrender', dt)
+        self.emitter.emit('postrender', dt)
 
       }
       _render();
@@ -715,7 +727,7 @@ Game.prototype.hookupControls = function(buttons, opts) {
 
 Game.prototype.handleChunkGeneration = function() {
   var self = this
-  this.voxels.on('missingChunk', function(chunkPos) {
+  this.voxels.emitter.addListener('missingChunk', function(chunkPos) {
     self.pendingChunks.push(chunkPos.join('|'))
   })
   this.voxels.requestMissingChunks(this.worldOrigin)

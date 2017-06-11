@@ -17,9 +17,11 @@
     "events": "^1.1.1",
     "expo": "16.0.0",
     "expo-three": "^1.0.0",
+    "expo-three-orbit-controls": "^1.0.1",
     "gl-matrix": "^2.3.2",
     "inherits": "^2.0.3",
     "kb-controls": "^0.2.0",
+    "minecraft-skin": "^0.1.2",
     "pin": "^0.3.0",
     "pin-it": "0.0.1",
     "raf": "^3.3.2",
@@ -31,11 +33,15 @@
     "tic": "^1.0.0",
     "voxel": "^0.5.0",
     "voxel-engine": "^0.20.2",
+    "voxel-fly": "^0.1.2",
+    "voxel-highlight": "0.0.10",
     "voxel-mesh": "^0.3.0",
     "voxel-physical": "^0.1.3",
+    "voxel-player": "^0.1.0",
     "voxel-raycast": "^0.2.1",
     "voxel-region-change": "^0.1.0",
-    "voxel-view": "0.0.7"
+    "voxel-view": "0.0.7",
+    "voxel-walk": "0.0.5"
   },
   "devDependencies": {
     "jest-expo": "~0.4.0"

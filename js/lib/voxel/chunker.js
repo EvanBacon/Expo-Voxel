@@ -7,6 +7,8 @@ module.exports = function(opts) {
 
 module.exports.Chunker = Chunker
 
+import EventEmitter from 'EventEmitter';
+
 function Chunker(opts) {
   this.distance = opts.chunkDistance || 2
   this.chunkSize = opts.chunkSize || 32
@@ -15,7 +17,7 @@ function Chunker(opts) {
   this.generateVoxelChunk = opts.generateVoxelChunk
   this.chunks = {}
   this.meshes = {}
-
+  this.emitter = new EventEmitter()
   if (this.chunkSize & this.chunkSize-1 !== 0)
     throw new Error('chunkSize must be a power of 2')
   var bits = 0;
@@ -24,8 +26,7 @@ function Chunker(opts) {
   this.chunkMask = (1 << this.chunkBits) - 1
   this.chunkPadHalf = this.chunkPad >> 1
 }
-
-inherits(Chunker, events.EventEmitter)
+// inherits(Chunker, EventEmitter)
 
 Chunker.prototype.nearbyChunks = function(position, distance) {
   var current = this.chunkAtPosition(position)
@@ -48,7 +49,7 @@ Chunker.prototype.requestMissingChunks = function(position) {
   var self = this
   this.nearbyChunks(position).map(function(chunk) {
     if (!self.chunks[chunk.join('|')]) {
-      self.emit('missingChunk', chunk)
+      self.emitter.emit('missingChunk', chunk)
     }
   })
 }
@@ -116,4 +117,3 @@ Chunker.prototype.voxelAtPosition = function(pos, val) {
   var v = this.voxelAtCoordinates(x, y, z, val)
   return v;
 }
-

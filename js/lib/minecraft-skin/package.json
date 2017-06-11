@@ -1,0 +1,84 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "minecraft-skin",
+        "scope": null,
+        "escapedName": "minecraft-skin",
+        "name": "minecraft-skin",
+        "rawSpec": "",
+        "spec": "latest",
+        "type": "tag"
+      },
+      "/Users/evan.bacon/GoogleDrive/react-native/exponent/voxel"
+    ]
+  ],
+  "_from": "minecraft-skin@latest",
+  "_id": "minecraft-skin@0.1.2",
+  "_inCache": true,
+  "_location": "/minecraft-skin",
+  "_npmUser": {
+    "name": "maxogden",
+    "email": "max@maxogden.com"
+  },
+  "_npmVersion": "1.2.14",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "minecraft-skin",
+    "scope": null,
+    "escapedName": "minecraft-skin",
+    "name": "minecraft-skin",
+    "rawSpec": "",
+    "spec": "latest",
+    "type": "tag"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/",
+    "/voxel-player",
+    "/voxel-walk"
+  ],
+  "_resolved": "https://registry.npmjs.org/minecraft-skin/-/minecraft-skin-0.1.2.tgz",
+  "_shasum": "97e1b2cca70b7267832385424810f8286572ac7b",
+  "_shrinkwrap": null,
+  "_spec": "minecraft-skin",
+  "_where": "/Users/evan.bacon/GoogleDrive/react-native/exponent/voxel",
+  "author": {
+    "name": "max ogden",
+    "email": "max@maxogden.com"
+  },
+  "bugs": {
+    "url": "https://github.com/maxogden/minecraft-skin/issues"
+  },
+  "dependencies": {},
+  "description": "load minecraft skins as meshes in three.js applications",
+  "devDependencies": {
+    "beefy": "0.0.11",
+    "browserify": "~2.8.1",
+    "voxel-walk": "0.0.4"
+  },
+  "directories": {},
+  "dist": {
+    "shasum": "97e1b2cca70b7267832385424810f8286572ac7b",
+    "tarball": "https://registry.npmjs.org/minecraft-skin/-/minecraft-skin-0.1.2.tgz"
+  },
+  "homepage": "https://github.com/maxogden/minecraft-skin#readme",
+  "maintainers": [
+    {
+      "name": "maxogden",
+      "email": "max@maxogden.com"
+    }
+  ],
+  "name": "minecraft-skin",
+  "optionalDependencies": {},
+  "readme": "# minecraft-skin\n\nload minecraft skins as meshes in three.js applications\n\noriginally written by @daniel_hede for [this awesome demo](http://djazz.mine.nu/apps/MinecraftSkin/), turned into a module and upgraded to r54 by @maxogden\n\nminecraft is property of Mojang AB\n\n```javascript\nvar skin = require('minecraft-skin')\nvar viking = skin(THREE, 'viking.png')\nviking.mesh.position.y = 50\nscene.add(viking.mesh)\n```\n\ndesigned for use with [browserify](http://browserify.org)\n\n# license\n\nBSD",
+  "readmeFilename": "readme.md",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/maxogden/minecraft-skin.git"
+  },
+  "scripts": {
+    "start": "beefy demo.js"
+  },
+  "version": "0.1.2"
+}

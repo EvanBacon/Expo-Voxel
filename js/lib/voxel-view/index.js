@@ -72,5 +72,8 @@ let point = {
 
 View.prototype.render = function(scene) {
   this.renderer.render(scene, this.camera)
+}
+
+View.prototype.endRender = function() {
   this.context.endFrameEXP();
 }

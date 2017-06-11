@@ -1,0 +1,88 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "voxel-physical@^0.1.3",
+        "scope": null,
+        "escapedName": "voxel-physical",
+        "name": "voxel-physical",
+        "rawSpec": "^0.1.3",
+        "spec": ">=0.1.3 <0.2.0",
+        "type": "range"
+      },
+      "/Users/evan.bacon/GoogleDrive/react-native/exponent/voxel"
+    ]
+  ],
+  "_from": "voxel-physical@>=0.1.3 <0.2.0",
+  "_id": "voxel-physical@0.1.3",
+  "_inCache": true,
+  "_location": "/voxel-physical",
+  "_npmUser": {
+    "name": "chrisdickinson",
+    "email": "chris@neversaw.us"
+  },
+  "_npmVersion": "1.4.3",
+  "_phantomChildren": {
+    "gl-matrix": "2.3.2"
+  },
+  "_requested": {
+    "raw": "voxel-physical@^0.1.3",
+    "scope": null,
+    "escapedName": "voxel-physical",
+    "name": "voxel-physical",
+    "rawSpec": "^0.1.3",
+    "spec": ">=0.1.3 <0.2.0",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/voxel-physical/-/voxel-physical-0.1.3.tgz",
+  "_shasum": "ac0afed61e9514ffb39446a7ade81a43d20a3cdf",
+  "_shrinkwrap": null,
+  "_spec": "voxel-physical@^0.1.3",
+  "_where": "/Users/evan.bacon/GoogleDrive/react-native/exponent/voxel",
+  "author": {
+    "name": "Chris Dickinson",
+    "email": "chris@neversaw.us"
+  },
+  "bugs": {
+    "url": "https://github.com/chrisdickinson/voxel-physical/issues"
+  },
+  "dependencies": {
+    "aabb-3d": "0.0.X",
+    "three": "0.X.X"
+  },
+  "description": "create objects that have aabbs and respond to accel and vel updates",
+  "devDependencies": {},
+  "directories": {},
+  "dist": {
+    "shasum": "ac0afed61e9514ffb39446a7ade81a43d20a3cdf",
+    "tarball": "https://registry.npmjs.org/voxel-physical/-/voxel-physical-0.1.3.tgz"
+  },
+  "gitHead": "1b2a372bce5fb9fd460e231c0cea8fcc5d6e2352",
+  "homepage": "https://github.com/chrisdickinson/voxel-physical",
+  "keywords": [
+    "voxeljs",
+    "physics"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "maintainers": [
+    {
+      "name": "chrisdickinson",
+      "email": "chris@neversaw.us"
+    }
+  ],
+  "name": "voxel-physical",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/chrisdickinson/voxel-physical.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "0.1.3"
+}

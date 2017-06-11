@@ -4,10 +4,9 @@ import Expo from 'expo';
 import React from 'react';
 import {PanResponder,StyleSheet, View, Dimensions} from 'react-native'
 const {width, height} = Dimensions.get('window')
-import EventEmitter from 'EventEmitter';
 
 import TouchControls from '../js/lib/voxel-touchcontrols';
-
+import DirectionType from '../js/DirectionType'
 global.THREE = THREE;
 import OrbitControls from 'expo-three-orbit-controls'
 var fly = require('voxel-fly')
@@ -46,10 +45,22 @@ export default class Voxel extends React.Component {
   onMoveShouldSetPanResponder: (evt, gestureState) => true,
   onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
 
-  onPanResponderGrant: (({nativeEvent}) => onTouchStart(nativeEvent)),
-  onPanResponderMove: (({nativeEvent}) => onTouchMove(nativeEvent)),
-  onPanResponderRelease: (({nativeEvent}) => onTouchEnd(nativeEvent)),
-  onPanResponderTerminate: (({nativeEvent}) => onTouchEnd(nativeEvent)),
+  onPanResponderGrant: (({nativeEvent}) => {
+
+    window.document.body.emitter.emit("mousedown", nativeEvent);
+
+    // onTouchStart(nativeEvent)}
+  }),
+  onPanResponderMove: (({nativeEvent}) => {
+    // window.document.body.emitter.emit("keyup", {keyCode});
+    // onTouchMove(nativeEvent)
+  }),
+  onPanResponderRelease: (({nativeEvent}) => {
+    window.document.body.emitter.emit("mouseup", nativeEvent);
+  }),
+  onPanResponderTerminate: (({nativeEvent}) => {
+    window.document.body.emitter.emit("mouseup", nativeEvent);
+  }),
 })
 
 
@@ -58,8 +69,35 @@ export default class Voxel extends React.Component {
 
     this.setState({
       ready: true,
-      // panResponder: this.buildGestures(controls)
+      panResponder: this.buildGestures({})
     });
+  }
+
+  keyCodeForDirection = (direction) => {
+    let keyCode = null;
+    switch (direction) {
+      case DirectionType.front:
+        keyCode = 38;
+        break;
+        case DirectionType.left:
+          keyCode = 37;
+          break;
+          case DirectionType.right:
+            keyCode = 39;
+            break;
+            case DirectionType.back:
+              keyCode = 40;
+              break;
+              case DirectionType.up:
+                keyCode = 32;
+                this.avatar.toggle()
+                break;
+      default:
+break;
+
+
+    }
+    return keyCode;
   }
 
   render() {
@@ -69,8 +107,16 @@ export default class Voxel extends React.Component {
 
     const dPad = (<Dpad
       style={{position: 'absolute', bottom: 8, left: 8}}
-      onPressOut={_=> {this.moveID = null}}
+      onPressOut={_=> {
+        let keyCode = this.keyCodeForDirection(this.moveID);
+        this.moveID = null
+        window.document.body.emitter.emit("keyup", {keyCode});
+
+      }}
       onPress={id => {
+        let keyCode = this.keyCodeForDirection(id);
+
+            window.document.body.emitter.emit("keydown", {keyCode});
         this.moveID = id
       }}/>
     )
@@ -115,7 +161,8 @@ _onGLContextCreate = async (gl) => {
       width: width,
       height: height,
       skyColor: skyColor,
-      antialias: true,
+      ortho: false,
+      // antialias: true,
       bindToScene: (element) => {
 
       },
@@ -126,7 +173,7 @@ _onGLContextCreate = async (gl) => {
      style: {},
      addEventListener: () => {},
      removeEventListener: () => {},
-     clientHeight: gl.drawingBufferHeight,
+     clientHeight: height,
    },
    context: gl,
 
@@ -145,46 +192,30 @@ _onGLContextCreate = async (gl) => {
     mesher: voxel.meshers.culled,
     generate: voxel.generator['Hilly Terrain'],
     chunkDistance: 2,
-    materials: ['#ff0000', '#000'],
+    materials: ['#fff', '#000'],
     materialFlatColor: true,
     worldOrigin: [0, 0, 0],
-    controls: { discreteFire: true },
+    // controls: { discreteFire: true },
   });
   this.setState({camera: this.game.camera});
-    // console.log("VOXEL::", voxel.generator['Hilly Terrain'])
-  // this.game.on('postrender', function(dt) {
-  //   // console.log("VOXEL:: postrender")
-  // })
 
-//        gl.endFrameEXP();
+  (async () => {
 
 
-  // for (let _x = 0; _x < 20; _x += 1) {
-  //   for (let _y = 0; _y < 20; _y += 1) {
-  //     for (let _z = 0; _z < 20; _z += 1) {
-  //       this.game.addMarker(new THREE.Vector3(_x,_y,_z));
-  //     }
-  //   }
-  // }
-
-
-(async () => {
-
-
-  this._texture = await ExpoTHREE.createTextureAsync({
-    asset: Expo.Asset.fromModule(require('../assets/images/player.png')),
-  });
+    this._texture = await ExpoTHREE.createTextureAsync({
+      asset: Expo.Asset.fromModule(require('../assets/images/player.png')),
+    });
 
 
 var createPlayer = player(this.game)
 
 // create the player from a minecraft skin file and tell the
 // game to use it as the main player
-var avatar = createPlayer(this._texture)
-avatar.possess()
-avatar.yaw.position.set(2, 14, 4)
+this.avatar = createPlayer(this._texture)
+this.avatar.possess()
+this.avatar.yaw.position.set(2, 14, 4)
 
-  this.defaultSetup(this.game, avatar)
+  this.defaultSetup(this.game, this.avatar)
 })()
 
   }
@@ -199,11 +230,11 @@ avatar.yaw.position.set(2, 14, 4)
 
     // highlight blocks when you look at them, hold <Ctrl> for block placement
     var blockPosPlace, blockPosErase
-    var hl = game.highlighter = highlight(game, { color: 0xff0000 })
-    hl.on('highlight', function (voxelPos) { blockPosErase = voxelPos })
-    hl.on('remove', function (voxelPos) { blockPosErase = null })
-    hl.on('highlight-adjacent', function (voxelPos) { blockPosPlace = voxelPos })
-    hl.on('remove-adjacent', function (voxelPos) { blockPosPlace = null })
+    // var hl = game.highlighter = highlight(game, { color: 0xff0000 })
+    // hl.on('highlight', function (voxelPos) { blockPosErase = voxelPos })
+    // hl.on('remove', function (voxelPos) { blockPosErase = null })
+    // hl.on('highlight-adjacent', function (voxelPos) { blockPosPlace = voxelPos })
+    // hl.on('remove-adjacent', function (voxelPos) { blockPosPlace = null })
 
     // toggle between first and third person modes
     // window.addEventListener('keydown', function (ev) {
@@ -237,7 +268,7 @@ avatar.yaw.position.set(2, 14, 4)
 
 
 
-    this.setState({panResponder: this.buildGestures( new TouchControls(game.controls) )  });
+    // this.setState({panResponder: this.buildGestures( new TouchControls(game.controls) )  });
 
   }
 

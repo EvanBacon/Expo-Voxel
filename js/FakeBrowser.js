@@ -1,4 +1,5 @@
 import { Dimensions } from 'react-native';
+import EventEmitter from 'EventEmitter';
 
 class DOMNode {
   constructor(nodeName) {
@@ -12,7 +13,7 @@ class DOMNode {
 
 class DOMElement extends DOMNode {
   style = {};
-
+  emitter = new EventEmitter();
   constructor(tagName) {
     return super(tagName.toUpperCase());
   }
@@ -21,16 +22,20 @@ class DOMElement extends DOMNode {
     return this.nodeName;
   }
 
+
   addEventListener(eventName, listener) {
     // unimplemented
+    console.log("VOXEL:: add listener",this.tagName, eventName, listener);
+    this.emitter.addListener(eventName, listener)
   }
 
   removeEventListener(eventName, listener) {
     // unimplemented
+    this.emitter.removeListener(eventName, listener)
   }
 }
 
-class DOMDocument extends DOMNode {
+class DOMDocument extends DOMElement {
   body = new DOMElement('BODY');
 
   constructor() {
@@ -47,9 +52,18 @@ class DOMDocument extends DOMNode {
 }
 
 process.browser = true
-window.addEventListener = () => {
 
+window.emitter = new EventEmitter();
+window.addEventListener = (eventName, listener) => {
+  // unimplemented
+  console.log("VOXEL:: add listener","WINDOW", eventName, listener);
+  window.emitter.addListener(eventName, listener)
 }
+window.removeEventListener = (eventName, listener) => {
+  // unimplemented
+  window.emitter.removeListener(eventName, listener)
+}
+
 let { width, height } = Dimensions.get('window');
 window.innerWidth = width;
 window.innerHeight = height;

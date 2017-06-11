@@ -19,7 +19,7 @@ var vector = glMatrix.vec3
 var SpatialEventEmitter = require('spatial-events')
 var regionChange = require('voxel-region-change')
 var kb = require('kb-controls')
-var physical = require('voxel-physical')
+var physical = require('../voxel-physical')
 var pin = require('pin-it')
 var tic = require('tic')()
 
@@ -50,7 +50,7 @@ function Game(opts) {
 
 
   this.on = (type, callback) => this.emitter.addListener(type, callback);
-
+  this.removeListener = (identifier) => this.emitter.removeListener(identifier);
   // chunkDistance and removeDistance should not be set to the same thing
   // as it causes lag when you go back and forth on a chunk boundary
   this.chunkDistance = opts.chunkDistance || 2
@@ -394,6 +394,7 @@ Game.prototype.playerPosition = function() {
   var position = target
     ? target.avatar.position
     : this.camera.localToWorld(this.camera.position.clone())
+    console.log("VOXEL:: hero", position)
   return [position.x, position.y, position.z]
 }
 
@@ -697,6 +698,7 @@ Game.prototype.initializeRendering = function(opts) {
         self.render(dt)
         // console.log("VOXEL:: render", dt)
         self.emitter.emit('postrender', dt)
+        self.view.endRender();
 
       }
       _render();

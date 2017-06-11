@@ -8,11 +8,11 @@ const {width, height} = Dimensions.get('window')
 var voxel = require('../js/lib/voxel')
 // var voxel = require('voxel')
 const examples = voxel.generateExamples();
-import Engine from 'voxel-engine';
+// import Engine from 'voxel-engine';
 
-// import Engine from '../js/lib/voxel-engine';
+import Engine from '../js/lib/voxel-engine';
 // import voxelView from 'voxel-view';
-// import voxelView from '../js/lib/voxel-view';
+import voxelView from '../js/lib/voxel-view';
 import * as THREE from 'three';
 global.THREE = THREE;
 const THREEView = Expo.createTHREEViewClass(THREE);
@@ -20,6 +20,11 @@ const THREEView = Expo.createTHREEViewClass(THREE);
 
 import Dpad from './Dpad'
 import GestureType from '../js/GestureType'
+
+
+THREE.WebGLRenderer.setClearColorHex = function(color, alpha) {
+  this.setClearColor(color, hex);
+}
 
 export default class Voxel extends React.Component {
   // world;
@@ -110,7 +115,7 @@ _onGLContextCreate = async (gl) => {
     width / -2, width / 2, height / 2, height / -2, 0, 1);
 
 
-  view = {
+  view = new voxelView(THREE, {
       width: width,
       height: height,
       skyColor: skyColor,
@@ -130,12 +135,12 @@ _onGLContextCreate = async (gl) => {
    context: gl,
 
 
-  }
+ });
 
 
-  const mesher = voxel.generate([0,0,0], [16,16,16], function(x,y,z) {
-    return Math.round(Math.random() * 0xffffff)
-  });
+  // const mesher = voxel.generate([0,0,0], [16,16,16], function(x,y,z) {
+  //   return Math.round(Math.random() * 0xffffff)
+  // });
   engine = new Engine({
     view: view,
     isClient: true,
@@ -146,13 +151,17 @@ _onGLContextCreate = async (gl) => {
     materials: ['#fff', '#000'],
     materialFlatColor: true,
     worldOrigin: [0, 0, 0],
-    controls: { discreteFire: true }
+    controls: { discreteFire: true },
+    // context: gl,
+    postrender: (dt => {
+      gl.endFrameEXP();
+      console.log("VOXEL:: postrender", dt)
+
+    }),
   });
   console.log("VOXEL:: init")
-  engine.on('postrender', function(dt) {
-    gl.endFrameEXP();
-    // console.log("VOXEL:: postrender", dt)
-  })
+  // engine.on('postrender', function(dt) {
+  // })
 
 //        gl.endFrameEXP();
 

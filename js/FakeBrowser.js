@@ -46,6 +46,7 @@ class DOMDocument extends DOMNode {
   }
 }
 
+process.browser = true
 window.addEventListener = () => {
 
 }

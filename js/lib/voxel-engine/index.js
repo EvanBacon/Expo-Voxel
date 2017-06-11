@@ -4,7 +4,8 @@ var ray = require('voxel-raycast')
 var texture = require('voxel-texture')
 var control = require('voxel-control')
 var voxelView = require('voxel-view')
-var THREE = require('three')
+
+// var THREE = require('three')
 var inherits = require('inherits')
 var EventEmitter = require('events').EventEmitter
 // if (process.browser) var interact = require('interact')
@@ -37,7 +38,7 @@ function Game(opts) {
   this.setConfigurablePositions(opts)
   this.configureChunkLoading(opts)
   this.setDimensions(opts)
-  this.THREE = THREE
+  this.THREE = opts.THREE
   this.vector = vector
   this.glMatrix = glMatrix
   this.arrayType = opts.arrayType || Uint8Array
@@ -54,12 +55,12 @@ function Game(opts) {
   this.playerHeight = opts.playerHeight || 1.62
   this.meshType = opts.meshType || 'surfaceMesh'
   this.mesher = opts.mesher || voxel.meshers.culled
-  this.materialType = opts.materialType || THREE.MeshLambertMaterial
+  this.materialType = opts.materialType || this.THREE.MeshLambertMaterial
   this.materialParams = opts.materialParams || {}
   this.items = []
   this.voxels = voxel(this)
-  this.scene = new THREE.Scene()
-  this.view = opts.view || new voxelView(THREE, {
+  this.scene = new this.THREE.Scene()
+  this.view = opts.view || new voxelView(this.THREE, {
     width: this.width,
     height: this.height,
     skyColor: this.skyColor,
@@ -70,7 +71,7 @@ function Game(opts) {
   if (!opts.lightsDisabled) this.addLights(this.scene)
 
   this.fogScale = opts.fogScale || 32
-  if (!opts.fogDisabled) this.scene.fog = new THREE.Fog( this.skyColor, 0.00025, this.worldWidth() * this.fogScale )
+  if (!opts.fogDisabled) this.scene.fog = new this.THREE.Fog( this.skyColor, 0.00025, this.worldWidth() * this.fogScale )
 
   this.collideVoxels = collisions(
     this.getBlock.bind(this),
@@ -96,7 +97,7 @@ function Game(opts) {
   this.materials = texture({
     game: this,
     texturePath: opts.texturePath || './textures/',
-    materialType: opts.materialType || THREE.MeshLambertMaterial,
+    materialType: opts.materialType || this.THREE.MeshLambertMaterial,
     materialParams: opts.materialParams || {},
     materialFlatColor: opts.materialFlatColor === true
   })
@@ -417,9 +418,9 @@ Game.prototype.collideTerrain = function(other, bbox, vec, resting) {
 
 Game.prototype.addLights = function(scene) {
   var ambientLight, directionalLight
-  ambientLight = new THREE.AmbientLight(0xcccccc)
+  ambientLight = new this.THREE.AmbientLight(0xcccccc)
   scene.add(ambientLight)
-  var light	= new THREE.DirectionalLight( 0xffffff , 1)
+  var light	= new this.THREE.DirectionalLight( 0xffffff , 1)
   light.position.set( 1, 1, 0.5 ).normalize()
   scene.add( light )
 }
@@ -541,7 +542,7 @@ Game.prototype.showAllChunks = function() {
 Game.prototype.showChunk = function(chunk) {
   var chunkIndex = chunk.position.join('|')
   var bounds = this.voxels.getBounds.apply(this.voxels, chunk.position)
-  var scale = new THREE.Vector3(1, 1, 1)
+  var scale = new this.THREE.Vector3(1, 1, 1)
   var mesh = voxelMesh(chunk, this.mesher, scale, this.THREE)
   this.voxels.chunks[chunkIndex] = chunk
   if (this.voxels.meshes[chunkIndex]) {
@@ -563,17 +564,17 @@ Game.prototype.showChunk = function(chunk) {
 // # Debugging methods
 
 Game.prototype.addMarker = function(position) {
-  var geometry = new THREE.SphereGeometry( 0.1, 10, 10 )
-  var material = new THREE.MeshPhongMaterial( { color: 0xffffff, shading: THREE.FlatShading } )
-  var mesh = new THREE.Mesh( geometry, material )
+  var geometry = new this.THREE.SphereGeometry( 0.1, 10, 10 )
+  var material = new this.THREE.MeshPhongMaterial( { color: 0xffffff, shading: this.THREE.FlatShading } )
+  var mesh = new this.THREE.Mesh( geometry, material )
   mesh.position.copy(position)
   this.scene.add(mesh)
 }
 
 Game.prototype.addAABBMarker = function(aabb, color) {
-  var geometry = new THREE.CubeGeometry(aabb.width(), aabb.height(), aabb.depth())
-  var material = new THREE.MeshBasicMaterial({ color: color || 0xffffff, wireframe: true, transparent: true, opacity: 0.5, side: THREE.DoubleSide })
-  var mesh = new THREE.Mesh(geometry, material)
+  var geometry = new this.THREE.CubeGeometry(aabb.width(), aabb.height(), aabb.depth())
+  var material = new this.THREE.MeshBasicMaterial({ color: color || 0xffffff, wireframe: true, transparent: true, opacity: 0.5, side: this.THREE.DoubleSide })
+  var mesh = new this.THREE.Mesh(geometry, material)
   mesh.position.set(aabb.x0() + aabb.width() / 2, aabb.y0() + aabb.height() / 2, aabb.z0() + aabb.depth() / 2)
   this.scene.add(mesh)
   return mesh
@@ -680,19 +681,13 @@ Game.prototype.initializeRendering = function(opts) {
         time = now;
         requestAnimationFrame(_render);
 
-
         self.emit('prerender', dt)
-        // self.render(dt)
-        console.log("VOXEL:: render", dt)
+        self.render(dt)
+        // console.log("VOXEL:: render", dt)
         self.emit('postrender', dt)
-        opts.postrender(dt)
 
       }
       _render();
-
-  // requestAnimationFrame()
-  // requestAnimationFrame(window).on('data', function(dt) {
-  // })
 }
 
 Game.prototype.initializeControls = function(opts) {

@@ -19,7 +19,7 @@ function View(three, opts) {
   this.ortho = opts.ortho
   this.camera = this.ortho?(new THREE.OrthographicCamera(this.width/-2, this.width/2, this.height/2, this.height/-2, this.nearPlane, this.farPlane)):(new THREE.PerspectiveCamera(this.fov, this.aspectRatio, this.nearPlane, this.farPlane))
   this.camera.lookAt(new THREE.Vector3(0, 0, 0))
-
+  this.context = opts.context;
   if (!process.browser) return
 
   this.createRenderer(opts)
@@ -71,8 +71,18 @@ View.prototype.resizeWindow = function(width, height) {
   this.renderer.setSize( width, height )
 }
 
+let printed;
 View.prototype.render = function(scene) {
+
+  if (!printed) {
+console.log("VOXEL:: render", Object.keys(this.renderer));
+    printed = true;
+  }
+
+
   this.renderer.render(scene, this.camera)
+  this.context.endFrameEXP();
+
 }
 
 View.prototype.appendTo = function(element) {

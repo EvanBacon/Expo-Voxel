@@ -5,6 +5,9 @@ import React from 'react';
 import {PanResponder,StyleSheet, View, Dimensions} from 'react-native'
 const {width, height} = Dimensions.get('window')
 
+global.THREE = THREE;
+
+
 var voxel = require('../js/lib/voxel')
 // var voxel = require('voxel')
 const examples = voxel.generateExamples();
@@ -14,7 +17,6 @@ import Engine from '../js/lib/voxel-engine';
 // import voxelView from 'voxel-view';
 import voxelView from '../js/lib/voxel-view';
 import * as THREE from 'three';
-global.THREE = THREE;
 const THREEView = Expo.createTHREEViewClass(THREE);
 // const VoxelView = voxelView({});
 
@@ -111,10 +113,6 @@ _onGLContextCreate = async (gl) => {
   const {drawingBufferWidth: width, drawingBufferHeight:height} = gl;
 
 
-  const camera = new THREE.OrthographicCamera(
-    width / -2, width / 2, height / 2, height / -2, 0, 1);
-
-
   view = new voxelView(THREE, {
       width: width,
       height: height,
@@ -142,9 +140,10 @@ _onGLContextCreate = async (gl) => {
   //   return Math.round(Math.random() * 0xffffff)
   // });
   engine = new Engine({
+    THREE,
     view: view,
     isClient: true,
-    getCamera: (_ => camera),
+    getCamera: (_ => view.getCamera()),
     mesher: voxel.meshers.greedy,
     generate: voxel.generator['Valley'],
     chunkDistance: 2,
@@ -152,12 +151,6 @@ _onGLContextCreate = async (gl) => {
     materialFlatColor: true,
     worldOrigin: [0, 0, 0],
     controls: { discreteFire: true },
-    // context: gl,
-    postrender: (dt => {
-      gl.endFrameEXP();
-      console.log("VOXEL:: postrender", dt)
-
-    }),
   });
   console.log("VOXEL:: init")
   // engine.on('postrender', function(dt) {

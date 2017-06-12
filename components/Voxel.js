@@ -95,6 +95,9 @@ export default class Voxel extends React.Component {
           let keyCode = this.keyCodeForDirection(this.moveID);
           this.moveID = null
           window.document.body.emitter.emit("keyup", {keyCode});
+          ///TODO: Fix this hack
+          window.document.body.emitter.emit("keydown", {keyCode: 1000});
+          window.document.body.emitter.emit("keyup", {keyCode: 1000});
         }}
         onPress={id => {
           let keyCode = this.keyCodeForDirection(id);
@@ -184,7 +187,7 @@ export default class Voxel extends React.Component {
         // game to use it as the main player
         this.avatar = createPlayer(this._texture)
         this.avatar.possess()
-        this.avatar.yaw.position.set(2, 100, 4)
+        this.avatar.yaw.position.set(2, 14, 4)
 
         this.defaultSetup(this.game, this.avatar)
       })()

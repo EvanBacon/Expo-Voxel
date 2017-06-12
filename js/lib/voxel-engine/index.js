@@ -126,7 +126,7 @@ function Game(opts) {
 
 
 //// DISABLED CONTROLS _ STREAM IS FILLING JS THREAD
-  // this.initializeControls(opts)
+  this.initializeControls(opts)
 }
 
 // inherits(Game, EventEmitter)
@@ -528,6 +528,7 @@ Game.prototype.showChunk = function(chunk) {
   var chunkIndex = chunk.position.join('|')
   var bounds = this.voxels.getBounds.apply(this.voxels, chunk.position)
   var scale = new this.THREE.Vector3(1, 1, 1)
+  // var scale = new this.THREE.Vector3(10, 10, 10)
   var mesh = voxelMesh(chunk, this.mesher, scale, this.THREE)
   this.voxels.chunks[chunkIndex] = chunk
   if (this.voxels.meshes[chunkIndex]) {
@@ -540,7 +541,7 @@ Game.prototype.showChunk = function(chunk) {
     this.materials.paint(mesh)
 
   mesh.setPosition(bounds[0][0], bounds[0][1], bounds[0][2])
-  // mesh.addToScene(this.scene)
+  mesh.addToScene(this.scene)
   this.emitter.emit('renderChunk', chunk)
   return mesh
 }

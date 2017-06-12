@@ -1,18 +1,18 @@
 var THREE = require('three')
 
-module.exports = function(data, mesher, scaleFactor, three) {
-  return new Mesh(data, mesher, scaleFactor, three)
+module.exports = function(data, mesher, scaleFactor, three, mesherExtraData) {
+  return new Mesh(data, mesher, scaleFactor, three, mesherExtraData)
 }
 
 module.exports.Mesh = Mesh
 
-function Mesh(data, mesher, scaleFactor, three) {
+function Mesh(data, mesher, scaleFactor, three, mesherExtraData) {
   this.THREE = three || THREE
   this.data = data
   var geometry = this.geometry = new this.THREE.Geometry()
   this.scale = scaleFactor || new this.THREE.Vector3(10, 10, 10)
 
-  var result = mesher( data.voxels, data.dims )
+  var result = mesher( data.voxels, data.dims, mesherExtraData )
   this.meshed = result
 
   geometry.vertices.length = 0
@@ -28,13 +28,25 @@ function Mesh(data, mesher, scaleFactor, three) {
 
     var q = result.faces[i]
     if (q.length === 5) {
-      var f = new this.THREE.Face4(q[0], q[1], q[2], q[3])
-      f.color = new this.THREE.Color(q[4])
-      geometry.faces.push(f)
+      var uv = this.faceVertexUv(i);
+
+      var f = new this.THREE.Face3(q[0], q[1], q[3]);
+      f.color = new this.THREE.Color(q[4]);
+      geometry.faces.push(f);
+
+      geometry.faceVertexUvs[0].push([uv[0], uv[1], uv[3]])
+
+      var g = new this.THREE.Face3(q[1], q[2], q[3])
+      g.color = new this.THREE.Color(q[4])
+      geometry.faces.push(g)
+      
+      geometry.faceVertexUvs[0].push([uv[1], uv[2], uv[3]])
+
     } else if (q.length == 4) {
       var f = new this.THREE.Face3(q[0], q[1], q[2])
       f.color = new this.THREE.Color(q[3])
       geometry.faces.push(f)
+      geometry.faceVertexUvs[0].push(this.faceVertexUv(i))
     }
   }
 

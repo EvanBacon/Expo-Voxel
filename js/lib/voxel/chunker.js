@@ -43,7 +43,9 @@ Chunker.prototype.nearbyChunks = function(position, distance) {
 Chunker.prototype.requestMissingChunks = function(position) {
   var self = this
   this.nearbyChunks(position).map(function(chunk) {
+    console.log("Found nearby", chunk)
     if (!self.chunks[chunk.join('|')]) {
+      console.log("request Missing", chunk);
       self.emitter.emit('missingChunk', chunk)
     }
   })

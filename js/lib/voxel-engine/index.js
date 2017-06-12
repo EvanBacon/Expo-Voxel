@@ -526,7 +526,9 @@ Game.prototype.showAllChunks = function() {
 }
 
 Game.prototype.showChunk = function(chunk) {
+
   var chunkIndex = chunk.position.join('|')
+  console.log("show chunk", chunkIndex)
   var bounds = this.voxels.getBounds.apply(this.voxels, chunk.position)
   var scale = new this.THREE.Vector3(1, 1, 1)
   var mesh = voxelMesh(chunk, this.mesher, scale, this.THREE)
@@ -699,6 +701,7 @@ Game.prototype.hookupControls = function(buttons, opts) {
 Game.prototype.handleChunkGeneration = function() {
   var self = this
   this.voxels.emitter.addListener('missingChunk', function(chunkPos) {
+    console.log("push pending chunk", chunkPos)
     self.pendingChunks.push(chunkPos.join('|'))
   })
   this.voxels.requestMissingChunks(this.worldOrigin)

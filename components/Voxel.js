@@ -63,7 +63,7 @@ export default class Voxel extends React.Component {
 
       this.long_press_timeout = setTimeout(_ => {
         if (this.blockPosPlace) {
-        this.game.createBlock(this.blockPosPlace, '#000')  
+        this.game.createBlock(this.blockPosPlace, '#000');
         }
 
         // window.document.body.emitter.emit('contextmenu', saved);

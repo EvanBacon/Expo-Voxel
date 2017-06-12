@@ -107,8 +107,8 @@ Mesh.prototype.addToScene = function(scene) {
 }
 
 Mesh.prototype.setPosition = function(x, y, z) {
-  if (this.wireMesh) this.wireMesh.position = new this.THREE.Vector3(x, y, z)
-  if (this.surfaceMesh) this.surfaceMesh.position = new this.THREE.Vector3(x, y, z)
+  if (this.wireMesh) this.wireMesh.position.set(x,y,z)
+  if (this.surfaceMesh) this.surfaceMesh.position.set(x,y,z)
 }
 
 Mesh.prototype.faceVertexUv = function(i) {

@@ -67,8 +67,8 @@ function Game(opts) {
   })
   this.view.bindToScene(this.scene)
   this.camera = opts.getCamera()
-  let helper = new THREE.CameraHelper(this.camera);
-  this.scene.add(helper);
+  // let helper = new THREE.CameraHelper(this.camera);
+  // this.scene.add(helper);
 
 
   if (!opts.lightsDisabled) this.addLights(this.scene)

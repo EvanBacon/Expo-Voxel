@@ -1,6 +1,5 @@
 //Naive meshing (with face culling)
 function CulledMesh(volume, dims) {
-  dims = dims || [[0,0,0], [32,32,32]];
 
   //Precalculate direction vectors for convenience
   var dir = new Array(3);

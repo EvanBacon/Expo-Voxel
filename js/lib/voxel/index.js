@@ -75,7 +75,7 @@ module.exports.generator['Hill'] = function(i,j,k) {
 }
 
 module.exports.generator['Valley'] = function(i,j,k) {
-  return j <= (i*i + k*k) * 31 / (32*32*2) + 1 ? 1 + (1<<15) : 0;
+  return j <= (i*i + k*k) * 31 / (32*32*2) + 1 ? 1 : 0;
 }
 
 module.exports.generator['Hilly Terrain'] = function(i,j,k) {

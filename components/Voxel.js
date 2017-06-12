@@ -35,10 +35,10 @@ export default class Voxel extends React.Component {
   updateStreamWithEvent = (type, event, gestureState) => {
     const {nativeEvent} = event;
     const {dx, dy} = gestureState;
-    const scale = 0.1;
+    const scale = 1;
     this.screenDelta = {
-      x: this.screenDelta.x + (dx * scale),
-      y: this.screenDelta.y + (dy * scale),
+      x: dx,
+      y: dy
     }
     window.document.body.emitter.emit(type, {...nativeEvent, screenX: this.screenDelta.x, screenY: this.screenDelta.y });
 
@@ -169,9 +169,9 @@ export default class Voxel extends React.Component {
         isClient: true,
         getCamera: (_ => view.getCamera()),
         // mesher: voxel.meshers.stupid,
-        // generate: voxel.generator['Hilly Terrain'],
         // meshType: 'wireMesh',
         // tickFPS: 60,
+        generate: voxel.generator['Hill'],
         chunkDistance: 2,
         materials: ['#fff', '#000'],
         materialFlatColor: true,
@@ -219,7 +219,7 @@ export default class Voxel extends React.Component {
       // window.addEventListener('keydown', function (ev) {
       //   if (ev.keyCode === 'R'.charCodeAt(0)) avatar.toggle()
       // })
-      avatar.toggle()
+      // avatar.toggle()
       // block interaction stuff, uses highlight data
       var currentMaterial = 1
 

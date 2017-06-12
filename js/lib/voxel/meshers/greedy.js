@@ -3,7 +3,6 @@ var GreedyMesh = (function() {
 var mask = new Int32Array(4096);
 
 return function(volume, dims) {
-  dims = dims || [[0,0,0], [32,32,32]];
   var vertices = [], faces = []
     , dimsX = dims[0]
     , dimsY = dims[1]

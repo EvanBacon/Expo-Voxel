@@ -7,10 +7,10 @@ module.exports = function(three, texture, sizeRatio) {
 function Skin(three, texture, opts) {
   if (opts) opts.texture = opts.texture || texture
   else opts = { texture }
-  if (typeof texture === 'object') opts = texture
+  // if (typeof texture === 'object') opts = texture
   THREE = three // hack until three.js fixes multiple instantiation
   this.sizeRatio = opts.sizeRatio || 8
-  this.scale = opts.scale || new three.Vector3(1, 1, 1)
+  this.scale = opts.scale || new THREE.Vector3(1, 1, 1)
   this.fallbackImage = opts.fallbackImage || 'skin.png'
   // this.createCanvases()
   this.charMaterial = this.getMaterial(texture, false)
@@ -366,6 +366,6 @@ Skin.prototype.createPlayerObject = function(scene) {
 
 
   playerGroup.add(playerRotation);
-  playerGroup.scale = this.scale
+  playerGroup.scale.set(this.scale.x,this.scale.y,this.scale.z)// = this.scale
   return playerGroup
 }

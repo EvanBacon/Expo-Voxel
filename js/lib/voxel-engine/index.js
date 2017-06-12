@@ -527,8 +527,8 @@ Game.prototype.showAllChunks = function() {
 Game.prototype.showChunk = function(chunk) {
   var chunkIndex = chunk.position.join('|')
   var bounds = this.voxels.getBounds.apply(this.voxels, chunk.position)
-  var scale = new this.THREE.Vector3(1, 1, 1)
-  // var scale = new this.THREE.Vector3(10, 10, 10)
+  // var scale = new this.THREE.Vector3(1, 1, 1)
+  var scale = new this.THREE.Vector3(10, 10, 10)
   var mesh = voxelMesh(chunk, this.mesher, scale, this.THREE)
   this.voxels.chunks[chunkIndex] = chunk
   if (this.voxels.meshes[chunkIndex]) {

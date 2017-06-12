@@ -169,7 +169,7 @@ export default class Voxel extends React.Component {
         isClient: true,
         getCamera: (_ => view.getCamera()),
         // mesher: voxel.meshers.stupid,
-        generate: voxel.generator['Sphere'],
+        // generate: voxel.generator['Hilly Terrain'],
         // meshType: 'wireMesh',
         // tickFPS: 60,
         chunkDistance: 2,
@@ -193,7 +193,7 @@ export default class Voxel extends React.Component {
 
         // create the player from a minecraft skin file and tell the
         // game to use it as the main player
-        this.avatar = createPlayer(this._texture)
+        this.avatar = createPlayer(this._texture, {})
         this.avatar.possess()
         this.avatar.yaw.position.set(2, 14, 4)
 

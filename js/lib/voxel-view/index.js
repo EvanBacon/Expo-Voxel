@@ -64,12 +64,6 @@ View.prototype.resizeWindow = function(width, height) {
   this.renderer.setSize( width, height )
 }
 
-let point = {
-  x: 0,
-  y: 0,
-  z: 0
-}
-
 View.prototype.render = function(scene) {
   this.renderer.render(scene, this.camera)
 }

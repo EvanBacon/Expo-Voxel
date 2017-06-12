@@ -69,8 +69,8 @@ window.removeEventListener = (eventName, listener) => {
 }
 
 let { width, height } = Dimensions.get('window');
-window.innerWidth = width;
-window.innerHeight = height;
+window.innerWidth = window.clientWidth = width;
+window.innerHeight = window.clientHeight = height;
 window.document = new DOMDocument();
 
 

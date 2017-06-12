@@ -1,4 +1,6 @@
-var voxel = require('../voxel')
+// var voxel = require('../voxel')
+var voxel = require('voxel')
+
 var voxelMesh = require('voxel-mesh')
 var ray = require('voxel-raycast')
 var texture = require('../voxel-texture')
@@ -29,7 +31,6 @@ function Game(opts) {
   if (!(this instanceof Game)) return new Game(opts)
   var self = this
   if (!opts) opts = {}
-  if (process.browser && this.notCapable(opts)) return
 
   this.emitter = new EventEmitter();
 
@@ -343,23 +344,6 @@ Game.prototype.setDimensions = function(opts) {
   }
 }
 
-Game.prototype.notCapable = function(opts) {
-  var self = this
-
-  return false
-}
-
-Game.prototype.notCapableMessage = function() {
-  var wrapper = window.document.createElement('div')
-  wrapper.className = "errorMessage"
-  var a = window.document.createElement('a')
-  a.title = "You need WebGL and Pointer Lock (Chrome 23/Firefox 14) to play this game. Click here for more information."
-  a.innerHTML = a.title
-  a.href = "http://get.webgl.org"
-  wrapper.appendChild(a)
-  return wrapper
-}
-
 Game.prototype.onWindowResize = function() {
   var width = window.innerWidth
   var height = window.innerHeight
@@ -428,9 +412,8 @@ Game.prototype.collideTerrain = function(other, bbox, vec, resting) {
 
 
 Game.prototype.addLights = function(scene) {
-  var ambientLight, directionalLight
-  ambientLight = new this.THREE.AmbientLight(0xcccccc)
-  scene.add(ambientLight)
+
+  scene.add(new this.THREE.AmbientLight(0xcccccc))
   var light	= new this.THREE.DirectionalLight( 0xffffff , 1)
   light.position.set( 1, 1, 0.5 ).normalize()
   scene.add( light )

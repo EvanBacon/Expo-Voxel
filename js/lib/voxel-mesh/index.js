@@ -34,13 +34,13 @@ function Mesh(data, mesher, scaleFactor, three, mesherExtraData) {
       f.color = new this.THREE.Color(q[4]);
       geometry.faces.push(f);
 
-      geometry.faceVertexUvs[0].push([uv[0], uv[1], uv[3]])
+      geometry.faceVertexUvs[0].push([uv[0], uv[1], uv[3]]);
 
-      var g = new this.THREE.Face3(q[1], q[2], q[3])
-      g.color = new this.THREE.Color(q[4])
-      geometry.faces.push(g)
-      
-      geometry.faceVertexUvs[0].push([uv[1], uv[2], uv[3]])
+      var g = new this.THREE.Face3(q[1], q[2], q[3]);
+      g.color = new this.THREE.Color(q[4]);
+      geometry.faces.push(g);
+
+      geometry.faceVertexUvs[0].push([uv[1], uv[2], uv[3]]);
 
     } else if (q.length == 4) {
       var f = new this.THREE.Face3(q[0], q[1], q[2])

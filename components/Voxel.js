@@ -29,30 +29,39 @@ export default class Voxel extends React.Component {
     camera: null,
     ready: true,
   }
+  screenDelta = {x: 0, y: 0}
 
+
+  updateStreamWithEvent = (type, event, gestureState) => {
+    const {nativeEvent} = event;
+    const {dx, dy} = gestureState;
+    const scale = 0.1;
+    this.screenDelta = {
+      x: this.screenDelta.x + (dx * scale),
+      y: this.screenDelta.y + (dy * scale),
+    }
+    window.document.body.emitter.emit(type, {...nativeEvent, screenX: this.screenDelta.x, screenY: this.screenDelta.y });
+
+  }
   buildGestures = ({onTouchStart, onTouchMove, onTouchEnd}) => PanResponder.create({
     onStartShouldSetPanResponder: (evt, gestureState) => true,
     onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
     onMoveShouldSetPanResponder: (evt, gestureState) => true,
     onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
 
-    onPanResponderGrant: (({nativeEvent}) => {
-      console.log("VOXEL:: synthetic down");
-      window.document.body.emitter.emit("mousedown", {...nativeEvent, screenX: nativeEvent.pageX, screenY: nativeEvent.pageY });
-      // onTouchStart(nativeEvent)}
+    onPanResponderGrant: ( ( event, gestureState ) => {
+      this.updateStreamWithEvent("mousedown", event, gestureState)
     }),
-    onPanResponderMove: (({nativeEvent}) => {
-      console.log("VOXEL:: synthetic move");
-      window.document.body.emitter.emit("mousemove", {...nativeEvent, screenX: nativeEvent.pageX, screenY: nativeEvent.pageY });
-
+    onPanResponderMove: ( ( event, gestureState ) => {
+      this.updateStreamWithEvent("mousemove", event, gestureState)
       // window.document.body.emitter.emit("keyup", {keyCode});
       // onTouchMove(nativeEvent)
     }),
-    onPanResponderRelease: (({nativeEvent}) => {
-      console.log("VOXEL:: synthetic up");
-      window.document.body.emitter.emit("mouseup", {...nativeEvent, screenX: nativeEvent.pageX, screenY: nativeEvent.pageY });  }),
-      onPanResponderTerminate: (({nativeEvent}) => {
-        window.document.body.emitter.emit("mouseup", {...nativeEvent, screenX: nativeEvent.pageX, screenY: nativeEvent.pageY });
+    onPanResponderRelease:  ( ( event, gestureState ) => {
+      this.updateStreamWithEvent("mouseup", event, gestureState)
+    }),
+      onPanResponderTerminate: ( ( event, gestureState ) => {
+        this.updateStreamWithEvent("mouseup", event, gestureState)
       }),
     })
 
@@ -96,8 +105,8 @@ export default class Voxel extends React.Component {
           this.moveID = null
           window.document.body.emitter.emit("keyup", {keyCode});
           ///TODO: Fix this hack
-          window.document.body.emitter.emit("keydown", {keyCode: 1000});
-          window.document.body.emitter.emit("keyup", {keyCode: 1000});
+          // window.document.body.emitter.emit("keydown", {keyCode: 1000});
+          // window.document.body.emitter.emit("keyup", {keyCode: 1000});
         }}
         onPress={id => {
           let keyCode = this.keyCodeForDirection(id);
@@ -160,9 +169,9 @@ export default class Voxel extends React.Component {
         isClient: true,
         getCamera: (_ => view.getCamera()),
         // mesher: voxel.meshers.stupid,
-        // generate: voxel.generator['Hilly Terrain'],
+        generate: voxel.generator['Sphere'],
         // meshType: 'wireMesh',
-        tickFPS: 60,
+        // tickFPS: 60,
         chunkDistance: 2,
         materials: ['#fff', '#000'],
         materialFlatColor: true,
@@ -180,7 +189,6 @@ export default class Voxel extends React.Component {
           asset: Expo.Asset.fromModule(require('../assets/images/player.png')),
         });
 
-
         var createPlayer = player(this.game)
 
         // create the player from a minecraft skin file and tell the
@@ -191,10 +199,7 @@ export default class Voxel extends React.Component {
 
         this.defaultSetup(this.game, this.avatar)
       })()
-
     }
-
-
 
     defaultSetup = (game, avatar) => {
 
@@ -203,12 +208,12 @@ export default class Voxel extends React.Component {
       game.flyer = makeFly(target)
 
       // highlight blocks when you look at them, hold <Ctrl> for block placement
-      // var blockPosPlace, blockPosErase
-      // var hl = game.highlighter = highlight(game, { color: 0xff0000 })
-      // hl.on('highlight', function (voxelPos) { blockPosErase = voxelPos })
-      // hl.on('remove', function (voxelPos) { blockPosErase = null })
-      // hl.on('highlight-adjacent', function (voxelPos) { blockPosPlace = voxelPos })
-      // hl.on('remove-adjacent', function (voxelPos) { blockPosPlace = null })
+      var blockPosPlace, blockPosErase
+      var hl = game.highlighter = highlight(game, { color: 0xff0000 })
+      hl.on('highlight', function (voxelPos) { blockPosErase = voxelPos })
+      hl.on('remove', function (voxelPos) { blockPosErase = null })
+      hl.on('highlight-adjacent', function (voxelPos) { blockPosPlace = voxelPos })
+      hl.on('remove-adjacent', function (voxelPos) { blockPosPlace = null })
 
       // toggle between first and third person modes
       // window.addEventListener('keydown', function (ev) {

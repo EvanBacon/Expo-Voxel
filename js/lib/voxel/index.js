@@ -4,7 +4,7 @@ var ndarray = require('ndarray')
 
 module.exports = function(opts) {
   if (!opts.generateVoxelChunk) opts.generateVoxelChunk = function(low, high) {
-    return generate(low, high, module.exports.generator['Valley'])
+    return _generate(low, high, module.exports.generator['Valley'])
   }
   return chunker(opts)
 }
@@ -20,12 +20,12 @@ module.exports.meshers = {
 module.exports.Chunker = chunker.Chunker
 module.exports.geometry = {}
 module.exports.generator = {}
+module.exports._generate = _generate
 module.exports.generate = generate
-
 // from https://github.com/mikolalysenko/mikolalysenko.github.com/blob/master/MinecraftMeshes2/js/testdata.js#L4
-function generate(l, h, f) {
+function _generate(l, h, f) {
   var d = [ h[0]-l[0], h[1]-l[1], h[2]-l[2] ]
-    , v = new Int32Array(d[0]*d[1]*d[2])
+    , v = new Int8Array(d[0]*d[1]*d[2])
     , n = 0;
   for(var k=l[2]; k<h[2]; ++k)
   for(var j=l[1]; j<h[1]; ++j)
@@ -35,23 +35,23 @@ function generate(l, h, f) {
   return {voxels:v, dims:d};
 }
 
-// function generate(lo, hi, fn) {
-//   // To fix the display gaps, we need to pad the bounds
-//   lo[0]--
-//   lo[1]--
-//   lo[2]--
-//   hi[0]++
-//   hi[1]++
-//   hi[2]++
-//   var dims = [hi[2]-lo[2], hi[1]-lo[1], hi[0]-lo[0]]
-//   var data = ndarray(new Uint16Array(dims[2] * dims[1] * dims[0]), dims)
-//   for (var k = lo[2]; k < hi[2]; k++)
-//     for (var j = lo[1]; j < hi[1]; j++)
-//       for(var i = lo[0]; i < hi[0]; i++) {
-//         data.set(k-lo[2], j-lo[1], i-lo[0], fn(i, j, k))
-//       }
-//   return data
-// }
+function generate(lo, hi, fn) {
+  // To fix the display gaps, we need to pad the bounds
+  lo[0]--
+  lo[1]--
+  lo[2]--
+  hi[0]++
+  hi[1]++
+  hi[2]++
+  var dims = [hi[2]-lo[2], hi[1]-lo[1], hi[0]-lo[0]]
+  var data = ndarray(new Uint16Array(dims[2] * dims[1] * dims[0]), dims)
+  for (var k = lo[2]; k < hi[2]; k++)
+    for (var j = lo[1]; j < hi[1]; j++)
+      for(var i = lo[0]; i < hi[0]; i++) {
+        data.set(k-lo[2], j-lo[1], i-lo[0], fn(i, j, k))
+      }
+  return data
+}
 
 // shape and terrain generator functions
 module.exports.generator['Sphere'] = function(i,j,k) {
@@ -103,12 +103,12 @@ module.exports.scale = function ( x, fromLow, fromHigh, toLow, toHigh ) {
 // convenience function that uses the above functions to prebake some simple voxel geometries
 module.exports.generateExamples = function() {
   return {
-    'Sphere': generate([-16,-16,-16], [16,16,16], module.exports.generator['Sphere']),
-    'Noise': generate([0,0,0], [16,16,16], module.exports.generator['Noise']),
-    'Dense Noise': generate([0,0,0], [16,16,16], module.exports.generator['Dense Noise']),
-    'Checker': generate([0,0,0], [8,8,8], module.exports.generator['Checker']),
-    'Hill': generate([-16, 0, -16], [16,16,16], module.exports.generator['Hill']),
-    'Valley': generate([0,0,0], [32,32,32], module.exports.generator['Valley']),
-    'Hilly Terrain': generate([0, 0, 0], [32,32,32], module.exports.generator['Hilly Terrain'])
+    'Sphere': _generate([-16,-16,-16], [16,16,16], module.exports.generator['Sphere']),
+    'Noise': _generate([0,0,0], [16,16,16], module.exports.generator['Noise']),
+    'Dense Noise': _generate([0,0,0], [16,16,16], module.exports.generator['Dense Noise']),
+    'Checker': _generate([0,0,0], [8,8,8], module.exports.generator['Checker']),
+    'Hill': _generate([-16, 0, -16], [16,16,16], module.exports.generator['Hill']),
+    'Valley': _generate([0,0,0], [32,32,32], module.exports.generator['Valley']),
+    'Hilly Terrain': _generate([0, 0, 0], [32,32,32], module.exports.generator['Hilly Terrain'])
   }
 }

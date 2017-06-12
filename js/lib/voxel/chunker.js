@@ -85,21 +85,50 @@ Chunker.prototype.chunkAtPosition = function(position) {
 };
 
 Chunker.prototype.voxelIndexFromCoordinates = function(x, y, z) {
-  throw new Error('Chunker.prototype.voxelIndexFromCoordinates removed, use voxelAtCoordinates')
+  var bits = this.chunkBits
+  var mask = (1 << bits) - 1
+  var vidx = (x & mask) + ((y & mask) << bits) + ((z & mask) << bits * 2)
+  return vidx
+  var v = this.voxelVector(pos)
+  return this.voxelIndex(v)
+  // throw new Error('Chunker.prototype.voxelIndexFromCoordinates removed, use voxelAtCoordinates')
+}
+Chunker.prototype.voxelIndexFromPosition = function(pos) {
+  var v = this.voxelVector(pos)
+  return this.voxelIndex(v)
 }
 
+Chunker.prototype.voxelIndex = function(voxelVector) {
+  var vidx = this.voxelIndexFromCoordinates(voxelVector[0], voxelVector[1], voxelVector[2])
+  return vidx
+}
+
+// deprecated
+Chunker.prototype.voxelVector = function(pos) {
+  var cubeSize = this.cubeSize
+  var mask = (1 << this.chunkBits) - 1
+  var vx = (Math.floor(pos[0] / cubeSize)) & mask
+  var vy = (Math.floor(pos[1] / cubeSize)) & mask
+  var vz = (Math.floor(pos[2] / cubeSize)) & mask
+  return [vx, vy, vz]
+};
 Chunker.prototype.voxelAtCoordinates = function(x, y, z, val) {
   var ckey = this.chunkAtCoordinates(x, y, z).join('|')
   var chunk = this.chunks[ckey]
-  if (!chunk || !chunk.get || !chunk.set) return false
-  var mask = this.chunkMask
-  var h = this.chunkPadHalf
-  var mx = x & mask
-  var my = y & mask
-  var mz = z & mask
-  var v = chunk.get(mx+h, my+h, mz+h)
+  if (!chunk) return false
+  var vidx = this.voxelIndexFromCoordinates(x, y, z)
+  var v = chunk.voxels[vidx]
+
+  // var mask = this.chunkMask
+  // var h = this.chunkPadHalf
+  // var mx = x & mask
+  // var my = y & mask
+  // var mz = z & mask
+  // var v = chunk.voxels[mx+h + my+h + mz+h]
+  // chunk.get(mx+h, my+h, mz+h)
   if (typeof val !== 'undefined') {
-    chunk.set(mx+h, my+h, mz+h, val)
+    chunk.voxels[vidx] = val
+    // chunk.set(mx+h, my+h, mz+h, val)
   }
   return v
 }

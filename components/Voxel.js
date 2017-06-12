@@ -9,12 +9,9 @@ global.THREE = THREE;
 var fly = require('voxel-fly')
 var highlight = require('voxel-highlight')
 var walk = require('voxel-walk')
-// var voxel = require('../js/lib/voxel')
 var player = require('../js/lib/voxel-player')
 var voxel = require('voxel')
 const examples = voxel.generateExamples();
-// import Engine from 'voxel-engine';
-
 import Engine from '../js/lib/voxel-engine';
 import voxelView from '../js/lib/voxel-view';
 import * as THREE from 'three';

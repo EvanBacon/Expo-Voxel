@@ -6,7 +6,7 @@ function Texture(opts) {
   if (!(this instanceof Texture)) return new Texture(opts || {});
   var self = this;
   this.game = opts.game; delete opts.game;
-  // this.THREE = this.game.THREE;
+  this.THREE = this.game.THREE;
   this.materials = [];
   this.texturePath = opts.texturePath || '/textures/';
   this.loading = 0;
@@ -40,18 +40,25 @@ function Texture(opts) {
   this.options.applyTextureParams(this.texture);
 
   if (useFlatColors) {
-    // If were using simple colors
-    this.material = new THREE.MeshBasicMaterial({
-      vertexColors: THREE.VertexColors,
-      color: 'blue',
-    });
-  } else {
-    // load a first material for easy application to meshes
-    this.material = new this.options.materialType(this.options.materialParams);
-    // this.material.map = this.texture;
-    this.material.color = 'red';
-    this.material.transparent = true;
-  }
+     // If were using simple colors
+    //  this.material = new THREE.MeshBasicMaterial({
+    //    vertexColors: THREE.VertexColors,
+    //    color: 'blue',
+    //  });
+
+     this.material = new this.THREE.MeshBasicMaterial({
+       vertexColors: this.THREE.VertexColors
+     });
+   } else {
+     var opaque = new this.options.materialType(this.options.materialParams);
+     opaque.map = this.texture;
+     var transparent = new this.options.materialType(this.options.materialTransparentParams);
+     transparent.map = this.texture;
+     this.material = new this.THREE.MeshFaceMaterial([
+       opaque,
+       transparent
+     ]);
+   }
 
   // a place for meshes to wait while textures are loading
   this._meshQueue = [];
@@ -206,7 +213,6 @@ Texture.prototype.paint = function(mesh, materials) {
 
   mesh.geometry.faces.forEach(function(face, i) {
     if (mesh.geometry.faceVertexUvs[0].length < 1) return;
-
     if (isVoxelMesh) {
       var index = Math.floor(face.color.b*255 + face.color.g*255*255 + face.color.r*255*255*255);
       materials = self.materials[index - 1];

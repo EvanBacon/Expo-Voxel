@@ -25,10 +25,9 @@ import GestureType from '../js/GestureType'
 export default class Voxel extends React.Component {
   // world;
 
-
   state = {
     camera: null,
-    ready: false
+    ready: true,
   }
 
   buildGestures = ({onTouchStart, onTouchMove, onTouchEnd}) => PanResponder.create({
@@ -57,12 +56,10 @@ export default class Voxel extends React.Component {
       }),
     })
 
-    async componentWillMount() {
-      this.setState({
-        ready: true,
-        panResponder: this.buildGestures({})
-      });
+    componentWillMount() {
+      this.panResponder = this.buildGestures({});
     }
+
 
     keyCodeForDirection = (direction) => {
       let keyCode = null;
@@ -108,7 +105,7 @@ export default class Voxel extends React.Component {
       return (
         <View style={{flex: 1}}>
           <Expo.GLView
-            {...this.state.panResponder.panHandlers}
+            {...this.panResponder.panHandlers}
             style={StyleSheet.absoluteFill}
             onContextCreate={this._onGLContextCreate}
           />
@@ -160,8 +157,9 @@ export default class Voxel extends React.Component {
         isClient: true,
         getCamera: (_ => view.getCamera()),
         // mesher: voxel.meshers.stupid,
-        generate: voxel.generator['Hilly Terrain'],
+        // generate: voxel.generator['Hilly Terrain'],
         // meshType: 'wireMesh',
+        tickFPS: 60,
         chunkDistance: 2,
         materials: ['#fff', '#000'],
         materialFlatColor: true,
@@ -196,26 +194,18 @@ export default class Voxel extends React.Component {
 
 
     defaultSetup = (game, avatar) => {
-      game.addVoxelMarker(0,0,0, '#ff00ff')
-
-      for (let _x = 0; _x < 10; _x++) {
-        for (let _z = 0; _z < 10; _z++) {
-
-          game.addVoxelMarker(_x,0,_z, '#ff00ff')
-        }
-      }
 
       var makeFly = fly(game)
       var target = game.controls.target()
       game.flyer = makeFly(target)
 
       // highlight blocks when you look at them, hold <Ctrl> for block placement
-      var blockPosPlace, blockPosErase
-      var hl = game.highlighter = highlight(game, { color: 0xff0000 })
-      hl.on('highlight', function (voxelPos) { blockPosErase = voxelPos })
-      hl.on('remove', function (voxelPos) { blockPosErase = null })
-      hl.on('highlight-adjacent', function (voxelPos) { blockPosPlace = voxelPos })
-      hl.on('remove-adjacent', function (voxelPos) { blockPosPlace = null })
+      // var blockPosPlace, blockPosErase
+      // var hl = game.highlighter = highlight(game, { color: 0xff0000 })
+      // hl.on('highlight', function (voxelPos) { blockPosErase = voxelPos })
+      // hl.on('remove', function (voxelPos) { blockPosErase = null })
+      // hl.on('highlight-adjacent', function (voxelPos) { blockPosPlace = voxelPos })
+      // hl.on('remove-adjacent', function (voxelPos) { blockPosPlace = null })
 
       // toggle between first and third person modes
       // window.addEventListener('keydown', function (ev) {

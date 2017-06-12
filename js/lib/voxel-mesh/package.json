@@ -1,0 +1,82 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "voxel-mesh@0.2.1",
+        "scope": null,
+        "escapedName": "voxel-mesh",
+        "name": "voxel-mesh",
+        "rawSpec": "0.2.1",
+        "spec": "0.2.1",
+        "type": "version"
+      },
+      "/Users/evan.bacon/Downloads/chrome/voxel-hello-world-master 2/node_modules/voxel-engine"
+    ]
+  ],
+  "_from": "voxel-mesh@0.2.1",
+  "_id": "voxel-mesh@0.2.1",
+  "_inCache": true,
+  "_location": "/voxel-mesh",
+  "_npmUser": {
+    "name": "maxogden",
+    "email": "max@maxogden.com"
+  },
+  "_npmVersion": "1.2.14",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "voxel-mesh@0.2.1",
+    "scope": null,
+    "escapedName": "voxel-mesh",
+    "name": "voxel-mesh",
+    "rawSpec": "0.2.1",
+    "spec": "0.2.1",
+    "type": "version"
+  },
+  "_requiredBy": [
+    "/voxel-engine"
+  ],
+  "_resolved": "https://registry.npmjs.org/voxel-mesh/-/voxel-mesh-0.2.1.tgz",
+  "_shasum": "6b7539e46e08435ddcb3ee7ccb6a2f5144eeca69",
+  "_shrinkwrap": null,
+  "_spec": "voxel-mesh@0.2.1",
+  "_where": "/Users/evan.bacon/Downloads/chrome/voxel-hello-world-master 2/node_modules/voxel-engine",
+  "author": {
+    "name": "Max Ogden",
+    "email": "max@maxogden.com"
+  },
+  "bugs": {
+    "url": "https://github.com/maxogden/voxel-mesh/issues"
+  },
+  "dependencies": {},
+  "description": "generate a three.js mesh from voxel data",
+  "devDependencies": {},
+  "directories": {},
+  "dist": {
+    "shasum": "6b7539e46e08435ddcb3ee7ccb6a2f5144eeca69",
+    "tarball": "https://registry.npmjs.org/voxel-mesh/-/voxel-mesh-0.2.1.tgz"
+  },
+  "engine": {
+    "node": ">=0.6.0"
+  },
+  "homepage": "https://github.com/maxogden/voxel-mesh#readme",
+  "license": "MIT",
+  "main": "index.js",
+  "maintainers": [
+    {
+      "name": "maxogden",
+      "email": "max@maxogden.com"
+    }
+  ],
+  "name": "voxel-mesh",
+  "optionalDependencies": {},
+  "peerDependencies": {
+    "three": "*"
+  },
+  "readme": "# voxel-mesh\n\ngenerate a three.js mesh from voxel data. extracted from some code by @mikolalysenko\n\n- original repo: https://github.com/mikolalysenko/mikolalysenko.github.com/tree/master/MinecraftMeshes2\n- blog post: http://0fps.wordpress.com/2012/07/07/meshing-minecraft-part-2/\n- webgl demo: http://mikolalysenko.github.com/MinecraftMeshes2/\n\n# installation\n\nit is recommended that you use browserify to use this module\n\n```\nnpm install voxel-mesh\nnpm install browserify -g\nbrowserify -r voxel-mesh > voxel-mesh-browserified.js\n```\n\n# usage\n\n```javascript\nvar Mesh = require('voxel-mesh')\nvar voxelData = require('voxel').generator['Hilly Terrain']\nvar mesh = new Mesh(voxelData)\nmesh.createSurfaceMesh()\nthreeJSScene.add(mesh)\n```\n\n## new Mesh(voxelData, meshingAlgorithm, scaleFactor)\n\n`voxelData` and `meshingAlgorithm` are required, `scaleFactor` defaults to `new Three.Vector3(10, 10, 10)`.\n\n## Mesh.prototype.createSurfaceMesh(material)\n\nreturns the generated surface mesh. `material` defaults to `new THREE.MeshNormalMaterial()`. after calling this method your mesh will also have `.surfaceMesh` populated with the new mesh\n\n## Mesh.prototype.createWireMesh(hexColor)\n\nreturns the generated wire mesh. `hexColor` defaults to `0xffffff`. after calling this method your mesh will also have `.wireMesh` populated with the new mesh\n\n## Mesh.prototype.addToScene(scene)\n\nconvenience method for adding the currently generated meshes (either `surfaceMesh` or `wireMesh`) to a `three.js` scene instance\n\n## Mesh.prototype.setPosition(x, y, z)\n\nconvenience method for setting the position of the currently generated meshes (either `surfaceMesh` or `wireMesh`)\n\n# license\n\nMIT",
+  "readmeFilename": "readme.md",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/maxogden/voxel-mesh.git"
+  },
+  "version": "0.2.1"
+}

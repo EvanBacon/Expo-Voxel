@@ -1,6 +1,6 @@
 var texture = require('../voxel-texture')
 
-var voxel = require('voxel')
+var voxel = require('../voxel')
 var voxelMesh = require('voxel-mesh')
 var ray = require('voxel-raycast')
 var control = require('voxel-control')
@@ -28,9 +28,6 @@ function Game(opts) {
   if (!opts) opts = {}
 
   this.emitter = new EventEmitter();
-
-  // is this a client or a headless server
-  this.isClient = Boolean( (typeof opts.isClient !== 'undefined') ? opts.isClient : process.browser )
 
   if (!('generateChunks' in opts)) opts.generateChunks = true
   this.generateChunks = opts.generateChunks
@@ -114,12 +111,9 @@ function Game(opts) {
     self.removeFarChunks()
   })
 
-  if (this.isClient) this.materials.load(this.materialNames)
+  this.materials.load(this.materialNames)
 
   if (this.generateChunks) this.handleChunkGeneration()
-
-  // client side only after this point
-  if (!this.isClient) return
 
   this.paused = true
   this.initializeRendering(opts)
@@ -130,7 +124,9 @@ function Game(opts) {
     self.asyncChunkGeneration = 'asyncChunkGeneration' in opts ? opts.asyncChunkGeneration : true
   }, 2000)
 
-  this.initializeControls(opts)
+
+//// DISABLED CONTROLS _ STREAM IS FILLING JS THREAD
+  // this.initializeControls(opts)
 }
 
 // inherits(Game, EventEmitter)
@@ -510,7 +506,7 @@ Game.prototype.loadPendingChunks = function(count) {
     var chunkPos = pendingChunks[i].split('|')
     var chunk = this.voxels.generateChunk(chunkPos[0]|0, chunkPos[1]|0, chunkPos[2]|0)
 
-    if (this.isClient) this.showChunk(chunk)
+     this.showChunk(chunk)
   }
 
   if (count) pendingChunks.splice(0, count)
@@ -539,21 +535,17 @@ Game.prototype.showChunk = function(chunk) {
     if (this.voxels.meshes[chunkIndex].wireMesh) this.scene.remove(this.voxels.meshes[chunkIndex].wireMesh)
   }
   this.voxels.meshes[chunkIndex] = mesh
-  if (this.isClient) {
     if (this.meshType === 'wireMesh') mesh.createWireMesh()
     else mesh.createSurfaceMesh(this.materials.material)
     this.materials.paint(mesh)
-  }
+
   mesh.setPosition(bounds[0][0], bounds[0][1], bounds[0][2])
-  mesh.addToScene(this.scene)
+  // mesh.addToScene(this.scene)
   this.emitter.emit('renderChunk', chunk)
   return mesh
 }
 
-
-
 // # Debugging methods
-
 Game.prototype.addMarker = function(position) {
   var geometry = new this.THREE.SphereGeometry( 0.1, 10, 10 )
   var material = new this.THREE.MeshPhongMaterial( { color: 0xffffff, shading: this.THREE.FlatShading } )

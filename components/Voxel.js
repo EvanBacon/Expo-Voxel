@@ -4,11 +4,8 @@ import Expo from 'expo';
 import React from 'react';
 import {PanResponder,StyleSheet, View, Dimensions} from 'react-native'
 const {width, height} = Dimensions.get('window')
-
-import TouchControls from '../js/lib/voxel-touchcontrols';
 import DirectionType from '../js/DirectionType'
 global.THREE = THREE;
-import OrbitControls from 'expo-three-orbit-controls'
 var fly = require('voxel-fly')
 var highlight = require('voxel-highlight')
 var walk = require('voxel-walk')
@@ -19,11 +16,9 @@ const examples = voxel.generateExamples();
 // import Engine from 'voxel-engine';
 
 import Engine from '../js/lib/voxel-engine';
-// import voxelView from 'voxel-view';
 import voxelView from '../js/lib/voxel-view';
 import * as THREE from 'three';
 const THREEView = Expo.createTHREEViewClass(THREE);
-// const VoxelView = voxelView({});
 import ExpoTHREE from 'expo-three'
 
 import Dpad from './Dpad'
@@ -234,8 +229,6 @@ export default class Voxel extends React.Component {
       var currentMaterial = 1
 
       game.on('fire', function (target, state) {
-        console.log("VOXEL:: On Fire")
-
         var position = blockPosPlace
         if (position) {
           game.createBlock(position, currentMaterial)
@@ -247,17 +240,12 @@ export default class Voxel extends React.Component {
       })
 
       game.on('tick', function() {
-        console.log("VOXEL:: On Tick")
         walk.render(target.playerSkin)
         var vx = Math.abs(target.velocity.x)
         var vz = Math.abs(target.velocity.z)
         if (vx > 0.001 || vz > 0.001) walk.stopWalking()
         else walk.startWalking()
       })
-
-
-
-      // this.setState({panResponder: this.buildGestures( new TouchControls(game.controls) )  });
 
     }
 

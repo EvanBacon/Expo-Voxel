@@ -1,5 +1,5 @@
 var lock = require('pointer-lock')
-  , drag = require('../drag-stream')
+  , drag = require('drag-stream')
   , full = require('fullscreen')
 
 var EE = require('events').EventEmitter

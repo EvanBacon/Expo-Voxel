@@ -1,18 +1,13 @@
-// var voxel = require('../voxel')
-var voxel = require('voxel')
+var texture = require('../voxel-texture')
 
+var voxel = require('voxel')
 var voxelMesh = require('voxel-mesh')
 var ray = require('voxel-raycast')
-var texture = require('../voxel-texture')
 var control = require('voxel-control')
 var voxelView = require('voxel-view')
-
-// var THREE = require('three')
 var inherits = require('inherits')
-// var EventEmitter = require('events').EventEmitter
 import EventEmitter from 'EventEmitter';
-
-var interact = require('../interact')
+var interact = require('interact')
 var requestAnimationFrame = require('raf')
 var collisions = require('collide-3d-tilemap')
 var aabb = require('aabb-3d')
@@ -21,7 +16,7 @@ var vector = glMatrix.vec3
 var SpatialEventEmitter = require('spatial-events')
 var regionChange = require('voxel-region-change')
 var kb = require('kb-controls')
-var physical = require('../voxel-physical')
+var physical = require('voxel-physical')
 var pin = require('pin-it')
 var tic = require('tic')()
 

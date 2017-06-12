@@ -1,0 +1,48 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <title>Voxel Engine</title>
+    <meta charset="utf-8">
+    <style type="text/css">
+      body {
+        font-family: Monospace;
+        font-size: 12px;
+        background-color: #f0f0f0;
+        margin: 0px;
+        overflow: hidden;
+      }
+      #container {
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        user-select: none;
+      }
+      #crosshair {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        margin: -2px 0 0 -2px;
+        width: 4px;
+        height: 4px;
+        background-color: #d00;
+        opacity: 0.5;
+      }
+      #position {
+        position: absolute; top: 20px; right: 20px; width: 25%; font-size: 50px;
+      }
+      #stats { bottom: 0px; right: 0px; }
+      .bar-tab { right: 33% !important; left: 33% !important; }
+      .logo {position: absolute; top: 5px; left: 5px; }
+      .errorMessage { text-align: center; width: 200px; margin: 20px auto; }
+    </style>
+  </head>
+  <body>
+    <img class="logo" src="logo-white.png">
+    <div id="position">
+      voxel:<div id="voxel"></div>
+      chunk:<div id="chunk"></div>
+    </div>
+    <div id="container"></div>
+    <div id="crosshair"></div>
+    <script type="text/javascript" src="demo.js"></script>
+  </body>
+</html>

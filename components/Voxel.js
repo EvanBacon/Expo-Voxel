@@ -21,6 +21,7 @@ import ExpoTHREE from 'expo-three'
 import Dpad from './Dpad'
 import GestureType from '../js/GestureType'
 
+const LONG_PRESS_MIN_DURATION = 500;
 
 export default class Voxel extends React.Component {
   // world;
@@ -43,6 +44,8 @@ export default class Voxel extends React.Component {
     window.document.body.emitter.emit(type, {...nativeEvent, screenX: this.screenDelta.x, screenY: this.screenDelta.y });
 
   }
+
+
   buildGestures = ({onTouchStart, onTouchMove, onTouchEnd}) => PanResponder.create({
     onStartShouldSetPanResponder: (evt, gestureState) => true,
     onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
@@ -50,17 +53,42 @@ export default class Voxel extends React.Component {
     onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
 
     onPanResponderGrant: ( ( event, gestureState ) => {
+
+      const {dx, dy, x0, y0} = gestureState;
+      let screenDelta = {
+        x: dx,
+        y: dy
+      }
+      const saved = {...event.nativeEvent, clientX:x0, clientY: y0, screenX: x0, screenY: y0 };
+
+      this.long_press_timeout = setTimeout(_ => {
+        if (this.blockPosPlace) {
+        this.game.createBlock(this.blockPosPlace, '#000')  
+        }
+
+        // window.document.body.emitter.emit('contextmenu', saved);
+      }, LONG_PRESS_MIN_DURATION);
+
       this.updateStreamWithEvent("mousedown", event, gestureState)
     }),
     onPanResponderMove: ( ( event, gestureState ) => {
+      if (Math.sqrt((gestureState.dx * gestureState.dx) + (gestureState.dy * gestureState.dy)) > 10 ) {
+        clearTimeout(this.long_press_timeout);
+
+      }
+
       this.updateStreamWithEvent("mousemove", event, gestureState)
       // window.document.body.emitter.emit("keyup", {keyCode});
       // onTouchMove(nativeEvent)
     }),
     onPanResponderRelease:  ( ( event, gestureState ) => {
+      clearTimeout(this.long_press_timeout);
+
       this.updateStreamWithEvent("mouseup", event, gestureState)
     }),
       onPanResponderTerminate: ( ( event, gestureState ) => {
+        clearTimeout(this.long_press_timeout);
+
         this.updateStreamWithEvent("mouseup", event, gestureState)
       }),
     })
@@ -171,7 +199,13 @@ export default class Voxel extends React.Component {
         // mesher: voxel.meshers.stupid,
         // meshType: 'wireMesh',
         // tickFPS: 60,
-        generate: voxel.generator['Hill'],
+        generate: (x,y,z) => {
+          if (y == 0) {
+            return 1
+          }
+          return 0
+          // return x*x+y*y+z*z <= 15*15 ? 1 : 0 // sphere world
+        },
         chunkDistance: 2,
         materials: ['#fff', '#000'],
         materialFlatColor: true,
@@ -208,12 +242,16 @@ export default class Voxel extends React.Component {
       game.flyer = makeFly(target)
 
       // highlight blocks when you look at them, hold <Ctrl> for block placement
-      var blockPosPlace, blockPosErase
-      var hl = game.highlighter = highlight(game, { color: 0xff0000 })
-      hl.on('highlight', function (voxelPos) { blockPosErase = voxelPos })
-      hl.on('remove', function (voxelPos) { blockPosErase = null })
-      hl.on('highlight-adjacent', function (voxelPos) { blockPosPlace = voxelPos })
-      hl.on('remove-adjacent', function (voxelPos) { blockPosPlace = null })
+      this.blockPosPlace;
+      this.blockPosErase;
+      var hl = game.highlighter = highlight(game, { color: 0xdddddd })
+      hl.on('highlight', function (voxelPos) { this.blockPosErase = voxelPos })
+      hl.on('remove', function (voxelPos) {
+        // console.warn("removed", voxelPos)
+        this.blockPosErase = null
+      })
+      hl.on('highlight-adjacent', function (voxelPos) { this.blockPosPlace = voxelPos })
+      hl.on('remove-adjacent', function (voxelPos) { this.blockPosPlace = null })
 
       // toggle between first and third person modes
       // window.addEventListener('keydown', function (ev) {
@@ -224,12 +262,13 @@ export default class Voxel extends React.Component {
       var currentMaterial = 1
 
       game.on('fire', function (target, state) {
-        var position = blockPosPlace
+        var position = this.blockPosPlace
         if (position) {
           game.createBlock(position, currentMaterial)
+          console.warn("added", position)
         }
         else {
-          position = blockPosErase
+          position = this.blockPosErase
           if (position) game.setBlock(position, 0)
         }
       })

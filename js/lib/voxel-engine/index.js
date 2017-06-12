@@ -14,7 +14,7 @@ var aabb = require('aabb-3d')
 var glMatrix = require('gl-matrix')
 var vector = glMatrix.vec3
 var SpatialEventEmitter = require('spatial-events')
-var regionChange = require('voxel-region-change')
+var regionChange = require('../voxel-region-change')
 var kb = require('kb-controls')
 var physical = require('voxel-physical')
 var pin = require('pin-it')
@@ -107,7 +107,7 @@ function Game(opts) {
 
   this.materialNames = opts.materials || [['grass', 'dirt', 'grass_dirt'], 'brick', 'dirt']
 
-  self.chunkRegion.on('change', function(newChunk) {
+  self.chunkRegion.addListener('change', function(newChunk) {
     self.removeFarChunks()
   })
 
@@ -369,7 +369,7 @@ Game.prototype.playerPosition = function() {
   var position = target
     ? target.avatar.position
     : this.camera.localToWorld(this.camera.position.clone())
-    console.log("VOXEL:: hero", position)
+
   return [position.x, position.y, position.z]
 }
 
@@ -475,6 +475,7 @@ Game.prototype.removeFarChunks = function(playerPosition) {
     delete self.voxels.chunks[chunkIndex]
     self.emitter.emit('removeChunk', chunkPosition)
   })
+  console.log("get missing", playerPosition)
   self.voxels.requestMissingChunks(playerPosition)
 }
 
@@ -527,8 +528,7 @@ Game.prototype.showAllChunks = function() {
 Game.prototype.showChunk = function(chunk) {
   var chunkIndex = chunk.position.join('|')
   var bounds = this.voxels.getBounds.apply(this.voxels, chunk.position)
-  // var scale = new this.THREE.Vector3(1, 1, 1)
-  var scale = new this.THREE.Vector3(10, 10, 10)
+  var scale = new this.THREE.Vector3(1, 1, 1)
   var mesh = voxelMesh(chunk, this.mesher, scale, this.THREE)
   this.voxels.chunks[chunkIndex] = chunk
   if (this.voxels.meshes[chunkIndex]) {
@@ -658,7 +658,6 @@ Game.prototype.initializeRendering = function(opts) {
   var self = this
 
   // window.addEventListener('resize', self.onWindowResize.bind(self), false)
-  console.log("VOXEL:: needs-render")
   const _render = () => {
         var now = new Date().getTime();
         var dt = now - (time || now);
@@ -667,7 +666,6 @@ Game.prototype.initializeRendering = function(opts) {
 
         self.emitter.emit('prerender', dt)
         self.render(dt)
-        // console.log("VOXEL:: render", dt)
         self.emitter.emit('postrender', dt)
         self.view.endRender();
 

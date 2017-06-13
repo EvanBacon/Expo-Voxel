@@ -48,7 +48,7 @@ function Texture(opts) {
 
      this.material = new this.THREE.MeshLambertMaterial({
       //  vertexColors: this.THREE.VertexColors,
-        color: 'blue',
+        color: 'green',
      });
    } else {
      var opaque = new this.options.materialType(this.options.materialParams);

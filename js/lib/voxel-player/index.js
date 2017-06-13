@@ -8,7 +8,7 @@ module.exports = function (game) {
         if (!skinOpts) {
           skinOpts = {};
         }
-        skinOpts.scale = skinOpts.scale || new game.THREE.Vector3(0.04, 0.04, 0.04);
+        skinOpts.scale = skinOpts.scale || new game.THREE.Vector3(0.05, 0.05, 0.05);
         var playerSkin = skin(game.THREE, texture, skinOpts);
         var player = playerSkin.mesh;
         var physics = game.makePhysical(player);

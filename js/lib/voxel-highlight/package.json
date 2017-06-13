@@ -1,0 +1,76 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "voxel-highlight",
+        "scope": null,
+        "escapedName": "voxel-highlight",
+        "name": "voxel-highlight",
+        "rawSpec": "",
+        "spec": "latest",
+        "type": "tag"
+      },
+      "/Users/evan.bacon/GoogleDrive/react-native/exponent/voxel"
+    ]
+  ],
+  "_from": "voxel-highlight@latest",
+  "_id": "voxel-highlight@0.0.10",
+  "_inCache": true,
+  "_location": "/voxel-highlight",
+  "_npmUser": {
+    "name": "maxogden",
+    "email": "max@maxogden.com"
+  },
+  "_npmVersion": "1.4.9",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "voxel-highlight",
+    "scope": null,
+    "escapedName": "voxel-highlight",
+    "name": "voxel-highlight",
+    "rawSpec": "",
+    "spec": "latest",
+    "type": "tag"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/voxel-highlight/-/voxel-highlight-0.0.10.tgz",
+  "_shasum": "abef706f2e665534e4eb6f62ffd55c2596f80781",
+  "_shrinkwrap": null,
+  "_spec": "voxel-highlight",
+  "_where": "/Users/evan.bacon/GoogleDrive/react-native/exponent/voxel",
+  "bugs": {
+    "url": "https://github.com/maxogden/voxel-highlight/issues"
+  },
+  "dependencies": {
+    "inherits": "1.0.0",
+    "underscore": "1.4.4"
+  },
+  "description": "highlight or manipulate the voxel the player is looking at",
+  "devDependencies": {},
+  "directories": {},
+  "dist": {
+    "shasum": "abef706f2e665534e4eb6f62ffd55c2596f80781",
+    "tarball": "https://registry.npmjs.org/voxel-highlight/-/voxel-highlight-0.0.10.tgz"
+  },
+  "homepage": "https://github.com/maxogden/voxel-highlight",
+  "maintainers": [
+    {
+      "name": "maxogden",
+      "email": "max@maxogden.com"
+    }
+  ],
+  "name": "voxel-highlight",
+  "optionalDependencies": {},
+  "peerDependencies": {
+    "voxel-engine": ">=0.14.0"
+  },
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/maxogden/voxel-highlight.git"
+  },
+  "version": "0.0.10"
+}

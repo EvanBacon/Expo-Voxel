@@ -7,7 +7,7 @@ const {width, height} = Dimensions.get('window')
 import DirectionType from '../js/DirectionType'
 global.THREE = THREE;
 var fly = require('voxel-fly')
-var highlight = require('voxel-highlight')
+var highlight = require('../js/lib/voxel-highlight')
 var walk = require('voxel-walk')
 var player = require('../js/lib/voxel-player')
 var voxel = require('voxel')
@@ -17,11 +17,19 @@ import voxelView from '../js/lib/voxel-view';
 import * as THREE from 'three';
 const THREEView = Expo.createTHREEViewClass(THREE);
 import ExpoTHREE from 'expo-three'
+var createReach = require('../js/lib/voxel-reach');
 
 import Dpad from './Dpad'
 import GestureType from '../js/GestureType'
 
 const LONG_PRESS_MIN_DURATION = 500;
+
+var terrain = require('voxel-perlin-terrain')
+var chunkSize = 32
+
+// initialize your noise with a seed, floor height, ceiling height and scale factor
+var generateChunk = terrain('foo', 0, 5, 20)
+
 
 export default class Voxel extends React.Component {
   // world;
@@ -62,11 +70,17 @@ export default class Voxel extends React.Component {
       const saved = {...event.nativeEvent, clientX:x0, clientY: y0, screenX: x0, screenY: y0 };
 
       this.long_press_timeout = setTimeout(_ => {
-        if (this.blockPosPlace) {
-        this.game.createBlock(this.blockPosPlace, '#000');
-        }
+        // if (this.voxelPos) {
+        //   this.game.setBlock(this.voxelPos, 0) // on
+        // }
+        // console.warn(this.voxelPos)
+        // game.setBlock(pos, 0) // off
 
-        // window.document.body.emitter.emit('contextmenu', saved);
+        window.document.body.emitter.emit("keydown", {keyCode: 18});
+          window.document.body.emitter.emit('click', saved); //contextmenu
+       window.document.body.emitter.emit("keyup", {keyCode: 18});
+
+
       }, LONG_PRESS_MIN_DURATION);
 
       this.updateStreamWithEvent("mousedown", event, gestureState)
@@ -196,21 +210,23 @@ export default class Voxel extends React.Component {
         interactMouseDrag: true,
         isClient: true,
         getCamera: (_ => view.getCamera()),
+        generateChunks: false,
         // mesher: voxel.meshers.stupid,
         // meshType: 'wireMesh',
         // tickFPS: 60,
-        generate: (x,y,z) => {
-          if (y == 0) {
-            return 1
-          }
-          return 0
-          // return x*x+y*y+z*z <= 15*15 ? 1 : 0 // sphere world
-        },
+        // generate: (x,y,z) => {
+        //   if (y == 0) {
+        //     return 1
+        //   }
+        //   return 0
+        //   // return x*x+y*y+z*z <= 15*15 ? 1 : 0 // sphere world
+        // },
+        generate: voxel.generator['Valley'],
         chunkDistance: 2,
         materials: ['#fff', '#000'],
         materialFlatColor: true,
         worldOrigin: [0, 0, 0],
-        controls: { discreteFire: true },
+        controls: { discreteFire: true,fireRate:100 },
       });
       this.setState({camera: this.game.camera});
 
@@ -237,6 +253,23 @@ export default class Voxel extends React.Component {
 
     defaultSetup = (game, avatar) => {
 
+
+      // then hook it up to your game as such:
+
+      game.voxels.emitter.addListener('missingChunk', function(p) {
+        var voxels = generateChunk(p, chunkSize)
+        var chunk = {
+          position: p,
+          dims: [chunkSize, chunkSize, chunkSize],
+          voxels: voxels
+        }
+        game.showChunk(chunk)
+      })
+
+      // note that your game should have generateChunks: false
+
+
+
       var makeFly = fly(game)
       var target = game.controls.target()
       game.flyer = makeFly(target)
@@ -245,13 +278,50 @@ export default class Voxel extends React.Component {
       this.blockPosPlace;
       this.blockPosErase;
       var hl = game.highlighter = highlight(game, { color: 0xdddddd })
-      hl.on('highlight', function (voxelPos) { this.blockPosErase = voxelPos })
-      hl.on('remove', function (voxelPos) {
+      hl.emitter.addListener('highlight', (voxelPos) => {
+        // console.warn("Highlight", voxelPos)
+        this.blockPosErase = voxelPos
+      })
+      hl.emitter.addListener('remove', (voxelPos) => {
         // console.warn("removed", voxelPos)
         this.blockPosErase = null
       })
-      hl.on('highlight-adjacent', function (voxelPos) { this.blockPosPlace = voxelPos })
-      hl.on('remove-adjacent', function (voxelPos) { this.blockPosPlace = null })
+      hl.emitter.addListener('highlight-adjacent', (voxelPos) => {
+        // console.warn("adjacent", voxelPos)
+        this.blockPosPlace = voxelPos
+      })
+      hl.emitter.addListener('remove-adjacent', (voxelPos) => { this.blockPosPlace = null })
+game.plugins = {};
+      game.plugins['highlighter'] = hl;
+
+      reach = createReach(game, {reachDistance: 8});
+
+      game.plugins['voxel-reach'] = reach;
+      reach.emitter.addListener('use', function(target) {
+        console.warn("use", target)
+        if (target)
+          game.createBlock(target.adjacent, 1);
+      });
+
+      reach.emitter.addListener('mining', function(target) {
+        console.warn("mining", target)
+        if (target)
+          game.setBlock(target.voxel, 0);
+      });
+
+
+      var createMine = require('../js/lib/voxel-mine');
+
+      var mine = createMine(game, {
+
+      });
+game.plugins['voxel-mine'] = mine;
+      mine.addListener('break', function(target) {
+        // do something to this voxel (remove it, etc.)
+        console.warn("Remove This Voxel", target)
+      });
+
+
 
       // toggle between first and third person modes
       // window.addEventListener('keydown', function (ev) {
@@ -265,7 +335,7 @@ export default class Voxel extends React.Component {
         var position = this.blockPosPlace
         if (position) {
           game.createBlock(position, currentMaterial)
-          console.warn("added", position)
+          // console.warn("added", position)
         }
         else {
           position = this.blockPosErase

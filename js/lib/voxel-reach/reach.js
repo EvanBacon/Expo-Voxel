@@ -12,7 +12,7 @@ module.exports = function(game, reachDistance) {
 module.exports.pluginInfo = {
 };
 
-function Reach(game, reachDistance) {
+function Reach(game, {reachDistance}) {
   this.game = game;
   this.emitter = new EventEmitter();
   this.reachDistance = reachDistance || 8;

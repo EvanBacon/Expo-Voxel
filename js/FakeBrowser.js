@@ -50,6 +50,27 @@ class DOMDocument extends DOMElement {
     return new DOMElement(tagName);
   }
 
+  createElementNS(tagName) {
+    const canvas = this.createElement(tagName);
+    canvas.getContext = () => ({ 
+      fillRect: (_ => ({ })),
+      drawImage: (_ => ({ })),
+      getImageData: (_ => ({ })),
+      getContextAttributes: (_ => ({
+        stencil: true
+      })),
+      getExtension: (_ => ({
+        loseContext: (_ => ({
+
+        }))
+      })),
+     })
+     canvas.toDataURL = (_=> ({}))
+     
+    return canvas;
+  }
+
+
   getElementById(id) {
     return new DOMElement('div');
   }

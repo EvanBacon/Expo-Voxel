@@ -99,32 +99,27 @@ export default class Voxel extends React.Component {
     onPanResponderRelease: ((event, gestureState) => {
       clearTimeout(this.long_press_timeout);
       this.reach.stopMining();
-      this.updateStreamWithEvent("mouseup", event, gestureState)
-
-
+      this.updateStreamWithEvent("mouseup", event, gestureState);
 
       const distance = Math.hypot(gestureState.dx, gestureState.dy);
-      console.warn(distance);
 
       /*
         Is it a tap?
         Make sure the duration and distance are short...
       */
-      if (!this.longPressing && distance < this.minimumTappingDistance) {
-      
+      if (!this.longPressing && distance < this.minimumTappingDistance) {      
          //// Place Block
          this.controls.onfire({firealt: true});
       }
 
-      this.longPressing = false;
-      
 
+      this.longPressing = false;
     }),
     onPanResponderTerminate: ((event, gestureState) => {
       clearTimeout(this.long_press_timeout);
       this.longPressing = false;
       this.reach.stopMining();
-      this.updateStreamWithEvent("mouseup", event, gestureState)
+      this.updateStreamWithEvent("mouseup", event, gestureState);
     }),
   })
   minimumTappingDistance = 20;
@@ -254,6 +249,9 @@ export default class Voxel extends React.Component {
       worldOrigin: [0, 0, 0],
       controls: this.controls
     });
+    
+  
+    
     this.setState({ camera: this.game.camera });
 
 
@@ -279,6 +277,24 @@ export default class Voxel extends React.Component {
 
   defaultSetup = (game, avatar) => {
 
+    let plugins = {
+
+    }
+    game.plugins = {
+      get: (name) => plugins[name],
+      add: (name, mod, options) => {
+        plugins[name] = mod(game, options)
+        return plugins[name];
+      }
+    };
+    
+    game.plugins.add('voxel-registry', require('voxel-registry'), {});
+
+    // console.warn("Tickle");
+    // console.warn(game.plugins.get('voxel-registry'), "");
+//  return;
+    game.plugins.add('voxel-land', require('../js/lib/voxel-land'), {});
+    
 
     // then hook it up to your game as such:
 
@@ -315,13 +331,13 @@ export default class Voxel extends React.Component {
       this.blockPosPlace = voxelPos
     })
     hl.emitter.addListener('remove-adjacent', (voxelPos) => { this.blockPosPlace = null })
-    game.plugins = {};
-    game.plugins['highlighter'] = hl;
+    plugins['highlighter'] = hl;
 
     const reachDistance = 9;
     this.reach = createReach(game, reachDistance);
 
-    game.plugins['voxel-reach'] = this.reach;
+    
+    plugins['voxel-reach'] = this.reach;
     this.reach.emitter.addListener('use', function (target) {
       console.warn("use", target)
       if (target)
@@ -329,7 +345,7 @@ export default class Voxel extends React.Component {
     });
 
     this.reach.emitter.addListener('mining', function (target) {
-      console.warn("mining", target)
+      // console.warn("mining", target)
       if (target)
         game.setBlock(target.voxel, 0);
     });
@@ -339,7 +355,7 @@ export default class Voxel extends React.Component {
     var mine = createMine(game, {
 
     });
-    game.plugins['voxel-mine'] = mine;
+    plugins['voxel-mine'] = mine;
     mine.addListener('break', function (target) {
       // do something to this voxel (remove it, etc.)
       console.warn("Remove This Voxel", target)

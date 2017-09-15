@@ -9,12 +9,13 @@ class Mine extends EventEmitter {
     super();
     
     this.game = game;
-    this.registry = game.plugins['voxel-registry'];
-    this.hotbar = game.plugins['voxel-inventory-hotbar'];
-    this.reach = game.plugins['voxel-reach'];
+    // this.registry = game.plugins.get('voxel-registry');
+    // this.hotbar = game.plugins.get('voxel-inventory-hotbar');
+    this.reach = game.plugins.get('voxel-reach');
     if (!this.reach) throw new Error('voxel-mine requires "voxel-reach" plugin');
-    this.decals = game.plugins['voxel-decals'];
-    this.stitch = game.plugins['voxel-stitch'];
+    // this.decals = game.plugins.get('voxel-decals');
+    // this.stitch = game.plugins.get('voxel-stitch');
+    
     // continuous (non-discrete) firing is required to mine
     // if (this.game.controls) {
       // if (this.game.controls.needs_discrete_fire !== false) {
@@ -68,10 +69,10 @@ class Mine extends EventEmitter {
     }
 
     // if no registry, can't lookup per-block hardness, use same for all
-    if (!this.registry) return 9;
+    if (!this.registry || !this.registry.getBlockName) return 9;
 
     //  from registry, get the innate difficulty of mining this block
-    const blockID = game.getBlock(target.voxel);
+    const blockID = this.game.getBlock(target.voxel);
     const blockName = this.registry.getBlockName(blockID);
     let hardness = this.registry.getProp(blockName, 'hardness')
     if (hardness === undefined) hardness = 1.0; // seconds

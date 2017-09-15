@@ -1,0 +1,89 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "voxel-land",
+        "scope": null,
+        "escapedName": "voxel-land",
+        "name": "voxel-land",
+        "rawSpec": "",
+        "spec": "latest",
+        "type": "tag"
+      },
+      "/Users/evan.bacon/GoogleDrive/passion/react-native/exponent/voxel"
+    ]
+  ],
+  "_from": "voxel-land@latest",
+  "_id": "voxel-land@0.2.3",
+  "_inCache": true,
+  "_location": "/voxel-land",
+  "_nodeVersion": "4.2.4",
+  "_npmUser": {
+    "name": "deathcap",
+    "email": "deathcap@gmx.co.uk"
+  },
+  "_npmVersion": "2.14.12",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "voxel-land",
+    "scope": null,
+    "escapedName": "voxel-land",
+    "name": "voxel-land",
+    "rawSpec": "",
+    "spec": "latest",
+    "type": "tag"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/voxel-land/-/voxel-land-0.2.3.tgz",
+  "_shasum": "c582a6b29ed3a122bc4a5caa5d730e65fb082601",
+  "_shrinkwrap": null,
+  "_spec": "voxel-land",
+  "_where": "/Users/evan.bacon/GoogleDrive/passion/react-native/exponent/voxel",
+  "bugs": {
+    "url": "https://github.com/deathcap/voxel-land/issues"
+  },
+  "dependencies": {
+    "alea": "0.0.9",
+    "ever": "0.0.3",
+    "ndarray": "^1.0.10",
+    "ndarray-ops": "^1.2.2",
+    "simplex-noise": "^2.1.1",
+    "unworkify": "^0.1.1",
+    "voxel-trees": "^0.1.0",
+    "webworkify": "^0.1.0"
+  },
+  "description": "generate landforms for voxel-engine",
+  "devDependencies": {},
+  "directories": {},
+  "dist": {
+    "shasum": "c582a6b29ed3a122bc4a5caa5d730e65fb082601",
+    "tarball": "https://registry.npmjs.org/voxel-land/-/voxel-land-0.2.3.tgz"
+  },
+  "gitHead": "b17084dbe2a61b880e22a9719fee5ba6c1d19811",
+  "homepage": "https://github.com/deathcap/voxel-land#readme",
+  "keywords": [
+    "voxel",
+    "terrain",
+    "generation"
+  ],
+  "license": "MIT",
+  "main": "land.js",
+  "maintainers": [
+    {
+      "name": "deathcap",
+      "email": "deathcap@gmx.co.uk"
+    }
+  ],
+  "name": "voxel-land",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/deathcap/voxel-land.git"
+  },
+  "scripts": {},
+  "version": "0.2.3"
+}

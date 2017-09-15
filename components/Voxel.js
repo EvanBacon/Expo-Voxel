@@ -242,7 +242,8 @@ export default class Voxel extends React.Component {
       //   return 0
       //   // return x*x+y*y+z*z <= 15*15 ? 1 : 0 // sphere world
       // },
-      generate: voxel.generator['Valley'],
+
+      // generate: voxel.generator['Valley'],
       chunkDistance: 2,
       materials: ['#fff', '#000'],
       materialFlatColor: true,
@@ -298,15 +299,15 @@ export default class Voxel extends React.Component {
 
     // then hook it up to your game as such:
 
-    game.voxels.emitter.addListener('missingChunk', function (p) {
-      var voxels = generateChunk(p, chunkSize)
-      var chunk = {
-        position: p,
-        dims: [chunkSize, chunkSize, chunkSize],
-        voxels: voxels
-      }
-      game.showChunk(chunk)
-    })
+    // game.voxels.emitter.addListener('missingChunk', function (p) {
+    //   var voxels = generateChunk(p, chunkSize)
+    //   var chunk = {
+    //     position: p,
+    //     dims: [chunkSize, chunkSize, chunkSize],
+    //     voxels: voxels
+    //   }
+    //   game.showChunk(chunk)
+    // })
 
     // note that your game should have generateChunks: false
 

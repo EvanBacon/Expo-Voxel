@@ -2,7 +2,7 @@
 var ndarray = require('ndarray');
 var EventEmitter = require('events').EventEmitter;
 var inherits = require('inherits');
-
+import ChunkGenerator from './worker'
 module.exports = function(game, opts) {
   return new Land(game, opts);
 };
@@ -56,7 +56,6 @@ inherits(Land, EventEmitter);
 
 Land.prototype.enable = function() {
   this.registerBlocks();
-    this.worker = require('./worker.js');
   this.bindEvents();
 };
 
@@ -114,22 +113,28 @@ Land.prototype.registerBlocks = function()  {
 Land.prototype.bindEvents = function() {
   var self = this;
 
-  self.emit({cmd: 'configure', opts:self.opts});
+
+  let chunkGen = new ChunkGenerator(this, self.opts);
+  // self.emit({cmd: 'configure', opts:self.opts});
 
   this.game.voxels.emitter.addListener('missingChunk', this.missingChunk = function(pos) {
-    self.emit({cmd: 'generateChunk', pos:pos})
-  });
+// console.warn("packitnsionfmd")
+    // self.emit({cmd: 'generateChunk', pos:pos})
+    if (chunkGen === undefined) throw new Error('voxel-land web worker error: received "generateChunk" before "configure"');
+    const _chunk = chunkGen.generateChunk(pos);
 
-  self.addListener('message', function(ev) {
-    if (ev.data.cmd === 'chunkGenerated') {
-      var voxels = new self.game.arrayType(ev.data.voxelBuffer);
-      var chunk = ndarray(voxels, [self.opts.chunkSize+self.opts.chunkPad, self.opts.chunkSize+self.opts.chunkPad, self.opts.chunkSize+self.opts.chunkPad]);
+    var voxels = new self.game.arrayType(_chunk.voxelBuffer);
+    // var chunk = ndarray(voxels, [self.opts.chunkSize+self.opts.chunkPad, self.opts.chunkSize+self.opts.chunkPad, self.opts.chunkSize+self.opts.chunkPad]);
+    let chunk = {}
+    const chunkSize = 32;
+    chunk.position = _chunk.position;
+    chunk.dims =  [chunkSize, chunkSize, chunkSize]
+    chunk.voxels = voxels;
+    self.game.showChunk(chunk);
 
-      chunk.position = ev.data.position;
-
-      self.game.showChunk(chunk);
-    } else if (ev.data.cmd === 'decorate') {
-      var changes = ev.data.changes;
+    var {changes} = _chunk;
+    if (changes) {
+      
       for (var i = 0; i < changes.length; ++i) {
         var pos = changes[i][0];
         var value = changes[i][1];
@@ -137,8 +142,35 @@ Land.prototype.bindEvents = function() {
         self.game.setBlock(pos, value); // TODO: faster mass edit?
         // TODO: what if pos is out of loaded chunk range? doesn't automatically load chunk; change will be lost
       }
+
+    } else {
+
     }
+
+    // var voxels = generateChunk(p, chunkSize)
+    // var chunk = {
+    //   position: p,
+    //   dims: [chunkSize, chunkSize, chunkSize],
+    //   voxels: voxels
+    // }
+    // game.showChunk(chunk)
   });
+
+  // self.addListener('message', function(ev) {
+  //   console.warn("thrown back", ev.data.cmd);
+  //   if (ev.data.cmd === 'chunkGenerated') {
+   
+  //   } else if (ev.data.cmd === 'decorate') {
+  //     var changes = ev.data.changes;
+  //     for (var i = 0; i < changes.length; ++i) {
+  //       var pos = changes[i][0];
+  //       var value = changes[i][1];
+
+  //       self.game.setBlock(pos, value); // TODO: faster mass edit?
+  //       // TODO: what if pos is out of loaded chunk range? doesn't automatically load chunk; change will be lost
+  //     }
+  //   }
+  // });
 };
 
 Land.prototype.unbindEvents = function() {

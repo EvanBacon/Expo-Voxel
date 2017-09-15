@@ -278,23 +278,29 @@ ChunkGenerator.prototype.generateChunk = function(pos) {
 
   //if (pos.join('|') !== '0|0|0' && pos.join('|') !== '0|-1|0') return; // only a few chunks for testing
 
-  this.worker.postMessage({cmd: 'chunkGenerated', position: pos, voxelBuffer: buffer}, [buffer]);
-
+  // this.worker.postMessage({cmd: 'chunkGenerated', position: pos, voxelBuffer: buffer}, [buffer]);
+  let cc = { position: pos, voxelBuffer: buffer}
   // add additional decoration edits, which may span multiple loaded chunks
-  if (changes) this.worker.postMessage({cmd: 'decorate', changes:changes}); // TODO: use transferrable?
+  if (changes)  {
+    cc.changes = changes;
+    // this.worker.postMessage({cmd: 'decorate', changes:changes}); // TODO: use transferrable?
+  }
+  return cc;
+
 };
 
-module.exports = function() {
-  var gen;
-  ever(this).on('message', function(ev) {
-
-    if (ev.data.cmd === 'configure') {
-      gen = new ChunkGenerator(this, ev.data.opts);
-    } else if (ev.data.cmd === 'generateChunk') {
-      if (gen === undefined) throw new Error('voxel-land web worker error: received "generateChunk" before "configure"');
-      gen.generateChunk(ev.data.pos);
-    }
-  });
-};
+export default ChunkGenerator;
+//  function() {
+//   var gen;
+//   ever(this).on('message', function(ev) {
+//     console.warn("prin", ev.data.cmd);
+//     if (ev.data.cmd === 'configure') {
+//       gen = new ChunkGenerator(this, ev.data.opts);
+//     } else if (ev.data.cmd === 'generateChunk') {
+//       if (gen === undefined) throw new Error('voxel-land web worker error: received "generateChunk" before "configure"');
+//       gen.generateChunk(ev.data.pos);
+//     }
+//   });
+// };
 
 

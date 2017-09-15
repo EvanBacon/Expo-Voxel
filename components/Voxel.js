@@ -32,7 +32,7 @@ var generateChunk = terrain('foo', 0, 5, 20)
 
 export default class Voxel extends React.Component {
   // world;
-
+  reach;
   state = {
     camera: null,
     ready: true,
@@ -60,7 +60,7 @@ export default class Voxel extends React.Component {
     onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
 
     onPanResponderGrant: ((event, gestureState) => {
-
+      this.longPressing = false;
       const { dx, dy, x0, y0 } = gestureState;
       let screenDelta = {
         x: dx,
@@ -69,6 +69,7 @@ export default class Voxel extends React.Component {
       const saved = { ...event.nativeEvent, clientX: x0, clientY: y0, screenX: x0, screenY: y0 };
 
       this.long_press_timeout = setTimeout(_ => {
+        this.longPressing = true;
         // if (this.voxelPos) {
         //   this.game.setBlock(this.voxelPos, 0) // on
         // }
@@ -79,7 +80,8 @@ export default class Voxel extends React.Component {
         window.document.body.emitter.emit('click', saved); //contextmenu
         window.document.body.emitter.emit("keyup", { keyCode: 18 });
 
-
+        //// Remove Block
+        this.controls.onfire({fire: true});
       }, LONG_PRESS_MIN_DURATION);
 
       this.updateStreamWithEvent("mousedown", event, gestureState)
@@ -96,16 +98,36 @@ export default class Voxel extends React.Component {
     }),
     onPanResponderRelease: ((event, gestureState) => {
       clearTimeout(this.long_press_timeout);
-
+      this.reach.stopMining();
       this.updateStreamWithEvent("mouseup", event, gestureState)
+
+
+
+      const distance = Math.hypot(gestureState.dx, gestureState.dy);
+      console.warn(distance);
+
+      /*
+        Is it a tap?
+        Make sure the duration and distance are short...
+      */
+      if (!this.longPressing && distance < this.minimumTappingDistance) {
+      
+         //// Place Block
+         this.controls.onfire({firealt: true});
+      }
+
+      this.longPressing = false;
+      
+
     }),
     onPanResponderTerminate: ((event, gestureState) => {
       clearTimeout(this.long_press_timeout);
-
+      this.longPressing = false;
+      this.reach.stopMining();
       this.updateStreamWithEvent("mouseup", event, gestureState)
     }),
   })
-
+  minimumTappingDistance = 20;
   componentWillMount() {
     this.panResponder = this.buildGestures({});
   }
@@ -203,6 +225,11 @@ export default class Voxel extends React.Component {
     // const mesher = voxel.generate([0,0,0], [16,16,16], function(x,y,z) {
     //   return Math.round(Math.random() * 0xffffff)
     // });
+
+    this.controls = { 
+      discreteFire: true, 
+      fireRate: 100,
+    };
     this.game = new Engine({
       THREE,
       view,
@@ -225,7 +252,7 @@ export default class Voxel extends React.Component {
       materials: ['#fff', '#000'],
       materialFlatColor: true,
       worldOrigin: [0, 0, 0],
-      controls: { discreteFire: true, fireRate: 100 },
+      controls: this.controls
     });
     this.setState({ camera: this.game.camera });
 
@@ -267,8 +294,6 @@ export default class Voxel extends React.Component {
 
     // note that your game should have generateChunks: false
 
-
-
     var makeFly = fly(game)
     var target = game.controls.target()
     game.flyer = makeFly(target)
@@ -293,21 +318,21 @@ export default class Voxel extends React.Component {
     game.plugins = {};
     game.plugins['highlighter'] = hl;
 
-    reach = createReach(game, { reachDistance: 8 });
+    const reachDistance = 9;
+    this.reach = createReach(game, reachDistance);
 
-    game.plugins['voxel-reach'] = reach;
-    reach.emitter.addListener('use', function (target) {
+    game.plugins['voxel-reach'] = this.reach;
+    this.reach.emitter.addListener('use', function (target) {
       console.warn("use", target)
       if (target)
         game.createBlock(target.adjacent, 1);
     });
 
-    reach.emitter.addListener('mining', function (target) {
+    this.reach.emitter.addListener('mining', function (target) {
       console.warn("mining", target)
       if (target)
         game.setBlock(target.voxel, 0);
     });
-
 
     var createMine = require('../js/lib/voxel-mine');
 
@@ -331,15 +356,15 @@ export default class Voxel extends React.Component {
     var currentMaterial = 1
 
     game.on('fire', function (target, state) {
-      var position = this.blockPosPlace
-      if (position) {
-        game.createBlock(position, currentMaterial)
-        // console.warn("added", position)
-      }
-      else {
-        position = this.blockPosErase
-        if (position) game.setBlock(position, 0)
-      }
+      // var position = this.blockPosPlace
+      // if (position) {
+      //   game.createBlock(position, currentMaterial)
+      //   // console.warn("added", position)
+      // }
+      // else {
+      //   position = this.blockPosErase
+      //   if (position) game.setBlock(position, 0)
+      // }
     })
 
     game.on('tick', function () {
@@ -349,6 +374,8 @@ export default class Voxel extends React.Component {
       if (vx > 0.001 || vz > 0.001) walk.stopWalking()
       else walk.startWalking()
     })
+
+
 
   }
 

@@ -5,50 +5,34 @@ var inherits = require('inherits');
 import EventEmitter from 'EventEmitter';
 var fract = require('fract');
 
-module.exports = function(game, opts) {
-  return new Reach(game, opts);
+module.exports = function(game, reachDistance) {
+  return new Reach(game, reachDistance);
 };
 
 module.exports.pluginInfo = {
 };
 
-function Reach(game, opts) {
+function Reach(game, reachDistance) {
   this.game = game;
-  opts = opts || {};
   this.emitter = new EventEmitter();
-  opts.reachDistance = opts.reachDistance || 8;
-  opts.mouseButton = opts.mouseButton !== undefined ? opts.mouseButton : 0; // left
-
-  this.opts = opts;
+  this.reachDistance = reachDistance || 8;
   this.currentTarget = null;
-  // this.havePointer = false;
-
   this.enable();
 }
+
+Reach.prototype.startMining = function() {
+  this.emitter.emit('start mining', this.specifyTarget());
+}
+
+Reach.prototype.stopMining = function(ev) {
+   this.currentTarget = null;
+   this.emitter.emit('stop mining', this.specifyTarget());
+}
+
 
 
 Reach.prototype.enable = function() {
   var self = this;
-
-  // if (this.game.isClient) {
-  //   if (self.game.shell) {
-  //     // game-shell
-  //     Object.defineProperty(self, 'havePointer', {get: function() {
-  //       return self.game.shell.pointerLock;
-  //     }});
-  //   } else if (this.game.interact) {
-  //     // interact
-  //     this.game.interact.on('attain', function() {
-  //       self.havePointer = true;
-  //     });
-  //
-  //     this.game.interact.on('release', function() {
-  //       self.havePointer = false;
-  //     });
-  //   } else {
-  //     throw new Error('voxel-reach requires interact or game-shell');
-  //   }
-  // }
 
   // Continuously fired events while button is held down (from voxel-engine)
   function fire(fireTarget, state) {
@@ -73,42 +57,13 @@ Reach.prototype.enable = function() {
 
     self.emitter.emit(action, target);
   }
-
-  // Edge triggered
-  // TODO: refactor
-  function mousedown(ev) {
-    // if (!self.havePointer) return;
-    console.warn("down")
-    if (ev.button !== self.opts.mouseButton) return;
-    console.warn("pass")
-    self.emitter.emit('start mining', self.specifyTarget());
-  }
-
-  function mouseup(ev) {
-    // if (!self.havePointer) return;
-    if (ev.button !== self.opts.mouseButton)  return;
-    self.currentTarget = null;
-    self.emitter.emit('stop mining', self.specifyTarget());
-  }
-
   this.game.on('fire', fire);
-  if (this.game.isClient) {
-    ever(document.body).on('mousedown', mousedown);
-    ever(document.body).on('mouseup', mouseup);
-  }
-
   // Save callbacks for removing in disable()
   this.fire = fire;
-  this.mousedown = mousedown;
-  this.mouseup = mouseup;
 };
 
 Reach.prototype.disable = function() {
   this.game.removeListener('fire', this.fire);
-  if (this.game.isClient) {
-    ever(document.body).removeListener('mousedown', this.mousedown);
-    ever(document.body).removeListener('mouseup', this.mouseup);
-  }
 };
 
 function targetsEqual(a, b) {
@@ -121,7 +76,7 @@ function targetsEqual(a, b) {
 Reach.prototype.specifyTarget = function() {
   var sub, side, hit, value;
 
-  hit = this.game.raycastVoxels(this.game.cameraPosition(), this.game.cameraVector(), this.opts.reachDistance);
+  hit = this.game.raycastVoxels(this.game.cameraPosition(), this.game.cameraVector(), this.reachDistance);
 
   if (!hit) {
     // air

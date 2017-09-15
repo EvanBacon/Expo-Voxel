@@ -1,8 +1,5 @@
-'use strict';
-
 import EventEmitter from 'EventEmitter'
 module.exports = (game, opts) => new Mine(game, opts);
-
 module.exports.pluginInfo = {
   loadAfter: ['voxel-reach', 'voxel-registry', 'voxel-inventory-hotbar', 'voxel-decals', 'voxel-stitch']
 }
@@ -10,28 +7,25 @@ module.exports.pluginInfo = {
 class Mine extends EventEmitter {
   constructor(game, opts) {
     super();
-
+    
     this.game = game;
     this.registry = game.plugins['voxel-registry'];
     this.hotbar = game.plugins['voxel-inventory-hotbar'];
-
     this.reach = game.plugins['voxel-reach'];
     if (!this.reach) throw new Error('voxel-mine requires "voxel-reach" plugin');
-
     this.decals = game.plugins['voxel-decals'];
     this.stitch = game.plugins['voxel-stitch'];
-
     // continuous (non-discrete) firing is required to mine
-    if (this.game.controls) {
+    // if (this.game.controls) {
       // if (this.game.controls.needs_discrete_fire !== false) {
       //   throw new Error('voxel-mine requires discreteFire:false,fireRate:100 in voxel-control options (or voxel-engine controls discreteFire:false,fireRate:100)');
       // }
       // TODO: can we just set needs_discrete_fire and fire_rate ourselves?
       this.secondsPerFire = this.game.controls.fire_rate / 1000;  // ms -> s
-    } else {
-      // server-side, game.controls unavailable, assume 100 ms TODO
-      this.secondsPerFire = 100.0 / 1000.0;
-    }
+    // } else {
+    //   // server-side, game.controls unavailable, assume 100 ms TODO
+    //   this.secondsPerFire = 100.0 / 1000.0;
+    // }
 
     if (!opts) opts = {};
     if (opts.instaMine === undefined) opts.instaMine = false;     // instantly mine? (if true, ignores timeToMine)
@@ -55,16 +49,15 @@ class Mine extends EventEmitter {
     this.instaMine = opts.instaMine;
     this.progress = 0;
 
-    if (this.game.isClient) {
       // texture overlays require three.js and textures, or voxel-decals with game.shell
-      this.texturesEnabled = !this.opts.disableOverlay && this.opts.progressTexturesPrefix !== undefined;
-      if (this.texturesEnabled && this.game.shell && !this.decals) {
-          throw new Error('voxel-mine with game-shell requires voxel-decals to enable textures');
-      }
+
+      // this.texturesEnabled = !this.opts.disableOverlay && this.opts.progressTexturesPrefix !== undefined;
+      // if (this.texturesEnabled && this.game.shell && !this.decals) {
+      //     throw new Error('voxel-mine with game-shell requires voxel-decals to enable textures');
+      // }
 
       this.overlay = null;
       this.setupTextures();
-    }
 
     this.enable();
   }
@@ -202,10 +195,12 @@ class Mine extends EventEmitter {
     if (this.instaMine || !this.texturesEnabled) {
       return;
     }
-
+    console.warn("mine: overlay", target)
     this.destroyOverlay();
 
     if (this.decals) {
+      console.warn("mine: decals", target)
+      
       this.decalPosition = target.voxel.slice(0);
       this.decalNormal = target.normal.slice(0);
 

@@ -29,7 +29,7 @@ class DOMElement extends DOMNode {
 
   addEventListener(eventName, listener) {
     // unimplemented
-    console.log("VOXEL:: add listener",this.tagName, eventName, listener);
+    console.log("VOXEL:: add listener", this.tagName, eventName, listener);
     this.emitter.addListener(eventName, listener)
   }
 
@@ -60,7 +60,7 @@ process.browser = true
 window.emitter = new EventEmitter();
 window.addEventListener = (eventName, listener) => {
   // unimplemented
-  console.log("VOXEL:: add listener","WINDOW", eventName, listener);
+  console.log("VOXEL:: add listener", "WINDOW", eventName, listener);
   window.emitter.addListener(eventName, listener)
 }
 window.removeEventListener = (eventName, listener) => {

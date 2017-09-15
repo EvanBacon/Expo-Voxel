@@ -15,7 +15,6 @@ const examples = voxel.generateExamples();
 import Engine from '../js/lib/voxel-engine';
 import voxelView from '../js/lib/voxel-view';
 import * as THREE from 'three';
-const THREEView = Expo.createTHREEViewClass(THREE);
 import ExpoTHREE from 'expo-three'
 var createReach = require('../js/lib/voxel-reach');
 

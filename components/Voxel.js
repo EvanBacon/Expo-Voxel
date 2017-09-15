@@ -98,7 +98,10 @@ export default class Voxel extends React.Component {
     }),
     onPanResponderRelease: ((event, gestureState) => {
       clearTimeout(this.long_press_timeout);
-      this.reach.stopMining();
+      if (this.reach) {
+        this.reach.stopMining();
+      }
+      
       this.updateStreamWithEvent("mouseup", event, gestureState);
 
       const distance = Math.hypot(gestureState.dx, gestureState.dy);
@@ -109,7 +112,9 @@ export default class Voxel extends React.Component {
       */
       if (!this.longPressing && distance < this.minimumTappingDistance) {      
          //// Place Block
-         this.controls.onfire({firealt: true});
+         if (this.controls) {
+          this.controls.onfire({firealt: true});
+         }
       }
 
 
@@ -118,7 +123,9 @@ export default class Voxel extends React.Component {
     onPanResponderTerminate: ((event, gestureState) => {
       clearTimeout(this.long_press_timeout);
       this.longPressing = false;
-      this.reach.stopMining();
+      if (this.reach) {
+        this.reach.stopMining();
+      }
       this.updateStreamWithEvent("mouseup", event, gestureState);
     }),
   })
@@ -295,8 +302,11 @@ export default class Voxel extends React.Component {
     // console.warn(game.plugins.get('voxel-registry'), "");
 //  return;
     game.plugins.add('voxel-land', require('../js/lib/voxel-land'), {});
+    game.plugins.add('voxel-recipes', require('voxel-recipes'), {});
     
-
+    game.plugins.add('voxel-bedrock', require('voxel-bedrock'), {});
+    game.plugins.add('voxel-fluid', require('voxel-fluid'), {});
+    game.plugins.add('voxel-bucket', require('voxel-bucket'), {});
     // then hook it up to your game as such:
 
     // game.voxels.emitter.addListener('missingChunk', function (p) {
@@ -340,7 +350,6 @@ export default class Voxel extends React.Component {
     
     plugins['voxel-reach'] = this.reach;
     this.reach.emitter.addListener('use', function (target) {
-      console.warn("use", target)
       if (target)
         game.createBlock(target.adjacent, 1);
     });

@@ -1,8 +1,8 @@
 {
   "expo": {
-  "name": "Terravox",
+  "name": "Voxel AR",
   "description": "Beautiful Voxel Terrain",
-  "slug": "voxel",
+  "slug": "voxel-ar",
   "privacy": "public",
   "sdkVersion": "21.0.0",
   "version": "1.0.0",

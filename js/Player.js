@@ -82,7 +82,7 @@ export default class Player {
 
   setPosition = (position) => {
     const {x, y, z} = position
-    this.camera.position.set(x, y + (this.HEIGHT - 1), z)
+    // this.camera.position.set(x, y + (this.HEIGHT - 1), z)
     this.position = position
 
     ///Update Camera
@@ -246,7 +246,7 @@ export default class Player {
     targetPosition.y = (position.y) + 1 * Math.cos( this.phi );
     targetPosition.z = (position.z) + 1 * Math.sin( this.phi ) * Math.sin( this.theta );
 
-    this.camera.lookAt( targetPosition );
+    // this.camera.lookAt( targetPosition );
 
   }
 

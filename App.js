@@ -5,7 +5,7 @@ import Scene from './components/Scene';
 
 console.ignoredYellowBox = ['THREE.WebGLRenderer'];
 
-class AppContainer extends React.Component {
+export default class AppContainer extends React.Component {
   render = () => (
       <View style={styles.container}>
         <Scene
@@ -27,4 +27,3 @@ const styles = StyleSheet.create({
   },
 });
 
-Expo.registerRootComponent(AppContainer);

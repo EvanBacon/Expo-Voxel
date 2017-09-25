@@ -1,9 +1,10 @@
 {
+  "expo": {
   "name": "Terravox",
   "description": "Beautiful Voxel Terrain",
   "slug": "voxel",
   "privacy": "public",
-  "sdkVersion": "16.0.0",
+  "sdkVersion": "21.0.0",
   "version": "1.0.0",
   "orientation": "default",
   "primaryColor": "#46bd00",
@@ -25,4 +26,5 @@
   "ios": {
     "supportsTablet": true
   }
+}
 }

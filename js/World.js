@@ -6,7 +6,7 @@ import {View, Dimensions} from 'react-native'
 const {width, height} = Dimensions.get('window')
 import * as THREE from 'three';
 import ImprovedNoise from './ImprovedNoise'
-const THREEView = Expo.createTHREEViewClass(THREE);
+import ExpoTHREE from 'expo-three';
 
 export default class World {
   width;
@@ -233,6 +233,9 @@ export default class World {
 
   buildMesh = (geometry, image) => {
     this.mesh = new THREE.Mesh( geometry, this.buildTexture(image) );
+    // this.mesh.position.x = -this.width/2;
+    // this.mesh.position.z = -this.height/2;
+    this.mesh.position.y = -7;
     return this.mesh
   }
 
@@ -241,10 +244,11 @@ export default class World {
   }
 
   async buildTerrain() {
-    const textureAsset = Expo.Asset.fromModule(require('../assets/images/material.png'));
-    await textureAsset.downloadAsync();
 
-    this.texture = THREEView.textureFromAsset(textureAsset);
+    this.texture = await ExpoTHREE.createTextureAsync({
+      asset: Expo.Asset.fromModule(require('../assets/images/material.png')),
+    })
+
     this.texture.magFilter = THREE.NearestFilter;
     this.texture.minFilter = THREE.LinearMipMapLinearFilter;
 

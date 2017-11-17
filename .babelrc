@@ -1,5 +1,10 @@
 {
-  "presets": ["babel-preset-expo"],
+  "presets": [
+    "babel-preset-expo",
+    "babel-preset-es2015",
+    "babel-preset-es2016",
+    "babel-preset-es2017"
+  ],
   "env": {
     "development": {
       "plugins": ["transform-react-jsx-source"]

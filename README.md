@@ -1,4 +1,4 @@
-Expo Voxel
+[Expo Voxel](https://threejs.org/examples/?q=mine#webgl_geometry_minecraft_ao)
 ========
 
 Expo: https://exp.host/@bacon/voxel
@@ -20,7 +20,7 @@ Stack:
 
 ## Special Thanks
 
-- [Voxel Terrain](https://threejs.org/examples/?q=mine#webgl_geometry_minecraft_ao) by [Mr. Doob](https://github.com/mrdoob)__
+- [Voxel Terrain](https://threejs.org/examples/?q=mine#webgl_geometry_minecraft_ao) by [Mr. Doob](https://github.com/mrdoob)
 - [Nikhilesh Sigatapu](https://github.com/nikki93)
 - [Charlie Cheever](https://github.com/ccheever)
 - [Expo Team](https://twitter.com/expo_io)

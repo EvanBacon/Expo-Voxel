@@ -1,17 +1,7 @@
 import EventEmitter from 'EventEmitter';
 import { THREE } from 'expo-three';
-module.exports = (game, opts) => new Mine(game, opts);
-module.exports.pluginInfo = {
-  loadAfter: [
-    'voxel-reach',
-    'voxel-registry',
-    'voxel-inventory-hotbar',
-    'voxel-decals',
-    'voxel-stitch',
-  ],
-};
 
-class Mine extends EventEmitter {
+class VoxelMine extends EventEmitter {
   constructor(game, opts) {
     super();
 
@@ -296,3 +286,15 @@ class Mine extends EventEmitter {
     this.overlay = null;
   }
 }
+
+module.exports.pluginInfo = {
+  loadAfter: [
+    'voxel-reach',
+    'voxel-registry',
+    'voxel-inventory-hotbar',
+    'voxel-decals',
+    'voxel-stitch',
+  ],
+};
+
+export default VoxelMine;

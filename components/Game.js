@@ -24,6 +24,7 @@ const createReach = require('../js/lib/voxel-reach');
 const player = require('../js/lib/voxel-player');
 import Dpad from './Dpad';
 import GestureType from '../js/GestureType';
+import VoxelMine from '../js/lib/voxel-mine';
 
 const LONG_PRESS_MIN_DURATION = 500;
 
@@ -336,49 +337,47 @@ export default class App extends React.Component {
     //   game.showChunk(chunk);
     // });
     // note that your game should have generateChunks: false
-    var makeFly = fly(game);
-    var target = game.controls.target();
-    game.flyer = makeFly(target);
+    const makeFly = fly(game);
+    const controlTarget = game.controls.target();
+    game.flyer = makeFly(controlTarget);
 
     // highlight blocks when you look at them, hold <Ctrl> for block placement
-    const hl = (game.highlighter = new VoxelHighlighter(game, {
+    game.highlighter = new VoxelHighlighter(game, {
       color: 0xdddddd,
-    }));
-    hl.emitter.addListener('highlight', voxelPos => {
+    });
+    game.highlighter.emitter.addListener('highlight', voxelPos => {
       // console.warn("Highlight", voxelPos)
       this.blockPosErase = voxelPos;
     });
-    hl.emitter.addListener('remove', voxelPos => {
+    game.highlighter.emitter.addListener('remove', voxelPos => {
       // console.warn("removed", voxelPos)
       this.blockPosErase = null;
     });
-    hl.emitter.addListener('highlight-adjacent', voxelPos => {
+    game.highlighter.emitter.addListener('highlight-adjacent', voxelPos => {
       // console.warn("adjacent", voxelPos)
       this.blockPosPlace = voxelPos;
     });
-    hl.emitter.addListener('remove-adjacent', voxelPos => {
+    game.highlighter.emitter.addListener('remove-adjacent', voxelPos => {
       this.blockPosPlace = null;
     });
-    plugins['highlighter'] = hl;
+    plugins['highlighter'] = game.highlighter;
 
     const reachDistance = 9;
     this.reach = createReach(game, reachDistance);
 
     plugins['voxel-reach'] = this.reach;
     this.reach.emitter.addListener('use', function(target) {
-      if (target) game.createBlock(target.adjacent, 1);
+      target && game.createBlock(target.adjacent, 1);
     });
 
     this.reach.emitter.addListener('mining', function(target) {
       // console.warn("mining", target)
-      if (target) game.setBlock(target.voxel, 0);
+      target && game.setBlock(target.voxel, 0);
     });
 
-    var createMine = require('../js/lib/voxel-mine');
-
-    var mine = createMine(game, {});
-    plugins['voxel-mine'] = mine;
-    mine.addListener('break', function(target) {
+    const voxelMine = new VoxelMine(game, {});
+    plugins['voxel-mine'] = voxelMine;
+    voxelMine.addListener('break', function(target) {
       // do something to this voxel (remove it, etc.)
       console.warn('Remove This Voxel', target);
     });
@@ -404,11 +403,14 @@ export default class App extends React.Component {
     });
 
     game.on('tick', function() {
-      walk.render(target.playerSkin);
-      var vx = Math.abs(target.velocity.x);
-      var vz = Math.abs(target.velocity.z);
-      if (vx > 0.001 || vz > 0.001) walk.stopWalking();
-      else walk.startWalking();
+      walk.render(controlTarget.playerSkin);
+      const vx = Math.abs(controlTarget.velocity.x);
+      const vz = Math.abs(controlTarget.velocity.z);
+      if (vx > 0.001 || vz > 0.001) {
+        walk.stopWalking();
+      } else {
+        walk.startWalking();
+      }
     });
   };
 }

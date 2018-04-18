@@ -1,8 +1,13 @@
 import ExpoGraphics from 'expo-graphics';
 import ExpoTHREE, { THREE } from 'expo-three';
 import React from 'react';
-import { Platform } from 'react-native';
-import { PanResponder, StyleSheet, View, Dimensions } from 'react-native';
+import {
+  Platform,
+  PanResponder,
+  StyleSheet,
+  View,
+  Dimensions,
+} from 'react-native';
 
 import Assets from '../Assets';
 import Expo from 'expo';
@@ -24,8 +29,8 @@ import GestureType from '../js/GestureType';
 
 const LONG_PRESS_MIN_DURATION = 500;
 
-var terrain = require('voxel-perlin-terrain');
-var chunkSize = 32;
+const terrain = require('voxel-perlin-terrain');
+const chunkSize = 32;
 
 // initialize your noise with a seed, floor height, ceiling height and scale factor
 // var generateChunk = terrain('foo', 0, 5, 20);

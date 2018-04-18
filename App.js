@@ -2,7 +2,7 @@ import '@expo/browser-polyfill';
 
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-// import Game from './components/Game';
+import Game from './components/Game';
 import AssetUtils from 'expo-asset-utils';
 import Assets from './Assets';
 
@@ -50,7 +50,7 @@ export default class App extends React.Component {
     return <View />;
   }
   get screen() {
-    return <View />;
+    return <Game />;
   }
 
   render() {

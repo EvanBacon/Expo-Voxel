@@ -4,7 +4,9 @@ export default {
 		"player.png": require(`./assets/images/player.png`)
 	},
 	"icons": {
-		"app-icon.png": require(`./assets/icons/app-icon.png`),
-		"loading-icon.png": require(`./assets/icons/loading-icon.png`)
+		"android.png": require(`./assets/icons/android.png`),
+		"expo.png": require(`./assets/icons/expo.png`),
+		"splash.png": require(`./assets/icons/splash.png`),
+		"ios.png": require(`./assets/icons/ios.png`)
 	}
 };

@@ -1,28 +1,45 @@
 {
   "expo": {
-    "name": "Expo Craft",
-    "description": "Beautiful Voxel Terrain",
+    "name": "ExpoCraft",
+    "description": "Voxels for Life",
     "slug": "expo-craft",
     "privacy": "public",
     "sdkVersion": "26.0.0",
+    "platforms": [
+      "ios",
+      "android"
+    ],
     "version": "1.0.0",
-    "orientation": "default",
-    "primaryColor": "#46bd00",
-    "icon": "./assets/icons/app-icon.png",
+    "primaryColor": "#A2FD79",
+    "icon": "./assets/icons/expo.png",
     "notification": {
-      "icon": "./assets/icons/app-icon.png",
-      "color": "#000000"
+      "icon": "./assets/icons/expo.png",
+      "color": "#A2FD79"
+    },
+    "splash": {
+      "image": "./assets/icons/splash.png",
+      "backgroundColor": "#A2FD79",
+      "resizeMode": "cover"
     },
     "loading": {
-      "icon": "./assets/icons/loading-icon.png",
-      "hideExponentText": false,
-      "backgroundColor": "#46bd00"
-    },
-    "packagerOpts": {
-      "assetExts": ["ttf"]
+      "backgroundColor": "#A2FD79",
+      "hideExponentText": false
     },
     "ios": {
-      "supportsTablet": true
+      "icon": "./assets/icons/ios.png",
+      "supportsTablet": true,
+      "bundleIdentifier": "com.evanbacon.expocraft",
+      "buildNumber": "0.0.0"
+    },
+    "android": {
+      "icon": "./assets/icons/android.png",
+      "package": "com.evanbacon.expocraft",
+      "versionCode": 1
+    },
+    "packagerOpts": {
+      "assetExts": [
+        "mp4"
+      ]
     }
   }
 }

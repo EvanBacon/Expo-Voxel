@@ -229,7 +229,7 @@ export default class App extends React.Component {
     global.__context = gl;
     global.gl = gl;
 
-    view = new VoxelView({
+    this.view = new VoxelView({
       width,
       height,
       scale,
@@ -257,10 +257,10 @@ export default class App extends React.Component {
       fireRate: 100,
     };
     this.game = new Engine({
-      view,
+      view: this.view,
       interactMouseDrag: true,
       isClient: true,
-      getCamera: () => view.getCamera(),
+      getCamera: () => this.view.getCamera(),
       generateChunks: false,
       // mesher: voxel.meshers.stupid,
       // meshType: 'wireMesh',
@@ -294,19 +294,10 @@ export default class App extends React.Component {
   };
 
   onResize = ({ width, height, scale }) => {
-    if (this.game) {
-    }
-    this.camera.aspect = width / height;
-    this.camera.updateProjectionMatrix();
-    this.renderer.setPixelRatio(scale);
-    this.renderer.setSize(width, height);
+    this.view.resizeWindow(width, height);
   };
 
-  onRender = delta => {
-    // this.cube.rotation.x += 3.5 * delta;
-    // this.cube.rotation.y += 2 * delta;
-    // this.renderer.render(this.scene, this.camera);
-  };
+  onRender = delta => {};
 
   defaultSetup = (game, avatar) => {
     let plugins = {};

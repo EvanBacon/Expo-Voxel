@@ -3,7 +3,7 @@ const texture = require('./voxel-texture');
 var voxel = require('./voxel');
 import VoxelMesh from './voxel-mesh';
 var ray = require('voxel-raycast');
-const control = require('./voxel-control');
+import VoxelControl from './voxel-control';
 var inherits = require('inherits');
 import EventEmitter from 'EventEmitter';
 var interact = require('interact');
@@ -746,7 +746,7 @@ Game.prototype.hookupControls = function(buttons, opts) {
   opts = opts || {};
   opts.controls = opts.controls || {};
   opts.controls.onfire = this.onFire.bind(this);
-  this.controls = control(buttons, opts.controls);
+  this.controls = new VoxelControl(buttons, opts.controls);
   this.items.push(this.controls);
   this.controlling = null;
 };

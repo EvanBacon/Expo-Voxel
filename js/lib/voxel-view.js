@@ -66,18 +66,22 @@ class VoxelView {
   };
 
   bindToScene = scene => scene.add(this.camera);
+
   getCamera = () => this.camera;
+
   cameraPosition = () => {
     temporaryPosition.multiplyScalar(0);
     temporaryPosition.applyMatrix4(this.camera.matrixWorld);
     return [temporaryPosition.x, temporaryPosition.y, temporaryPosition.z];
   };
+
   cameraVector = () => {
     temporaryVector.multiplyScalar(0);
     temporaryVector.z = -1;
     temporaryVector.transformDirection(this.camera.matrixWorld);
     return [temporaryVector.x, temporaryVector.y, temporaryVector.z];
   };
+
   resizeWindow = (width, height) => {
     this.camera.aspect = this.aspectRatio = width / height;
     this.width = width;
@@ -87,6 +91,7 @@ class VoxelView {
 
     this.renderer.setSize(width, height);
   };
+
   render = scene => {
     this.renderer.render(scene, this.camera);
   };

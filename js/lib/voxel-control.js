@@ -246,6 +246,7 @@ class Control extends Stream {
     }
     return this;
   };
+
   pause = () => {
     if (this.paused) return;
 
@@ -253,16 +254,19 @@ class Control extends Stream {
     this.emit('pause');
     return this;
   };
+
   queue = data => {
     this.buffer.push(data);
     this.drain();
     return this;
   };
+
   acceleration = (current, max) => {
     // max -> 0
     var pct = (max - current) / max;
     return Math.sin(Math.PI / 2 * pct);
   };
+
   target = target => {
     if (target) {
       this._target = target;
@@ -272,6 +276,7 @@ class Control extends Stream {
     }
     return this._target;
   };
+
   onfire = () => {};
 }
 

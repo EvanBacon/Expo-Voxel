@@ -15,7 +15,7 @@ import Expo from 'expo';
 const { width, height } = Dimensions.get('window');
 import DirectionType from '../js/DirectionType';
 const fly = require('voxel-fly');
-const highlight = require('../js/lib/voxel-highlight');
+import VoxelHighlighter from '../js/lib/voxel-highlight';
 const walk = require('../js/lib/voxel-walk');
 const voxel = require('voxel');
 import Engine from '../js/lib/voxel-engine';
@@ -341,9 +341,9 @@ export default class App extends React.Component {
     game.flyer = makeFly(target);
 
     // highlight blocks when you look at them, hold <Ctrl> for block placement
-    this.blockPosPlace;
-    this.blockPosErase;
-    var hl = (game.highlighter = highlight(game, { color: 0xdddddd }));
+    const hl = (game.highlighter = new VoxelHighlighter(game, {
+      color: 0xdddddd,
+    }));
     hl.emitter.addListener('highlight', voxelPos => {
       // console.warn("Highlight", voxelPos)
       this.blockPosErase = voxelPos;

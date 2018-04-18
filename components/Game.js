@@ -318,14 +318,16 @@ export default class App extends React.Component {
       },
     };
     game.plugins.add('voxel-registry', require('voxel-registry'), {});
-    // console.warn("Tickle");
-    // console.warn(game.plugins.get('voxel-registry'), "");
-    //  return;
-    game.plugins.add('voxel-land', require('../js/lib/voxel-land'), {});
+    game.plugins.add('voxel-land', require('../js/lib/voxel-land'), {
+      treesScale: 2,
+      hillScale: 2,
+      chunkSize: 16,
+    });
     game.plugins.add('voxel-recipes', require('voxel-recipes'), {});
     game.plugins.add('voxel-bedrock', require('voxel-bedrock'), {});
     game.plugins.add('voxel-fluid', require('voxel-fluid'), {});
     game.plugins.add('voxel-bucket', require('voxel-bucket'), {});
+
     // then hook it up to your game as such:
     // game.voxels.emitter.addListener('missingChunk', function(p) {
     //   var voxels = generateChunk(p, chunkSize);

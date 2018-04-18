@@ -202,8 +202,6 @@ export default class App extends React.Component {
   }
 
   render() {
-    // Create an `ExpoGraphics.View` covering the whole screen, tell it to call our
-    // `onContextCreate` function once it's initialized.
     return (
       <View style={{ flex: 1 }}>
         <ExpoGraphics.View
@@ -221,223 +219,223 @@ export default class App extends React.Component {
   // This is called by the `ExpoGraphics.View` once it's initialized
   onContextCreate = async ({ gl, canvas, width, height, scale }) => {
     global.__context = gl;
-    // var createGame = require('../game/voxel-engine');
+    var createGame = require('../js/lib/voxel-engine');
 
-    // this.game = createGame({
-    //   materials: ['grass', 'yellow'],
-    //   generate: function(x, y, z) {
-    //     if (y === 5 && x === 5 && z === 5) {
-    //       return 2;
-    //     }
-    //     if (y === 4 && (x > 3 && x < 7) && (z > 3 && z < 7)) {
-    //       return 2;
-    //     }
-    //     if (y === 3 && (x > 2 && x < 8) && (z > 2 && z < 8)) {
-    //       return 2;
-    //     }
-    //     if (y === 2 && (x > 1 && x < 9) && (z > 1 && z < 9)) {
-    //       return 2;
-    //     }
-    //     if (y === 1 && (x > 0 && x < 10) && (z > 0 && z < 10)) {
-    //       return 2;
-    //     }
-    //     return y === 0 ? 1 : 0;
-    //   },
-    // });
+    this.game = createGame({
+      materials: ['grass', 'yellow'],
+      generate: function(x, y, z) {
+        if (y === 5 && x === 5 && z === 5) {
+          return 2;
+        }
+        if (y === 4 && (x > 3 && x < 7) && (z > 3 && z < 7)) {
+          return 2;
+        }
+        if (y === 3 && (x > 2 && x < 8) && (z > 2 && z < 8)) {
+          return 2;
+        }
+        if (y === 2 && (x > 1 && x < 9) && (z > 1 && z < 9)) {
+          return 2;
+        }
+        if (y === 1 && (x > 0 && x < 10) && (z > 0 && z < 10)) {
+          return 2;
+        }
+        return y === 0 ? 1 : 0;
+      },
+    });
 
-    // var player = require('../game/voxel-player');
-    // var createPlayer = player(this.game);
+    var player = require('../js/lib/voxel-player');
+    var createPlayer = player(this.game);
 
-    // var avatar = createPlayer(
-    //   Expo.Asset.fromModule(Assets.images['player.png']).localUri,
-    // );
-    // // avatar.possess();
-    // // avatar.yaw.position.set(0, 1, 4);
+    var avatar = createPlayer(
+      Expo.Asset.fromModule(Assets.images['player.png']).localUri,
+    );
+    // avatar.possess();
+    // avatar.yaw.position.set(0, 1, 4);
 
-    // const skyColor = '#5dc3ea';
+    const skyColor = '#5dc3ea';
     // const { drawingBufferWidth: width, drawingBufferHeight: height } = gl;
 
-    // global.gl = gl;
+    global.gl = gl;
 
-    // view = new voxelView(THREE, {
-    //   width,
-    //   height,
-    //   skyColor,
-    //   ortho: false,
-    //   antialias: true,
-    //   bindToScene: element => {},
-    //   canvas: {
-    //     width,
-    //     height,
-    //     style: {},
-    //     addEventListener: () => {},
-    //     removeEventListener: () => {},
-    //     clientHeight: height,
-    //   },
-    //   context: gl,
-    // });
+    view = new voxelView(THREE, {
+      width,
+      height,
+      skyColor,
+      ortho: false,
+      antialias: true,
+      bindToScene: element => {},
+      canvas: {
+        width,
+        height,
+        style: {},
+        addEventListener: () => {},
+        removeEventListener: () => {},
+        clientHeight: height,
+      },
+      context: gl,
+    });
 
-    // const mesher = voxel.generate([0,0,0], [16,16,16], function(x,y,z) {
-    //   return Math.round(Math.random() * 0xffffff)
-    // });
+    const mesher = voxel.generate([0, 0, 0], [16, 16, 16], function(x, y, z) {
+      return Math.round(Math.random() * 0xffffff);
+    });
 
-    // this.controls = {
-    //   discreteFire: true,
-    //   fireRate: 100,
-    // };
-    // this.game = new Engine({
-    //   THREE,
-    //   view,
-    //   interactMouseDrag: true,
-    //   isClient: true,
-    //   getCamera: _ => view.getCamera(),
-    //   generateChunks: false,
-    //   // mesher: voxel.meshers.stupid,
-    //   // meshType: 'wireMesh',
-    //   // tickFPS: 60,
-    //   // generate: (x,y,z) => {
-    //   //   if (y == 0) {
-    //   //     return 1
-    //   //   }
-    //   //   return 0
-    //   //   // return x*x+y*y+z*z <= 15*15 ? 1 : 0 // sphere world
-    //   // },
+    this.controls = {
+      discreteFire: true,
+      fireRate: 100,
+    };
+    this.game = new Engine({
+      THREE,
+      view,
+      interactMouseDrag: true,
+      isClient: true,
+      getCamera: _ => view.getCamera(),
+      generateChunks: false,
+      // mesher: voxel.meshers.stupid,
+      // meshType: 'wireMesh',
+      // tickFPS: 60,
+      // generate: (x,y,z) => {
+      //   if (y == 0) {
+      //     return 1
+      //   }
+      //   return 0
+      //   // return x*x+y*y+z*z <= 15*15 ? 1 : 0 // sphere world
+      // },
 
-    //   // generate: voxel.generator['Valley'],
-    //   chunkDistance: 2,
-    //   materials: ['#fff', '#000'],
-    //   materialFlatColor: true,
-    //   worldOrigin: [0, 0, 0],
-    //   controls: this.controls,
-    // });
+      // generate: voxel.generator['Valley'],
+      chunkDistance: 2,
+      materials: ['#fff', '#000'],
+      materialFlatColor: true,
+      worldOrigin: [0, 0, 0],
+      controls: this.controls,
+    });
 
-    // this.setState({ camera: this.game.camera });
+    this.setState({ camera: this.game.camera });
 
-    // (async () => {
-    //   this._texture = await ExpoTHREE.createTextureAsync({
-    //     asset: Expo.Asset.fromModule(require('../assets/images/player.png')),
-    //   });
+    (async () => {
+      this._texture = await ExpoTHREE.createTextureAsync({
+        asset: Expo.Asset.fromModule(require('../assets/images/player.png')),
+      });
 
-    //   var createPlayer = player(this.game);
+      var createPlayer = player(this.game);
 
-    //   // create the player from a minecraft skin file and tell the
-    //   // game to use it as the main player
-    //   this.avatar = createPlayer(this._texture, {});
-    //   this.avatar.possess();
-    //   this.avatar.yaw.position.set(2, 14, 4);
+      // create the player from a minecraft skin file and tell the
+      // game to use it as the main player
+      this.avatar = createPlayer(this._texture, {});
+      this.avatar.possess();
+      this.avatar.yaw.position.set(2, 14, 4);
 
-    //   this.defaultSetup(this.game, this.avatar);
-    // })();
+      this.defaultSetup(this.game, this.avatar);
+    })();
   };
 
   onResize = ({ width, height, scale }) => {
     if (this.game) {
     }
-    // this.camera.aspect = width / height;
-    // this.camera.updateProjectionMatrix();
-    // this.renderer.setPixelRatio(scale);
-    // this.renderer.setSize(width, height);
+    this.camera.aspect = width / height;
+    this.camera.updateProjectionMatrix();
+    this.renderer.setPixelRatio(scale);
+    this.renderer.setSize(width, height);
   };
 
   onRender = delta => {
     // this.cube.rotation.x += 3.5 * delta;
     // this.cube.rotation.y += 2 * delta;
-    // this.renderer.render(this.scene, this.camera);
+    this.renderer.render(this.scene, this.camera);
   };
 
   defaultSetup = (game, avatar) => {
-    // let plugins = {};
-    // game.plugins = {
-    //   get: name => plugins[name],
-    //   add: (name, mod, options) => {
-    //     plugins[name] = mod(game, options);
-    //     return plugins[name];
-    //   },
-    // };
-    // game.plugins.add('voxel-registry', require('voxel-registry'), {});
-    // // console.warn("Tickle");
-    // // console.warn(game.plugins.get('voxel-registry'), "");
-    // //  return;
-    // game.plugins.add('voxel-land', require('../js/lib/voxel-land'), {});
-    // game.plugins.add('voxel-recipes', require('voxel-recipes'), {});
-    // game.plugins.add('voxel-bedrock', require('voxel-bedrock'), {});
-    // game.plugins.add('voxel-fluid', require('voxel-fluid'), {});
-    // game.plugins.add('voxel-bucket', require('voxel-bucket'), {});
-    // // then hook it up to your game as such:
-    // // game.voxels.emitter.addListener('missingChunk', function (p) {
-    // //   var voxels = generateChunk(p, chunkSize)
-    // //   var chunk = {
-    // //     position: p,
-    // //     dims: [chunkSize, chunkSize, chunkSize],
-    // //     voxels: voxels
-    // //   }
-    // //   game.showChunk(chunk)
-    // // })
-    // // note that your game should have generateChunks: false
-    // var makeFly = fly(game);
-    // var target = game.controls.target();
-    // game.flyer = makeFly(target);
-    // // highlight blocks when you look at them, hold <Ctrl> for block placement
-    // this.blockPosPlace;
-    // this.blockPosErase;
-    // var hl = (game.highlighter = highlight(game, { color: 0xdddddd }));
-    // hl.emitter.addListener('highlight', voxelPos => {
-    //   // console.warn("Highlight", voxelPos)
-    //   this.blockPosErase = voxelPos;
-    // });
-    // hl.emitter.addListener('remove', voxelPos => {
-    //   // console.warn("removed", voxelPos)
-    //   this.blockPosErase = null;
-    // });
-    // hl.emitter.addListener('highlight-adjacent', voxelPos => {
-    //   // console.warn("adjacent", voxelPos)
-    //   this.blockPosPlace = voxelPos;
-    // });
-    // hl.emitter.addListener('remove-adjacent', voxelPos => {
-    //   this.blockPosPlace = null;
-    // });
-    // plugins['highlighter'] = hl;
-    // const reachDistance = 9;
-    // this.reach = createReach(game, reachDistance);
-    // plugins['voxel-reach'] = this.reach;
-    // this.reach.emitter.addListener('use', function(target) {
-    //   if (target) game.createBlock(target.adjacent, 1);
-    // });
-    // this.reach.emitter.addListener('mining', function(target) {
-    //   // console.warn("mining", target)
-    //   if (target) game.setBlock(target.voxel, 0);
-    // });
-    // var createMine = require('../js/lib/voxel-mine');
-    // var mine = createMine(game, {});
-    // plugins['voxel-mine'] = mine;
-    // mine.addListener('break', function(target) {
-    //   // do something to this voxel (remove it, etc.)
-    //   console.warn('Remove This Voxel', target);
-    // });
-    // // toggle between first and third person modes
-    // // window.addEventListener('keydown', function (ev) {
-    // //   if (ev.keyCode === 'R'.charCodeAt(0)) avatar.toggle()
-    // // })
-    // // avatar.toggle()
-    // // block interaction stuff, uses highlight data
-    // var currentMaterial = 1;
-    // game.on('fire', function(target, state) {
-    //   // var position = this.blockPosPlace
-    //   // if (position) {
-    //   //   game.createBlock(position, currentMaterial)
-    //   //   // console.warn("added", position)
-    //   // }
-    //   // else {
-    //   //   position = this.blockPosErase
-    //   //   if (position) game.setBlock(position, 0)
-    //   // }
-    // });
-    // game.on('tick', function() {
-    //   walk.render(target.playerSkin);
-    //   var vx = Math.abs(target.velocity.x);
-    //   var vz = Math.abs(target.velocity.z);
-    //   if (vx > 0.001 || vz > 0.001) walk.stopWalking();
-    //   else walk.startWalking();
-    // });
+    let plugins = {};
+    game.plugins = {
+      get: name => plugins[name],
+      add: (name, mod, options) => {
+        plugins[name] = mod(game, options);
+        return plugins[name];
+      },
+    };
+    game.plugins.add('voxel-registry', require('voxel-registry'), {});
+    // console.warn("Tickle");
+    // console.warn(game.plugins.get('voxel-registry'), "");
+    //  return;
+    game.plugins.add('voxel-land', require('../js/lib/voxel-land'), {});
+    game.plugins.add('voxel-recipes', require('voxel-recipes'), {});
+    game.plugins.add('voxel-bedrock', require('voxel-bedrock'), {});
+    game.plugins.add('voxel-fluid', require('voxel-fluid'), {});
+    game.plugins.add('voxel-bucket', require('voxel-bucket'), {});
+    // then hook it up to your game as such:
+    // game.voxels.emitter.addListener('missingChunk', function (p) {
+    //   var voxels = generateChunk(p, chunkSize)
+    //   var chunk = {
+    //     position: p,
+    //     dims: [chunkSize, chunkSize, chunkSize],
+    //     voxels: voxels
+    //   }
+    //   game.showChunk(chunk)
+    // })
+    // note that your game should have generateChunks: false
+    var makeFly = fly(game);
+    var target = game.controls.target();
+    game.flyer = makeFly(target);
+    // highlight blocks when you look at them, hold <Ctrl> for block placement
+    this.blockPosPlace;
+    this.blockPosErase;
+    var hl = (game.highlighter = highlight(game, { color: 0xdddddd }));
+    hl.emitter.addListener('highlight', voxelPos => {
+      // console.warn("Highlight", voxelPos)
+      this.blockPosErase = voxelPos;
+    });
+    hl.emitter.addListener('remove', voxelPos => {
+      // console.warn("removed", voxelPos)
+      this.blockPosErase = null;
+    });
+    hl.emitter.addListener('highlight-adjacent', voxelPos => {
+      // console.warn("adjacent", voxelPos)
+      this.blockPosPlace = voxelPos;
+    });
+    hl.emitter.addListener('remove-adjacent', voxelPos => {
+      this.blockPosPlace = null;
+    });
+    plugins['highlighter'] = hl;
+    const reachDistance = 9;
+    this.reach = createReach(game, reachDistance);
+    plugins['voxel-reach'] = this.reach;
+    this.reach.emitter.addListener('use', function(target) {
+      if (target) game.createBlock(target.adjacent, 1);
+    });
+    this.reach.emitter.addListener('mining', function(target) {
+      // console.warn("mining", target)
+      if (target) game.setBlock(target.voxel, 0);
+    });
+    var createMine = require('../js/lib/voxel-mine');
+    var mine = createMine(game, {});
+    plugins['voxel-mine'] = mine;
+    mine.addListener('break', function(target) {
+      // do something to this voxel (remove it, etc.)
+      console.warn('Remove This Voxel', target);
+    });
+    // toggle between first and third person modes
+    // window.addEventListener('keydown', function (ev) {
+    //   if (ev.keyCode === 'R'.charCodeAt(0)) avatar.toggle()
+    // })
+    // avatar.toggle()
+    // block interaction stuff, uses highlight data
+    var currentMaterial = 1;
+    game.on('fire', function(target, state) {
+      // var position = this.blockPosPlace
+      // if (position) {
+      //   game.createBlock(position, currentMaterial)
+      //   // console.warn("added", position)
+      // }
+      // else {
+      //   position = this.blockPosErase
+      //   if (position) game.setBlock(position, 0)
+      // }
+    });
+    game.on('tick', function() {
+      walk.render(target.playerSkin);
+      var vx = Math.abs(target.velocity.x);
+      var vz = Math.abs(target.velocity.z);
+      if (vx > 0.001 || vz > 0.001) walk.stopWalking();
+      else walk.startWalking();
+    });
   };
 }

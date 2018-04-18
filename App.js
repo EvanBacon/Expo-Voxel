@@ -5,11 +5,19 @@ import { StyleSheet, Text, View } from 'react-native';
 import Game from './components/Game';
 import AssetUtils from 'expo-asset-utils';
 import Assets from './Assets';
-
+import { THREE } from 'expo-three';
 export default class App extends React.Component {
   state = {
     loading: true,
   };
+
+  componentWillMount() {
+    THREE.suppressExpoWarnings(true);
+    this.preloadAssets();
+  }
+  componentWillUnmount() {
+    THREE.suppressExpoWarnings(false);
+  }
 
   get fonts() {
     let items = {};
@@ -40,10 +48,6 @@ export default class App extends React.Component {
       // audio: this.audio,
     });
     this.setState({ loading: false });
-  }
-
-  componentWillMount() {
-    this.preloadAssets();
   }
 
   get loading() {

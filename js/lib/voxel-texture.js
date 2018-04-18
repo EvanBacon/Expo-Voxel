@@ -1,12 +1,12 @@
 var tic = require('tic')();
 var createAtlas = require('atlaspack');
-import * as THREE from 'three';
+import { THREE } from 'expo-three';
 
 function Texture(opts) {
   if (!(this instanceof Texture)) return new Texture(opts || {});
   var self = this;
-  this.game = opts.game; delete opts.game;
-  this.THREE = this.game.THREE;
+  this.game = opts.game;
+  delete opts.game;
   this.materials = [];
   this.texturePath = opts.texturePath || '/textures/';
   this.loading = 0;
@@ -17,17 +17,18 @@ function Texture(opts) {
   this.options = defaults(opts || {}, {
     crossOrigin: 'Anonymous',
     materialParams: defaults(opts.materialParams || {}, {
-      ambient: 0xbbbbbb
+      ambient: 0xbbbbbb,
     }),
     materialType: THREE.MeshLambertMaterial,
     applyTextureParams: function(map) {
       map.magFilter = THREE.NearestFilter;
       map.minFilter = THREE.LinearMipMapLinearFilter;
-    }
+    },
   });
 
   // create a canvas for the texture atlas
-  this.canvas = (typeof document !== 'undefined') ? document.createElement('canvas') : {};
+  this.canvas =
+    typeof document !== 'undefined' ? document.createElement('canvas') : {};
   this.canvas.width = opts.atlasWidth || 512;
   this.canvas.height = opts.atlasHeight || 512;
 
@@ -40,26 +41,25 @@ function Texture(opts) {
   this.options.applyTextureParams(this.texture);
 
   if (useFlatColors) {
-     // If were using simple colors
+    // If were using simple colors
     //  this.material = new THREE.MeshBasicMaterial({
     //    vertexColors: THREE.VertexColors,
     //    color: 'blue',
     //  });
 
-     this.material = new this.THREE.MeshLambertMaterial({
-      //  vertexColors: this.THREE.VertexColors,
-        color: 'green',
-     });
-   } else {
-     var opaque = new this.options.materialType(this.options.materialParams);
-     opaque.map = this.texture;
-     var transparent = new this.options.materialType(this.options.materialTransparentParams);
-     transparent.map = this.texture;
-     this.material = new this.THREE.MeshFaceMaterial([
-       opaque,
-       transparent
-     ]);
-   }
+    this.material = new THREE.MeshLambertMaterial({
+      //  vertexColors: THREE.VertexColors,
+      color: 'green',
+    });
+  } else {
+    var opaque = new this.options.materialType(this.options.materialParams);
+    opaque.map = this.texture;
+    var transparent = new this.options.materialType(
+      this.options.materialTransparentParams,
+    );
+    transparent.map = this.texture;
+    this.material = new THREE.MeshFaceMaterial([opaque, transparent]);
+  }
 
   // a place for meshes to wait while textures are loading
   this._meshQueue = [];
@@ -113,7 +113,7 @@ Texture.prototype.pack = function(name, done) {
       pack(img);
     };
     img.onerror = function() {
-      console.error('Couldn\'t load URL [' + img.src + ']');
+      console.error("Couldn't load URL [" + img.src + ']');
       done();
     };
   } else {
@@ -139,16 +139,28 @@ Texture.prototype.find = function(name) {
 
 Texture.prototype._expandName = function(name) {
   if (name === null) return Array(6);
-  if (name.top) return [name.back, name.front, name.top, name.bottom, name.left, name.right];
+  if (name.top)
+    return [
+      name.back,
+      name.front,
+      name.top,
+      name.bottom,
+      name.left,
+      name.right,
+    ];
   if (!Array.isArray(name)) name = [name];
   // load the 0 texture to all
-  if (name.length === 1) name = [name[0],name[0],name[0],name[0],name[0],name[0]];
+  if (name.length === 1)
+    name = [name[0], name[0], name[0], name[0], name[0], name[0]];
   // 0 is top/bottom, 1 is sides
-  if (name.length === 2) name = [name[1],name[1],name[0],name[0],name[1],name[1]];
+  if (name.length === 2)
+    name = [name[1], name[1], name[0], name[0], name[1], name[1]];
   // 0 is top, 1 is bottom, 2 is sides
-  if (name.length === 3) name = [name[2],name[2],name[0],name[1],name[2],name[2]];
+  if (name.length === 3)
+    name = [name[2], name[2], name[0], name[1], name[2], name[2]];
   // 0 is top, 1 is bottom, 2 is front/back, 3 is left/right
-  if (name.length === 4) name = [name[2],name[2],name[0],name[1],name[3],name[3]];
+  if (name.length === 4)
+    name = [name[2], name[2], name[0], name[1], name[3], name[3]];
   return name;
 };
 
@@ -205,28 +217,32 @@ Texture.prototype.paint = function(mesh, materials) {
 
   // if were loading put into queue
   if (self.loading > 0) {
-    self._meshQueue.push({self: self, args: arguments});
+    self._meshQueue.push({ self: self, args: arguments });
     return false;
   }
 
-  var isVoxelMesh = (materials) ? false : true;
+  var isVoxelMesh = materials ? false : true;
   if (!isVoxelMesh) materials = self._expandName(materials);
 
   mesh.geometry.faces.forEach(function(face, i) {
     if (mesh.geometry.faceVertexUvs[0].length < 1) return;
     if (isVoxelMesh) {
-      var index = Math.floor(face.color.b*255 + face.color.g*255*255 + face.color.r*255*255*255);
+      var index = Math.floor(
+        face.color.b * 255 +
+          face.color.g * 255 * 255 +
+          face.color.r * 255 * 255 * 255,
+      );
       materials = self.materials[index - 1];
       if (!materials) materials = self.materials[0];
     }
 
     // BACK, FRONT, TOP, BOTTOM, LEFT, RIGHT
     var name = materials[0] || '';
-    if      (face.normal.z === 1)  name = materials[1] || '';
-    else if (face.normal.y === 1)  name = materials[2] || '';
+    if (face.normal.z === 1) name = materials[1] || '';
+    else if (face.normal.y === 1) name = materials[2] || '';
     else if (face.normal.y === -1) name = materials[3] || '';
     else if (face.normal.x === -1) name = materials[4] || '';
-    else if (face.normal.x === 1)  name = materials[5] || '';
+    else if (face.normal.x === 1) name = materials[5] || '';
 
     // if just a simple color
     if (name.slice(0, 1) === '#') {
@@ -251,7 +267,10 @@ Texture.prototype.paint = function(mesh, materials) {
       atlasuv = uvrot(atlasuv, -90);
     }
     for (var j = 0; j < 4; j++) {
-      mesh.geometry.faceVertexUvs[0][i][j].set(atlasuv[j][0], 1 - atlasuv[j][1]);
+      mesh.geometry.faceVertexUvs[0][i][j].set(
+        atlasuv[j][0],
+        1 - atlasuv[j][1],
+      );
     }
   });
 
@@ -260,9 +279,16 @@ Texture.prototype.paint = function(mesh, materials) {
 
 Texture.prototype.sprite = function(name, w, h, cb) {
   var self = this;
-  if (typeof w === 'function') { cb = w; w = null; }
-  if (typeof h === 'function') { cb = h; h = null; }
-  w = w || 16; h = h || w;
+  if (typeof w === 'function') {
+    cb = w;
+    w = null;
+  }
+  if (typeof h === 'function') {
+    cb = h;
+    h = null;
+  }
+  w = w || 16;
+  h = h || w;
   self.loading++;
   var img = new Image();
   img.src = self.texturePath + ext(name);
@@ -272,7 +298,6 @@ Texture.prototype.sprite = function(name, w, h, cb) {
     for (var x = 0; x < img.width; x += w) {
       for (var y = 0; y < img.height; y += h) {
         ////TODO: Add this back - fix canvas image
-
         // var canvas = document.createElement('canvas');
         // canvas.width = w; canvas.height = h;
         // canvas.name = name + '_' + x + '_' + y;
@@ -281,25 +306,33 @@ Texture.prototype.sprite = function(name, w, h, cb) {
       }
     }
     var textures = [];
-    each(canvases, function(canvas, next) {
-      var tex = new Image();
-      tex.name = canvas.name;
-      tex.src = canvas.toDataURL();
-      tex.onload = function() {
-        self.pack(tex, next);
-      };
-      tex.onerror = next;
-      textures.push([
-        tex.name, tex.name, tex.name,
-        tex.name, tex.name, tex.name
-      ]);
-    }, function() {
-      self._afterLoading();
-      // delete canvases;
-      canvases = null;
-      self.materials = self.materials.concat(textures);
-      cb(textures);
-    });
+    each(
+      canvases,
+      function(canvas, next) {
+        var tex = new Image();
+        tex.name = canvas.name;
+        tex.src = canvas.toDataURL();
+        tex.onload = function() {
+          self.pack(tex, next);
+        };
+        tex.onerror = next;
+        textures.push([
+          tex.name,
+          tex.name,
+          tex.name,
+          tex.name,
+          tex.name,
+          tex.name,
+        ]);
+      },
+      function() {
+        self._afterLoading();
+        // delete canvases;
+        canvases = null;
+        self.materials = self.materials.concat(textures);
+        cb(textures);
+      },
+    );
   };
   return self;
 };
@@ -330,12 +363,16 @@ Texture.prototype.setColor = function(face, color) {
   var ld = this._lightDark(color);
 
   // TODO: AO should be figured better than this
-  if (face.normal.y === 1)       face.vertexColors = [ld[0], ld[0], ld[0], ld[0]];
-  else if (face.normal.y === -1) face.vertexColors = [ld[1], ld[1], ld[1], ld[1]];
-  else if (face.normal.x === 1)  face.vertexColors = [ld[1], ld[0], ld[0], ld[1]];
-  else if (face.normal.x === -1) face.vertexColors = [ld[1], ld[1], ld[0], ld[0]];
-  else if (face.normal.z === 1)  face.vertexColors = [ld[1], ld[1], ld[0], ld[0]];
-  else                           face.vertexColors = [ld[1], ld[0], ld[0], ld[1]];
+  if (face.normal.y === 1) face.vertexColors = [ld[0], ld[0], ld[0], ld[0]];
+  else if (face.normal.y === -1)
+    face.vertexColors = [ld[1], ld[1], ld[1], ld[1]];
+  else if (face.normal.x === 1)
+    face.vertexColors = [ld[1], ld[0], ld[0], ld[1]];
+  else if (face.normal.x === -1)
+    face.vertexColors = [ld[1], ld[1], ld[0], ld[0]];
+  else if (face.normal.z === 1)
+    face.vertexColors = [ld[1], ld[1], ld[0], ld[0]];
+  else face.vertexColors = [ld[1], ld[0], ld[0], ld[1]];
 };
 
 Texture.prototype._lightDark = memoize(function(color) {
@@ -352,7 +389,8 @@ function uvrot(coords, deg) {
   var i = (4 - Math.ceil(deg / 90)) % 4;
   for (var j = 0; j < 4; j++) {
     c.push(coords[i]);
-    if (i === 3) i = 0; else i++;
+    if (i === 3) i = 0;
+    else i++;
   }
   return c;
 }
@@ -363,7 +401,7 @@ function uvinvert(coords) {
 }
 
 function ext(name) {
-  return (String(name).indexOf('.') !== -1) ? name : name + '.png';
+  return String(name).indexOf('.') !== -1 ? name : name + '.png';
 }
 
 function defaults(obj) {
@@ -385,12 +423,17 @@ function each(arr, it, done) {
 
 function hex2rgb(hex) {
   if (hex[0] === '#') hex = hex.substr(1);
-  return [parseInt(hex.substr(0,2), 16)/255, parseInt(hex.substr(2,2), 16)/255, parseInt(hex.substr(4,2), 16)/255];
+  return [
+    parseInt(hex.substr(0, 2), 16) / 255,
+    parseInt(hex.substr(2, 2), 16) / 255,
+    parseInt(hex.substr(4, 2), 16) / 255,
+  ];
 }
 
 function memoize(func) {
   function memoized() {
-    var cache = memoized.cache, key = arguments[0];
+    var cache = memoized.cache,
+      key = arguments[0];
     return hasOwnProperty.call(cache, key)
       ? cache[key]
       : (cache[key] = func.apply(this, arguments));

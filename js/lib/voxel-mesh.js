@@ -1,12 +1,6 @@
 import { THREE } from 'expo-three';
 
-module.exports = function(data, mesher, scaleFactor, three, mesherExtraData) {
-  return new Mesh(data, mesher, scaleFactor, three, mesherExtraData);
-};
-
-module.exports.Mesh = Mesh;
-
-function Mesh(data, mesher, scaleFactor, three, mesherExtraData) {
+function Mesh(data, mesher, scaleFactor, mesherExtraData) {
   this.data = data;
   var geometry = (this.geometry = new THREE.Geometry());
   this.scale = scaleFactor || new THREE.Vector3(10, 10, 10);
@@ -178,3 +172,5 @@ Mesh.prototype.faceVertexUv = function(i) {
     ];
   }
 };
+
+export default Mesh;

@@ -92,4 +92,4 @@ class VoxelView {
   };
 }
 
-export default View;
+export default VoxelView;

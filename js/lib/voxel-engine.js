@@ -1,10 +1,9 @@
-var texture = require('../voxel-texture');
+const texture = require('./voxel-texture');
 
-var voxel = require('../voxel');
-var voxelMesh = require('../voxel-mesh');
+var voxel = require('./voxel');
+import VoxelMesh from './voxel-mesh';
 var ray = require('voxel-raycast');
-var control = require('../voxel-control');
-var voxelView = require('../voxel-view');
+const control = require('./voxel-control');
 var inherits = require('inherits');
 import EventEmitter from 'EventEmitter';
 var interact = require('interact');
@@ -14,11 +13,11 @@ var aabb = require('aabb-3d');
 var glMatrix = require('gl-matrix');
 var vector = glMatrix.vec3;
 var SpatialEventEmitter = require('spatial-events');
-var regionChange = require('../voxel-region-change');
+var regionChange = require('./voxel-region-change');
 var kb = require('kb-controls');
 var physical = require('voxel-physical');
 var pin = require('pin-it');
-var tic = require('tic')();
+const tic = require('tic')();
 import { THREE } from 'expo-three';
 
 module.exports = Game;
@@ -58,14 +57,7 @@ function Game(opts) {
   this.items = [];
   this.voxels = voxel(this);
   this.scene = new THREE.Scene();
-  this.view =
-    opts.view ||
-    new voxelView(THREE, {
-      width: this.width,
-      height: this.height,
-      skyColor: this.skyColor,
-      antialias: this.antialias,
-    });
+  this.view = opts.view;
   this.view.bindToScene(this.scene);
   this.camera = opts.getCamera();
   // let helper = new THREE.CameraHelper(this.camera);
@@ -571,11 +563,11 @@ Game.prototype.showAllChunks = function() {
 };
 
 Game.prototype.showChunk = function(chunk) {
-  var chunkIndex = chunk.position.join('|');
+  const chunkIndex = chunk.position.join('|');
   console.log('show chunk', chunkIndex);
   var bounds = this.voxels.getBounds.apply(this.voxels, chunk.position);
   var scale = new THREE.Vector3(1, 1, 1);
-  var mesh = voxelMesh(chunk, this.mesher, scale, THREE);
+  var mesh = new VoxelMesh(chunk, this.mesher, scale);
   this.voxels.chunks[chunkIndex] = chunk;
   if (this.voxels.meshes[chunkIndex]) {
     if (this.voxels.meshes[chunkIndex].surfaceMesh)
@@ -732,7 +724,6 @@ Game.prototype.initializeRendering = function(opts) {
     self.emitter.emit('prerender', dt);
     self.render(dt);
     self.emitter.emit('postrender', dt);
-    self.view.endRender();
   };
   _render();
 };

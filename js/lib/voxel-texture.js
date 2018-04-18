@@ -1,5 +1,5 @@
-var tic = require('tic')();
-var createAtlas = require('atlaspack');
+const tic = require('tic')();
+const createAtlas = require('atlaspack');
 import { THREE } from 'expo-three';
 
 function Texture(opts) {
@@ -363,16 +363,19 @@ Texture.prototype.setColor = function(face, color) {
   var ld = this._lightDark(color);
 
   // TODO: AO should be figured better than this
-  if (face.normal.y === 1) face.vertexColors = [ld[0], ld[0], ld[0], ld[0]];
-  else if (face.normal.y === -1)
+  if (face.normal.y === 1) {
+    face.vertexColors = [ld[0], ld[0], ld[0], ld[0]];
+  } else if (face.normal.y === -1) {
     face.vertexColors = [ld[1], ld[1], ld[1], ld[1]];
-  else if (face.normal.x === 1)
+  } else if (face.normal.x === 1) {
     face.vertexColors = [ld[1], ld[0], ld[0], ld[1]];
-  else if (face.normal.x === -1)
+  } else if (face.normal.x === -1) {
     face.vertexColors = [ld[1], ld[1], ld[0], ld[0]];
-  else if (face.normal.z === 1)
+  } else if (face.normal.z === 1) {
     face.vertexColors = [ld[1], ld[1], ld[0], ld[0]];
-  else face.vertexColors = [ld[1], ld[0], ld[0], ld[1]];
+  } else {
+    face.vertexColors = [ld[1], ld[0], ld[0], ld[1]];
+  }
 };
 
 Texture.prototype._lightDark = memoize(function(color) {

@@ -1,7 +1,7 @@
 //'use strict'; // TODO
 
 var ever = require('ever');
-var createTree = require('voxel-trees');
+var createTree = require('../voxel-trees');
 var SimplexNoise = require('simplex-noise');
 var Alea = require('alea');
 var ndarray = require('ndarray');
@@ -11,15 +11,21 @@ function ChunkGenerator(worker, opts) {
   this.worker = worker;
   this.opts = opts;
 
-  var random = this.random = new Alea(this.opts.seed);
+  var random = (this.random = new Alea(this.opts.seed));
 
   var randomHills = new Alea(random());
   var randomRoughness = new Alea(random());
   var randomTrees = new Alea(random());
 
-  this.noiseHills = new SimplexNoise(function() { return randomHills(); });
-  this.noiseRoughness = new SimplexNoise(function() { return randomRoughness(); });
-  this.noiseTrees = new SimplexNoise(function() { return randomTrees(); });
+  this.noiseHills = new SimplexNoise(function() {
+    return randomHills();
+  });
+  this.noiseRoughness = new SimplexNoise(function() {
+    return randomRoughness();
+  });
+  this.noiseTrees = new SimplexNoise(function() {
+    return randomTrees();
+  });
 
   this.populators = [];
 
@@ -28,9 +34,9 @@ function ChunkGenerator(worker, opts) {
   this.registerPopulator(this.populateIronOre.bind(this));
 
   return this;
-};
+}
 
-// calculate terrain height based on perlin noise 
+// calculate terrain height based on perlin noise
 // see @maxogden's voxel-perlin-terrain https://github.com/maxogden/voxel-perlin-terrain
 ChunkGenerator.prototype.generateHeightMap = function(position, width) {
   var startX = position[0] * width;
@@ -40,18 +46,29 @@ ChunkGenerator.prototype.generateHeightMap = function(position, width) {
 
   for (var x = startX; x < startX + width; x++) {
     for (var z = startZ; z < startZ + width; z++) {
-
       // large scale ruggedness of terrain
-      var roughness = this.noiseRoughness.noise2D(x / this.opts.roughnessScale, z / this.opts.roughnessScale);
+      var roughness = this.noiseRoughness.noise2D(
+        x / this.opts.roughnessScale,
+        z / this.opts.roughnessScale,
+      );
       roughnessTerm = Math.floor(Math.pow(scale(roughness, -1, 1, 0, 2), 5));
 
       // smaller scale local hills
-      var n = this.noiseHills.noise2D(x / this.opts.hillScale, z / this.opts.hillScale);
-      var y = ~~scale(n, -1, 1, this.opts.crustLower, this.opts.crustUpper + roughnessTerm);
+      var n = this.noiseHills.noise2D(
+        x / this.opts.hillScale,
+        z / this.opts.hillScale,
+      );
+      var y = ~~scale(
+        n,
+        -1,
+        1,
+        this.opts.crustLower,
+        this.opts.crustUpper + roughnessTerm,
+      );
       if (roughnessTerm < 1) y = this.opts.crustLower; // completely flat ("plains")
       //y = roughnessFactor; // to debug roughness map
 
-      if (y === this.crustLower || startY < y && y < startY + width) {
+      if (y === this.crustLower || (startY < y && y < startY + width)) {
         var xidx = Math.abs((width + x % width) % width);
         var yidx = Math.abs((width + y % width) % width);
         var zidx = Math.abs((width + z % width) % width);
@@ -64,18 +81,24 @@ ChunkGenerator.prototype.generateHeightMap = function(position, width) {
   return heightMap;
 };
 
-function scale( x, fromLow, fromHigh, toLow, toHigh ) {
-  return ( x - fromLow ) * ( toHigh - toLow ) / ( fromHigh - fromLow ) + toLow;
+function scale(x, fromLow, fromHigh, toLow, toHigh) {
+  return (x - fromLow) * (toHigh - toLow) / (fromHigh - fromLow) + toLow;
 }
 
 ChunkGenerator.prototype.registerPopulator = function(f) {
   this.populators.push(f);
 };
 
-
 // Add per-chunk features
 // Mutate voxels array
-ChunkGenerator.prototype.populateChunk = function(random, chunkX, chunkY, chunkZ, chunkHeightMap, voxels) {
+ChunkGenerator.prototype.populateChunk = function(
+  random,
+  chunkX,
+  chunkY,
+  chunkZ,
+  chunkHeightMap,
+  voxels,
+) {
   // populate chunk with features that don't need to cross chunks TODO: customizable, plugin-based
   //console.log('populating chunk '+[chunkX,chunkY,chunkZ,voxels].join(' '));
 
@@ -86,7 +109,18 @@ ChunkGenerator.prototype.populateChunk = function(random, chunkX, chunkY, chunkZ
   }
 };
 
-ChunkGenerator.prototype.populateOreClusters = function(random, chunkX, chunkY, chunkZ, chunkHeightMap, voxels, clustersPerChunk, clusterSize, replaceMaterial, oreMaterial) {
+ChunkGenerator.prototype.populateOreClusters = function(
+  random,
+  chunkX,
+  chunkY,
+  chunkZ,
+  chunkHeightMap,
+  voxels,
+  clustersPerChunk,
+  clusterSize,
+  replaceMaterial,
+  oreMaterial,
+) {
   // ores
   var width = this.opts.chunkSize;
   var nextInt = function(max) {
@@ -105,13 +139,13 @@ ChunkGenerator.prototype.populateOreClusters = function(random, chunkX, chunkY, 
         //console.log('ore gen at '+[chunkX * width + x, chunkY * width + y, chunkZ * width + z].join(' '));
       }
 
-      // TODO: better clusters, and other distributions - see http://www.minecraftforum.net/topic/1107057-146v2-custom-ore-generation-updated-jan-5th/ 
+      // TODO: better clusters, and other distributions - see http://www.minecraftforum.net/topic/1107057-146v2-custom-ore-generation-updated-jan-5th/
       // and http://customoregen.shoutwiki.com/wiki/Category:Distributions http://www.minecraftforge.net/wiki/Tutorials/Ore_Generation
       // 'elliptic?'
-   
+
       // currently, randomly branches, but might loop on itself
-      x += nextInt(2) - 1
-      y += nextInt(2) - 1
+      x += nextInt(2) - 1;
+      y += nextInt(2) - 1;
 
       // wrap TODO: truncate instead?
       x %= width - 1;
@@ -122,7 +156,14 @@ ChunkGenerator.prototype.populateOreClusters = function(random, chunkX, chunkY, 
 
 // TODO: refactor, and make more generic enough that external plugins can register
 
-ChunkGenerator.prototype.populateCoalOre = function(random, chunkX, chunkY, chunkZ, chunkHeightMap, voxels) {
+ChunkGenerator.prototype.populateCoalOre = function(
+  random,
+  chunkX,
+  chunkY,
+  chunkZ,
+  chunkHeightMap,
+  voxels,
+) {
   var nextInt = function(max) {
     return Math.round(random() * max);
   };
@@ -131,10 +172,28 @@ ChunkGenerator.prototype.populateCoalOre = function(random, chunkX, chunkY, chun
   var clusterSize = nextInt(100) + 50;
   var replaceMaterial = this.opts.materials.stone;
 
-  this.populateOreClusters(random, chunkX, chunkY, chunkZ, chunkHeightMap, voxels, clustersPerChunk, clusterSize, replaceMaterial, this.opts.materials.oreCoal);
+  this.populateOreClusters(
+    random,
+    chunkX,
+    chunkY,
+    chunkZ,
+    chunkHeightMap,
+    voxels,
+    clustersPerChunk,
+    clusterSize,
+    replaceMaterial,
+    this.opts.materials.oreCoal,
+  );
 };
 
-ChunkGenerator.prototype.populateIronOre = function(random, chunkX, chunkY, chunkZ, chunkHeightMap, voxels) {
+ChunkGenerator.prototype.populateIronOre = function(
+  random,
+  chunkX,
+  chunkY,
+  chunkZ,
+  chunkHeightMap,
+  voxels,
+) {
   var nextInt = function(max) {
     return Math.round(random() * max);
   };
@@ -143,13 +202,29 @@ ChunkGenerator.prototype.populateIronOre = function(random, chunkX, chunkY, chun
   var clusterSize = nextInt(30) + 10;
   var replaceMaterial = this.opts.materials.stone;
 
-  this.populateOreClusters(random, chunkX, chunkY, chunkZ, chunkHeightMap, voxels, clustersPerChunk, clusterSize, replaceMaterial, this.opts.materials.oreIron);
+  this.populateOreClusters(
+    random,
+    chunkX,
+    chunkY,
+    chunkZ,
+    chunkHeightMap,
+    voxels,
+    clustersPerChunk,
+    clusterSize,
+    replaceMaterial,
+    this.opts.materials.oreIron,
+  );
 };
-
 
 // Add possibly-cross-chunk features, with global world coordinates (slower)
 // Return list of changes to voxels to make
-ChunkGenerator.prototype.decorate = function(random, chunkX, chunkY, chunkZ, chunkHeightMap) {
+ChunkGenerator.prototype.decorate = function(
+  random,
+  chunkX,
+  chunkY,
+  chunkZ,
+  chunkHeightMap,
+) {
   var changes = [];
   var width = this.opts.chunkSize;
   var startX = chunkX * width;
@@ -159,14 +234,14 @@ ChunkGenerator.prototype.decorate = function(random, chunkX, chunkY, chunkZ, chu
   // TODO: iterate list of 'decorators'
 
   // "craters" (TODO: fill with water to make lakes)
-  if (random() < 0.30) {
+  if (random() < 0.3) {
     var radius = ~~(random() * 10);
     for (var dx = -radius; dx <= radius; ++dx) {
       for (var dy = -radius; dy <= radius; ++dy) {
         for (var dz = -radius; dz <= radius; ++dz) {
-          var distance = Math.sqrt(dx*dx + dy*dy + dz*dz); // TODO: better algorithm
+          var distance = Math.sqrt(dx * dx + dy * dy + dz * dz); // TODO: better algorithm
           if (distance < radius)
-            changes.push([[startX+dx, startY+dy, startZ+dz], 0]);
+            changes.push([[startX + dx, startY + dy, startZ + dz], 0]);
         }
       }
     }
@@ -174,42 +249,47 @@ ChunkGenerator.prototype.decorate = function(random, chunkX, chunkY, chunkZ, chu
   }
 
   // trees
-  if (!this.opts.populateTrees) 
-    return;
+  if (!this.opts.populateTrees) return;
 
   // TODO: large-scale biomes, with higher tree density? forests
-  var treeCount = ~~scale(this.noiseTrees.noise2D(chunkX / this.opts.treesScale, chunkZ / this.opts.treesScale), -1, 1, 0, this.opts.treesMaxDensity);
+  var treeCount = ~~scale(
+    this.noiseTrees.noise2D(
+      chunkX / this.opts.treesScale,
+      chunkZ / this.opts.treesScale,
+    ),
+    -1,
+    1,
+    0,
+    this.opts.treesMaxDensity,
+  );
 
   for (var i = 0; i < treeCount; ++i) {
     // scatter randomly around chunk
     var dx = ~~scale(random(), 0, 1, 0, width - 1);
     var dz = ~~scale(random(), 0, 1, 0, width - 1);
 
-    // position at top of surface 
+    // position at top of surface
     var dy = chunkHeightMap[dx + dz * width] + 1;
 
     var n = random();
     var treeType;
-    if (n < 0.05)
-      treeType = 'guybrush';
+    if (n < 0.05) treeType = 'guybrush';
     //else if (n < 0.20)
     //  treeType = 'fractal';  // too weird
-    else
-      treeType = 'subspace';
+    else treeType = 'subspace';
 
-    createTree({ 
+    createTree({
       random: random,
       bark: this.opts.materials.logOak,
       leaves: this.opts.materials.leavesOak,
-      position: {x:startX + dx, y:startY + dy, z:startZ + dz},
+      position: { x: startX + dx, y: startY + dy, z: startZ + dz },
       treeType: treeType,
-      setBlock: function (pos, value) {
+      setBlock: function(pos, value) {
         changes.push([[pos.x, pos.y, pos.z], value]);
-        return false;  // returning true stops tree
-      }
+        return false; // returning true stops tree
+      },
     });
   }
-
 
   return changes;
 };
@@ -217,13 +297,21 @@ ChunkGenerator.prototype.decorate = function(random, chunkX, chunkY, chunkZ, chu
 ChunkGenerator.prototype.generateChunk = function(pos) {
   var width = this.opts.chunkSize;
   var pad = this.opts.chunkPad;
-  var arrayType = {1:Uint8Array, 2:Uint16Array, 4:Uint32Array}[this.opts.arrayElementSize];
+  var arrayType = { 1: Uint8Array, 2: Uint16Array, 4: Uint32Array }[
+    this.opts.arrayElementSize
+  ];
 
   // create underlying array padded 2 voxels on each edge, but also an unpadded view for populating
-  var buffer = new ArrayBuffer((width+pad) * (width+pad) * (width+pad) * this.opts.arrayElementSize);
-  var voxelsPadded = ndarray(new arrayType(buffer), [width+pad, width+pad, width+pad]);
+  var buffer = new ArrayBuffer(
+    (width + pad) * (width + pad) * (width + pad) * this.opts.arrayElementSize,
+  );
+  var voxelsPadded = ndarray(new arrayType(buffer), [
+    width + pad,
+    width + pad,
+    width + pad,
+  ]);
   var h = pad >> 1;
-  var voxels = voxelsPadded.lo(h,h,h).hi(width,width,width);
+  var voxels = voxelsPadded.lo(h, h, h).hi(width, width, width);
 
   var changes = undefined;
 
@@ -254,10 +342,8 @@ ChunkGenerator.prototype.generateChunk = function(pos) {
         //y=1;voxels.set(x,y,z, (pos[0]+pos[2]) & 1 ? this.opts.materials.oreCoal : this.opts.materials.oreIron); continue; // flat checkerboard for testing chunk boundaries
 
         // dirt with grass on top
-        voxels.set(x,y,z, this.opts.materials.grass);
-        while(y-- > 0)
-          voxels.set(x,y,z, this.opts.materials.dirt);
-
+        voxels.set(x, y, z, this.opts.materials.grass);
+        while (y-- > 0) voxels.set(x, y, z, this.opts.materials.dirt);
       }
     }
     // features
@@ -279,14 +365,13 @@ ChunkGenerator.prototype.generateChunk = function(pos) {
   //if (pos.join('|') !== '0|0|0' && pos.join('|') !== '0|-1|0') return; // only a few chunks for testing
 
   // this.worker.postMessage({cmd: 'chunkGenerated', position: pos, voxelBuffer: buffer}, [buffer]);
-  let cc = { position: pos, voxelBuffer: buffer}
+  let cc = { position: pos, voxelBuffer: buffer };
   // add additional decoration edits, which may span multiple loaded chunks
-  if (changes)  {
+  if (changes) {
     cc.changes = changes;
     // this.worker.postMessage({cmd: 'decorate', changes:changes}); // TODO: use transferrable?
   }
   return cc;
-
 };
 
 export default ChunkGenerator;
@@ -302,5 +387,3 @@ export default ChunkGenerator;
 //     }
 //   });
 // };
-
-

@@ -1,10 +1,10 @@
 var texture = require('../voxel-texture');
 
 var voxel = require('../voxel');
-var voxelMesh = require('voxel-mesh');
+var voxelMesh = require('../voxel-mesh');
 var ray = require('voxel-raycast');
-var control = require('voxel-control');
-var voxelView = require('voxel-view');
+var control = require('../voxel-control');
+var voxelView = require('../voxel-view');
 var inherits = require('inherits');
 import EventEmitter from 'EventEmitter';
 var interact = require('interact');
@@ -211,7 +211,8 @@ Game.prototype.removeItem = function(item) {
 };
 
 // only intersects voxels, not items (for now)
-Game.prototype.raycast = Game.prototype.raycastVoxels = function( // backwards compat
+Game.prototype.raycast = Game.prototype.raycastVoxels = function(
+  // backwards compat
   start,
   direction,
   maxDistance,

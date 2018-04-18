@@ -1,5 +1,5 @@
 var skin = require('./minecraft-skin');
-
+import { THREE } from 'expo-three';
 module.exports = function(game) {
   var mountPoint;
   var possessed;
@@ -8,8 +8,8 @@ module.exports = function(game) {
     if (!skinOpts) {
       skinOpts = {};
     }
-    skinOpts.scale = skinOpts.scale || new game.THREE.Vector3(0.05, 0.05, 0.05);
-    var playerSkin = skin(game.THREE, texture, skinOpts);
+    skinOpts.scale = skinOpts.scale || new THREE.Vector3(0.05, 0.05, 0.05);
+    var playerSkin = skin(THREE, texture, skinOpts);
     var player = playerSkin.mesh;
     var physics = game.makePhysical(player);
     physics.playerSkin = playerSkin;

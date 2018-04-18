@@ -433,7 +433,7 @@ EventEmitter@^1.0.0:
     gulp-sourcemaps "^1.6.0"
     gulp-uglify "^1.5.3"
 
-aabb-3d@0.0.0, aabb-3d@0.0.X:
+aabb-3d@0.0.X:
   version "0.0.0"
   resolved "https://registry.yarnpkg.com/aabb-3d/-/aabb-3d-0.0.0.tgz#223ef5798a747d1d5dfb6555a4c6ad942e1719c8"
   dependencies:
@@ -733,10 +733,6 @@ asynckit@^0.4.0:
 atlaspack@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/atlaspack/-/atlaspack-1.0.0.tgz#c57d00d8f1870248fcf73c50011811c92b0ad776"
-
-atlaspack@~0.2.4:
-  version "0.2.7"
-  resolved "https://registry.yarnpkg.com/atlaspack/-/atlaspack-0.2.7.tgz#8d0008b9336188f55334ba5760384de698558d02"
 
 atob@^2.0.0:
   version "2.1.0"
@@ -1893,10 +1889,6 @@ collection-visit@^1.0.0:
     map-visit "^1.0.0"
     object-visit "^1.0.0"
 
-collide-3d-tilemap@0.0.1:
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/collide-3d-tilemap/-/collide-3d-tilemap-0.0.1.tgz#38fc9ae4b0400dcf8370a6198a15103cf19fd55f"
-
 collide-3d-tilemap@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/collide-3d-tilemap/-/collide-3d-tilemap-1.0.0.tgz#2c9d448a731dbd9bb7e66859be1373fa2e001a87"
@@ -2258,12 +2250,12 @@ domnode@~0.0.3:
   dependencies:
     mustache "0.4.0"
 
-drag-stream@0.0.2:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/drag-stream/-/drag-stream-0.0.2.tgz#52d6e40fa4b83178014a61e54eb25dc499d1fb0f"
+drag-stream@0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/drag-stream/-/drag-stream-0.0.3.tgz#3629b97d619b0b46038437d69797bd86a825c5ae"
   dependencies:
     domnode-dom "~0.0.X"
-    through "~1.1.1"
+    through "~2.2.1"
 
 duplexer2@0.0.2:
   version "0.0.2"
@@ -2936,10 +2928,6 @@ function-bind@^1.0.2, function-bind@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/function-bind/-/function-bind-1.1.1.tgz#a56899d3ea3c9bab874bb9773b7c5ede92f4895d"
 
-funstance@~0.0.2:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/funstance/-/funstance-0.0.2.tgz#cabcd051dbc51455be0161d9e6b8ee959aaccab4"
-
 gauge@~1.2.5:
   version "1.2.7"
   resolved "https://registry.yarnpkg.com/gauge/-/gauge-1.2.7.tgz#e9cec5483d3d4ee0ef44b60a7d99e4935e136d93"
@@ -2990,10 +2978,6 @@ getpass@^0.1.1:
   resolved "https://registry.yarnpkg.com/getpass/-/getpass-0.1.7.tgz#5eff8e3e684d569ae4cb2b1282604e8ba62149fa"
   dependencies:
     assert-plus "^1.0.0"
-
-gl-matrix@2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/gl-matrix/-/gl-matrix-2.0.0.tgz#06ecd8b2b60de4a0dbc44d6c98ca3166fc00ad1a"
 
 gl-matrix@2.4.0, gl-matrix@2.X.X, gl-matrix@^2.3.2:
   version "2.4.0"
@@ -3374,10 +3358,6 @@ inherits@2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/inherits/-/inherits-2.0.1.tgz#b17d08d326b4423e568eff719f91b0b1cbdf69f1"
 
-inherits@~1.0.0:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/inherits/-/inherits-1.0.2.tgz#ca4309dadee6b54cc0b8d247e8d7c7a0975bdc9b"
-
 ini@~1.3.0:
   version "1.3.5"
   resolved "https://registry.yarnpkg.com/ini/-/ini-1.3.5.tgz#eee25f56db1c9ec6085e0c22778083f596abf927"
@@ -3419,11 +3399,11 @@ inquirer@^3.0.6:
     strip-ansi "^4.0.0"
     through "^2.3.6"
 
-interact@0.0.2:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/interact/-/interact-0.0.2.tgz#4823043dccbb145a320436caf0290a8cb9c0f973"
+interact@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/interact/-/interact-0.0.3.tgz#6d4eae8133683a9799d4760f01626a5f5d51da22"
   dependencies:
-    drag-stream "0.0.2"
+    drag-stream "0.0.3"
     fullscreen "0.0.1"
     pointer-lock "0.0.3"
 
@@ -4187,13 +4167,6 @@ jsprim@^1.2.2:
     json-schema "0.2.3"
     verror "1.10.0"
 
-kb-controls@0.0.2:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/kb-controls/-/kb-controls-0.0.2.tgz#74a617cd65393e056794809d1d3088161ef6fa40"
-  dependencies:
-    ever X.X.X
-    vkey X.X.X
-
 kb-controls@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/kb-controls/-/kb-controls-0.2.0.tgz#b46fa4aa5cf79c98c500960a2e2aea2ea778ac3e"
@@ -4671,7 +4644,7 @@ min-document@^2.19.0:
   dependencies:
     dom-walk "^0.1.0"
 
-minecraft-skin@^0.1.2, minecraft-skin@~0.1.0, minecraft-skin@~0.1.2:
+minecraft-skin@^0.1.2:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/minecraft-skin/-/minecraft-skin-0.1.2.tgz#97e1b2cca70b7267832385424810f8286572ac7b"
 
@@ -4957,10 +4930,6 @@ onetime@^2.0.0:
   dependencies:
     mimic-fn "^1.0.0"
 
-opaque@0.0.1:
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/opaque/-/opaque-0.0.1.tgz#f68d5f13a3bc89f82fa901f679eb73b4e14715ce"
-
 opn@^3.0.2:
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/opn/-/opn-3.0.3.tgz#b6d99e7399f78d65c3baaffef1fb288e9b85243a"
@@ -5038,10 +5007,6 @@ p-locate@^2.0.0:
 p-try@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/p-try/-/p-try-1.0.0.tgz#cbc79cdbaf8fd4228e13f621f2b1a237c1b207b3"
-
-painterly-textures@0.0.3:
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/painterly-textures/-/painterly-textures-0.0.3.tgz#7023c5761ebb3474a6023c370d3716dafc752eb7"
 
 parse-glob@^3.0.4:
   version "3.0.4"
@@ -5155,13 +5120,6 @@ pkg-dir@^2.0.0:
   resolved "https://registry.yarnpkg.com/pkg-dir/-/pkg-dir-2.0.0.tgz#f6d5d1109e19d63edf428e0bd57e12777615334b"
   dependencies:
     find-up "^2.1.0"
-
-player-physics@0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/player-physics/-/player-physics-0.1.0.tgz#d3e77304ccdf484b0b72d1d0daa1419c1cf78bf5"
-  dependencies:
-    inherits "1.0.0"
-    three "0.54.0"
 
 plist@2.0.1:
   version "2.0.1"
@@ -5296,10 +5254,6 @@ qs@^6.5.0, qs@~6.5.1:
 qs@~6.4.0:
   version "6.4.0"
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.4.0.tgz#13e26d28ad6b0ffaa91312cd3bf708ed351e7233"
-
-raf@0.0.1:
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/raf/-/raf-0.0.1.tgz#1cddaa6054ac7c407ef037131955a9d5861986fc"
 
 raf@^3.3.2:
   version "3.4.0"
@@ -6069,21 +6023,11 @@ sparkles@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/sparkles/-/sparkles-1.0.0.tgz#1acbbfb592436d10bbe8f785b7cc6f82815012c3"
 
-spatial-events@0.0.1:
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/spatial-events/-/spatial-events-0.0.1.tgz#2a993e3d4948acf0f77934d8c8155863e1c3076f"
-  dependencies:
-    aabb-3d "0.X.X"
-
 spatial-events@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/spatial-events/-/spatial-events-1.1.0.tgz#fdfcffbf7ad87f368a65a40237b5c84748c3920c"
   dependencies:
     aabb-3d "0.X.X"
-
-spatial-trigger@0.0.0:
-  version "0.0.0"
-  resolved "https://registry.yarnpkg.com/spatial-trigger/-/spatial-trigger-0.0.0.tgz#68794be1e911e7fae6a05a4ff35003c81db79c53"
 
 spdx-correct@^3.0.0:
   version "3.0.0"
@@ -6327,14 +6271,6 @@ text-table@~0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/text-table/-/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"
 
-three@0.54.0:
-  version "0.54.0"
-  resolved "https://registry.yarnpkg.com/three/-/three-0.54.0.tgz#21e82dc58b28f88af5f29a2e583da60a11d27421"
-
-three@0.56.0:
-  version "0.56.0"
-  resolved "https://registry.yarnpkg.com/three/-/three-0.56.0.tgz#8c47c58b8294e86528c66de04aa70c968715bd31"
-
 three@0.X.X, three@^0.91.0:
   version "0.91.0"
   resolved "https://registry.yarnpkg.com/three/-/three-0.91.0.tgz#033fe745b64e56e679a86581957cfd1c5f9fe284"
@@ -6354,13 +6290,9 @@ through@^2.3.6:
   version "2.3.8"
   resolved "https://registry.yarnpkg.com/through/-/through-2.3.8.tgz#0dd4c9ffaabc357960b1b724115d7e0e86a2e1f5"
 
-through@~1.1.1:
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/through/-/through-1.1.2.tgz#344a5425a3773314ca7e0eb6512fbafaf76c0bfe"
-
-tic@0.2.1, tic@~0.2.0:
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/tic/-/tic-0.2.1.tgz#03240336dde29d0b7c2e5a24e9cc0cbf5461e1b1"
+through@~2.2.1:
+  version "2.2.7"
+  resolved "https://registry.yarnpkg.com/through/-/through-2.2.7.tgz#6e8e21200191d4eb6a99f6f010df46aa1c6eb2bd"
 
 tic@^1.0.0:
   version "1.0.0"
@@ -6413,12 +6345,6 @@ to-regex@^3.0.1, to-regex@^3.0.2:
     extend-shallow "^3.0.2"
     regex-not "^1.0.2"
     safe-regex "^1.1.0"
-
-toolbar@0.0.2:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/toolbar/-/toolbar-0.0.2.tgz#6e9c1eeecaae0f008de3c6da297de91af3f11e59"
-  dependencies:
-    inherits "1.0.0"
 
 tough-cookie@>=2.3.3, tough-cookie@^2.3.3, tough-cookie@~2.3.0, tough-cookie@~2.3.3:
   version "2.3.4"
@@ -6517,9 +6443,9 @@ ultron@~1.1.0:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/ultron/-/ultron-1.1.1.tgz#9fe1536a10a664a65266a1e3ccf85fd36302bc9c"
 
-underscore@1.4.4:
-  version "1.4.4"
-  resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.4.4.tgz#61a6a32010622afa07963bf325203cf12239d604"
+underscore@^1.8.3:
+  version "1.8.3"
+  resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.8.3.tgz#4f3fb53b106e6097fcf9cb4109f2a5e9bdfa5022"
 
 union-value@^1.0.0:
   version "1.0.0"
@@ -6544,12 +6470,6 @@ unset-value@^1.0.0:
   dependencies:
     has-value "^0.3.1"
     isobject "^3.0.0"
-
-unworkify@^0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/unworkify/-/unworkify-0.1.1.tgz#56f799064d3d8e9522b83ac2361a8100fe1af1c7"
-  dependencies:
-    inherits "1.0.0"
 
 urix@^0.1.0, urix@~0.1.0:
   version "0.1.0"
@@ -6660,69 +6580,6 @@ voxel-bucket@^1.0.0:
     itempile "^2.0.0"
     ucfirst "^1.0.0"
 
-voxel-chunks@0.0.2:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/voxel-chunks/-/voxel-chunks-0.0.2.tgz#7d36e7f6c4add51a34c5653ba0166e554d76a9f8"
-  dependencies:
-    inherits "~1.0.0"
-    voxel "~0.1.1"
-    voxel-mesh "~0.1.0"
-
-voxel-control@0.0.7:
-  version "0.0.7"
-  resolved "https://registry.yarnpkg.com/voxel-control/-/voxel-control-0.0.7.tgz#63a47ad1deae4d99b4f7475c76b401bbe6efb9c7"
-
-voxel-debris@0.0.4:
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/voxel-debris/-/voxel-debris-0.0.4.tgz#2287b982ce194788d9cd667244556eea9d102d07"
-  dependencies:
-    funstance "~0.0.2"
-
-voxel-engine@0.5.3:
-  version "0.5.3"
-  resolved "https://registry.yarnpkg.com/voxel-engine/-/voxel-engine-0.5.3.tgz#550d2c78114b6f8871737f9bd0b6c033e3f106db"
-  dependencies:
-    aabb-3d "0.0.0"
-    collide-3d-tilemap "0.0.1"
-    inherits "1.0.0"
-    interact "0.0.2"
-    player-physics "0.1.0"
-    raf "0.0.1"
-    spatial-events "0.0.1"
-    spatial-trigger "0.0.0"
-    three "0.54.0"
-    toolbar "0.0.2"
-    voxel "0.1.4"
-    voxel-chunks "0.0.2"
-    voxel-mesh "0.1.1"
-    voxel-region-change "0.0.2"
-    voxel-texture "0.3.0"
-
-voxel-engine@^0.20.2:
-  version "0.20.2"
-  resolved "https://registry.yarnpkg.com/voxel-engine/-/voxel-engine-0.20.2.tgz#3e7b5b80fbf55e09f269e32976c6146f03498a38"
-  dependencies:
-    aabb-3d "0.0.0"
-    collide-3d-tilemap "0.0.1"
-    gl-matrix "2.0.0"
-    inherits "1.0.0"
-    interact "0.0.2"
-    kb-controls "0.0.2"
-    pin-it "0.0.1"
-    raf "0.0.1"
-    spatial-events "0.0.1"
-    spatial-trigger "0.0.0"
-    three "0.56.0"
-    tic "0.2.1"
-    voxel "0.3.1"
-    voxel-control "0.0.7"
-    voxel-mesh "0.2.1"
-    voxel-physical "0.0.10"
-    voxel-raycast "0.2.1"
-    voxel-region-change "0.1.0"
-    voxel-texture "0.5.6"
-    voxel-view "0.0.6"
-
 voxel-fluid@0.0.2:
   version "0.0.2"
   resolved "https://registry.yarnpkg.com/voxel-fluid/-/voxel-fluid-0.0.2.tgz#2a45ac05da1f9d9fcd1992801d175ece54899dc3"
@@ -6736,36 +6593,6 @@ voxel-fly@^0.1.2:
     ever "0.0.3"
     vkey "0.0.2"
 
-voxel-highlight@0.0.10:
-  version "0.0.10"
-  resolved "https://registry.yarnpkg.com/voxel-highlight/-/voxel-highlight-0.0.10.tgz#abef706f2e665534e4eb6f62ffd55c2596f80781"
-  dependencies:
-    inherits "1.0.0"
-    underscore "1.4.4"
-
-voxel-land@^0.2.3:
-  version "0.2.3"
-  resolved "https://registry.yarnpkg.com/voxel-land/-/voxel-land-0.2.3.tgz#c582a6b29ed3a122bc4a5caa5d730e65fb082601"
-  dependencies:
-    alea "0.0.9"
-    ever "0.0.3"
-    ndarray "^1.0.10"
-    ndarray-ops "^1.2.2"
-    simplex-noise "^2.1.1"
-    unworkify "^0.1.1"
-    voxel-trees "^0.1.0"
-    webworkify "^0.1.0"
-
-voxel-mesh@0.1.1, voxel-mesh@~0.1.0:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/voxel-mesh/-/voxel-mesh-0.1.1.tgz#0788e87296a563d5b1390dab1496ca592377372e"
-  dependencies:
-    three "0.54.0"
-
-voxel-mesh@0.2.1:
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/voxel-mesh/-/voxel-mesh-0.2.1.tgz#6b7539e46e08435ddcb3ee7ccb6a2f5144eeca69"
-
 voxel-mesh@^0.3.0:
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/voxel-mesh/-/voxel-mesh-0.3.0.tgz#33d61695f67293c2857715986f177dd27c6a87e9"
@@ -6776,25 +6603,12 @@ voxel-perlin-terrain@^1.0.0:
   dependencies:
     perlin "1.0.0"
 
-voxel-physical@0.0.10:
-  version "0.0.10"
-  resolved "https://registry.yarnpkg.com/voxel-physical/-/voxel-physical-0.0.10.tgz#fc9f66facd6d6b4e1c422c4daab5c67eac436a58"
-  dependencies:
-    aabb-3d "0.0.X"
-    three "0.X.X"
-
 voxel-physical@^0.1.3:
   version "0.1.3"
   resolved "https://registry.yarnpkg.com/voxel-physical/-/voxel-physical-0.1.3.tgz#ac0afed61e9514ffb39446a7ade81a43d20a3cdf"
   dependencies:
     aabb-3d "0.0.X"
     three "0.X.X"
-
-voxel-player@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/voxel-player/-/voxel-player-0.1.0.tgz#dacfaf0e60e42ec84732feb6b4f05d5df00a64be"
-  dependencies:
-    minecraft-skin "~0.1.0"
 
 voxel-plugins@^0.5.0:
   version "0.5.0"
@@ -6803,7 +6617,7 @@ voxel-plugins@^0.5.0:
     inherits "^2.0.1"
     tsort "0.0.1"
 
-voxel-raycast@0.2.1, voxel-raycast@^0.2.1:
+voxel-raycast@^0.2.1:
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/voxel-raycast/-/voxel-raycast-0.2.1.tgz#61e7bb02e934b08265a3ed81e368b353bca4fb8e"
 
@@ -6814,69 +6628,9 @@ voxel-recipes@^1.0.0:
     craftingrecipes "^2.0.0"
     itempile "^2.0.0"
 
-voxel-region-change@0.0.2:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/voxel-region-change/-/voxel-region-change-0.0.2.tgz#4d9e06366d1184034393b329596253ca9079b64d"
-  dependencies:
-    aabb-3d "0.0.0"
-
-voxel-region-change@0.1.0, voxel-region-change@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/voxel-region-change/-/voxel-region-change-0.1.0.tgz#fe12d30591178693ad7c10288309c82efaa558dc"
-  dependencies:
-    aabb-3d "0.0.0"
-
 voxel-registry@^0.8.3:
   version "0.8.3"
   resolved "https://registry.yarnpkg.com/voxel-registry/-/voxel-registry-0.8.3.tgz#6eeeddd78826f7bea440c7d45274a2f62b723dba"
-
-voxel-texture@0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/voxel-texture/-/voxel-texture-0.3.0.tgz#312eb1191f91f2416b6e3de6690b08d3f5bb1d22"
-  dependencies:
-    opaque "0.0.1"
-    three "0.54.0"
-
-voxel-texture@0.5.6:
-  version "0.5.6"
-  resolved "https://registry.yarnpkg.com/voxel-texture/-/voxel-texture-0.5.6.tgz#76c516a7cc4a9491db25c731230ada5c0898c288"
-  dependencies:
-    atlaspack "~0.2.4"
-    tic "~0.2.0"
-
-voxel-trees@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/voxel-trees/-/voxel-trees-0.1.0.tgz#d41c2fedadf912bbc0fbc435a9e0e7eeffc23ff1"
-
-voxel-view@0.0.6:
-  version "0.0.6"
-  resolved "https://registry.yarnpkg.com/voxel-view/-/voxel-view-0.0.6.tgz#b4924f2fc1e89a78bb332efbc99e29664d6274c8"
-
-voxel-view@0.0.7:
-  version "0.0.7"
-  resolved "https://registry.yarnpkg.com/voxel-view/-/voxel-view-0.0.7.tgz#b19d783e3e636184d51fbc058ae0fa9156777ccf"
-
-voxel-walk@0.0.5:
-  version "0.0.5"
-  resolved "https://registry.yarnpkg.com/voxel-walk/-/voxel-walk-0.0.5.tgz#bbc866922876b771bba4539df3fa0b20ee37f81f"
-  dependencies:
-    minecraft-skin "~0.1.2"
-    painterly-textures "0.0.3"
-    voxel "~0.1.5"
-    voxel-debris "0.0.4"
-    voxel-engine "0.5.3"
-
-voxel@0.1.4:
-  version "0.1.4"
-  resolved "https://registry.yarnpkg.com/voxel/-/voxel-0.1.4.tgz#a777d97dd10a0916696cba3fbf51fbc5ece596a5"
-  dependencies:
-    inherits "1.0.0"
-
-voxel@0.3.1:
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/voxel/-/voxel-0.3.1.tgz#a9717a7635fe1e9431b78f172812385a98777e1b"
-  dependencies:
-    inherits "1.0.0"
 
 voxel@^0.5.0:
   version "0.5.0"
@@ -6884,12 +6638,6 @@ voxel@^0.5.0:
   dependencies:
     inherits "1.0.0"
     ndarray "~1.0.5"
-
-voxel@~0.1.1, voxel@~0.1.5:
-  version "0.1.5"
-  resolved "https://registry.yarnpkg.com/voxel/-/voxel-0.1.5.tgz#04720c3236044e9039e02797ec4572521b49de0c"
-  dependencies:
-    inherits "1.0.0"
 
 w3c-hr-time@^1.0.1:
   version "1.0.1"
@@ -6923,10 +6671,6 @@ webidl-conversions@^4.0.1, webidl-conversions@^4.0.2:
     noop-fn "^1.0.0"
     pouchdb-collections "^1.0.1"
     tiny-queue "^0.2.1"
-
-webworkify@^0.1.0:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/webworkify/-/webworkify-0.1.1.tgz#212576750ef22be380390ef6cab87c04e5fe6fd1"
 
 whatwg-encoding@^1.0.1, whatwg-encoding@^1.0.3:
   version "1.0.3"

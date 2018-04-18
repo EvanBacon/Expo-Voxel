@@ -42,6 +42,7 @@ View.prototype.createRenderer = function(opts) {
   this.renderer = new THREE.WebGLRenderer(opts);
   this.renderer.setClearColorHex = () => {};
   this.renderer.setSize(this.width, this.height);
+  this.renderer.setPixelRatio(window.devicePixelRatio);
   this.renderer.setClearColor(this.skyColor, 1.0);
   this.renderer.clear();
 };

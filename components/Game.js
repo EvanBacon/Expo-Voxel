@@ -14,16 +14,14 @@ import Expo from 'expo';
 
 const { width, height } = Dimensions.get('window');
 import DirectionType from '../js/DirectionType';
-// var fly = require('voxel-fly');
-// var highlight = require('../js/lib/voxel-highlight');
-// var walk = require('voxel-walk');
-// var player = require('../js/lib/voxel-player');
-// var voxel = require('voxel');
-// const examples = voxel.generateExamples();
-// import Engine from '../js/lib/voxel-engine';
-// import voxelView from '../js/lib/voxel-view';
-// var createReach = require('../js/lib/voxel-reach');
-
+const fly = require('voxel-fly');
+const highlight = require('../js/lib/voxel-highlight');
+const walk = require('../js/lib/voxel-walk');
+const voxel = require('voxel');
+import Engine from '../js/lib/voxel-engine';
+import voxelView from '../js/lib/voxel-view';
+const createReach = require('../js/lib/voxel-reach');
+const player = require('../js/lib/voxel-player');
 import Dpad from './Dpad';
 import GestureType from '../js/GestureType';
 
@@ -33,7 +31,7 @@ const terrain = require('voxel-perlin-terrain');
 const chunkSize = 32;
 
 // initialize your noise with a seed, floor height, ceiling height and scale factor
-// var generateChunk = terrain('foo', 0, 5, 20);
+const generateChunk = terrain('foo', 0, 5, 20);
 
 export default class App extends React.Component {
   componentWillMount() {
@@ -47,6 +45,10 @@ export default class App extends React.Component {
     return Platform.OS === 'android';
   };
 
+  shouldComponentUpdate() {
+    return false;
+  }
+
   screenDelta = { x: 0, y: 0 };
 
   updateStreamWithEvent = (type, event, gestureState) => {
@@ -57,6 +59,7 @@ export default class App extends React.Component {
       x: dx,
       y: dy,
     };
+    console.log('stream touch', this.screenDelta);
     window.document.body.emitter.emit(type, {
       ...nativeEvent,
       screenX: this.screenDelta.x,
@@ -204,13 +207,17 @@ export default class App extends React.Component {
   render() {
     return (
       <View style={{ flex: 1 }}>
-        <ExpoGraphics.View
+        <View
+          style={StyleSheet.absoluteFill}
           {...this.panResponder.panHandlers}
-          onContextCreate={this.onContextCreate}
-          onRender={this.onRender}
-          onResize={this.onResize}
-          onShouldReloadContext={this.onShouldReloadContext}
-        />
+        >
+          <ExpoGraphics.View
+            onContextCreate={this.onContextCreate}
+            onRender={this.onRender}
+            onResize={this.onResize}
+            onShouldReloadContext={this.onShouldReloadContext}
+          />
+        </View>
         {this.dpad}
       </View>
     );
@@ -219,48 +226,13 @@ export default class App extends React.Component {
   // This is called by the `ExpoGraphics.View` once it's initialized
   onContextCreate = async ({ gl, canvas, width, height, scale }) => {
     global.__context = gl;
-    var createGame = require('../js/lib/voxel-engine');
-
-    this.game = createGame({
-      materials: ['grass', 'yellow'],
-      generate: function(x, y, z) {
-        if (y === 5 && x === 5 && z === 5) {
-          return 2;
-        }
-        if (y === 4 && (x > 3 && x < 7) && (z > 3 && z < 7)) {
-          return 2;
-        }
-        if (y === 3 && (x > 2 && x < 8) && (z > 2 && z < 8)) {
-          return 2;
-        }
-        if (y === 2 && (x > 1 && x < 9) && (z > 1 && z < 9)) {
-          return 2;
-        }
-        if (y === 1 && (x > 0 && x < 10) && (z > 0 && z < 10)) {
-          return 2;
-        }
-        return y === 0 ? 1 : 0;
-      },
-    });
-
-    var player = require('../js/lib/voxel-player');
-    var createPlayer = player(this.game);
-
-    var avatar = createPlayer(
-      Expo.Asset.fromModule(Assets.images['player.png']).localUri,
-    );
-    // avatar.possess();
-    // avatar.yaw.position.set(0, 1, 4);
-
-    const skyColor = '#5dc3ea';
-    // const { drawingBufferWidth: width, drawingBufferHeight: height } = gl;
-
     global.gl = gl;
 
     view = new voxelView(THREE, {
       width,
       height,
-      skyColor,
+      scale,
+      skyColor: 0x5dc3ea,
       ortho: false,
       antialias: true,
       bindToScene: element => {},
@@ -275,20 +247,19 @@ export default class App extends React.Component {
       context: gl,
     });
 
-    const mesher = voxel.generate([0, 0, 0], [16, 16, 16], function(x, y, z) {
-      return Math.round(Math.random() * 0xffffff);
-    });
+    // const mesher = voxel.generate([0, 0, 0], [16, 16, 16], function(x, y, z) {
+    //   return Math.round(Math.random() * 0xffffff);
+    // });
 
     this.controls = {
       discreteFire: true,
       fireRate: 100,
     };
     this.game = new Engine({
-      THREE,
       view,
       interactMouseDrag: true,
       isClient: true,
-      getCamera: _ => view.getCamera(),
+      getCamera: () => view.getCamera(),
       generateChunks: false,
       // mesher: voxel.meshers.stupid,
       // meshType: 'wireMesh',
@@ -309,23 +280,16 @@ export default class App extends React.Component {
       controls: this.controls,
     });
 
-    this.setState({ camera: this.game.camera });
+    const createPlayer = player(this.game);
 
-    (async () => {
-      this._texture = await ExpoTHREE.createTextureAsync({
-        asset: Expo.Asset.fromModule(require('../assets/images/player.png')),
-      });
+    const texture = await ExpoTHREE.loadAsync(Assets.images['player.png']);
+    const avatar = createPlayer(texture);
+    avatar.possess();
+    avatar.yaw.position.set(2, 14, 4);
+    this.avatar = avatar;
 
-      var createPlayer = player(this.game);
-
-      // create the player from a minecraft skin file and tell the
-      // game to use it as the main player
-      this.avatar = createPlayer(this._texture, {});
-      this.avatar.possess();
-      this.avatar.yaw.position.set(2, 14, 4);
-
-      this.defaultSetup(this.game, this.avatar);
-    })();
+    this.defaultSetup(this.game, this.avatar);
+    // })();
   };
 
   onResize = ({ width, height, scale }) => {
@@ -340,7 +304,7 @@ export default class App extends React.Component {
   onRender = delta => {
     // this.cube.rotation.x += 3.5 * delta;
     // this.cube.rotation.y += 2 * delta;
-    this.renderer.render(this.scene, this.camera);
+    // this.renderer.render(this.scene, this.camera);
   };
 
   defaultSetup = (game, avatar) => {
@@ -362,19 +326,20 @@ export default class App extends React.Component {
     game.plugins.add('voxel-fluid', require('voxel-fluid'), {});
     game.plugins.add('voxel-bucket', require('voxel-bucket'), {});
     // then hook it up to your game as such:
-    // game.voxels.emitter.addListener('missingChunk', function (p) {
-    //   var voxels = generateChunk(p, chunkSize)
+    // game.voxels.emitter.addListener('missingChunk', function(p) {
+    //   var voxels = generateChunk(p, chunkSize);
     //   var chunk = {
     //     position: p,
     //     dims: [chunkSize, chunkSize, chunkSize],
-    //     voxels: voxels
-    //   }
-    //   game.showChunk(chunk)
-    // })
+    //     voxels: voxels,
+    //   };
+    //   game.showChunk(chunk);
+    // });
     // note that your game should have generateChunks: false
     var makeFly = fly(game);
     var target = game.controls.target();
     game.flyer = makeFly(target);
+
     // highlight blocks when you look at them, hold <Ctrl> for block placement
     this.blockPosPlace;
     this.blockPosErase;
@@ -395,23 +360,29 @@ export default class App extends React.Component {
       this.blockPosPlace = null;
     });
     plugins['highlighter'] = hl;
+
     const reachDistance = 9;
     this.reach = createReach(game, reachDistance);
+
     plugins['voxel-reach'] = this.reach;
     this.reach.emitter.addListener('use', function(target) {
       if (target) game.createBlock(target.adjacent, 1);
     });
+
     this.reach.emitter.addListener('mining', function(target) {
       // console.warn("mining", target)
       if (target) game.setBlock(target.voxel, 0);
     });
+
     var createMine = require('../js/lib/voxel-mine');
+
     var mine = createMine(game, {});
     plugins['voxel-mine'] = mine;
     mine.addListener('break', function(target) {
       // do something to this voxel (remove it, etc.)
       console.warn('Remove This Voxel', target);
     });
+
     // toggle between first and third person modes
     // window.addEventListener('keydown', function (ev) {
     //   if (ev.keyCode === 'R'.charCodeAt(0)) avatar.toggle()
@@ -419,6 +390,7 @@ export default class App extends React.Component {
     // avatar.toggle()
     // block interaction stuff, uses highlight data
     var currentMaterial = 1;
+
     game.on('fire', function(target, state) {
       // var position = this.blockPosPlace
       // if (position) {
@@ -430,6 +402,7 @@ export default class App extends React.Component {
       //   if (position) game.setBlock(position, 0)
       // }
     });
+
     game.on('tick', function() {
       walk.render(target.playerSkin);
       var vx = Math.abs(target.velocity.x);

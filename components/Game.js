@@ -19,7 +19,7 @@ const highlight = require('../js/lib/voxel-highlight');
 const walk = require('../js/lib/voxel-walk');
 const voxel = require('voxel');
 import Engine from '../js/lib/voxel-engine';
-import voxelView from '../js/lib/voxel-view';
+import VoxelView from '../js/lib/voxel-view';
 const createReach = require('../js/lib/voxel-reach');
 const player = require('../js/lib/voxel-player');
 import Dpad from './Dpad';
@@ -228,7 +228,7 @@ export default class App extends React.Component {
     global.__context = gl;
     global.gl = gl;
 
-    view = new voxelView(THREE, {
+    view = new VoxelView({
       width,
       height,
       scale,

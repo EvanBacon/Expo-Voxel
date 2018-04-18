@@ -4,7 +4,7 @@
     "description": "Beautiful Voxel Terrain",
     "slug": "expo-craft",
     "privacy": "public",
-    "sdkVersion": "22.0.0",
+    "sdkVersion": "26.0.0",
     "version": "1.0.0",
     "orientation": "default",
     "primaryColor": "#46bd00",

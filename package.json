@@ -11,12 +11,15 @@
     "preset": "jest-expo"
   },
   "dependencies": {
+    "@expo/browser-polyfill": "^0.0.0-alpha.5",
     "aabb-3d": "^0.1.0",
     "atlaspack": "^1.0.0",
     "collide-3d-tilemap": "^1.0.0",
-    "events": "^1.1.1",
-    "expo-three": "^2.0.3",
-    "expo-three-orbit-controls": "^1.0.1",
+    "events": "^2.0.0",
+    "expo": "^26.0.0",
+    "expo-graphics": "^0.0.3",
+    "expo-three": "^2.2.2-alpha.1",
+    "fract": "^0.1.0",
     "gl-matrix": "^2.3.2",
     "inherits": "^2.0.3",
     "kb-controls": "^0.2.0",
@@ -24,13 +27,11 @@
     "pin": "^0.3.0",
     "pin-it": "0.0.1",
     "raf": "^3.3.2",
-    "expo": "^22.0.4",
-    "react": "16.0.0-beta.5",
-    "react-native":
-      "https://github.com/expo/react-native/archive/sdk-22.0.0.tar.gz",
+    "react": "16.3.0",
+    "react-native": "https://github.com/expo/react-native/archive/sdk-26.0.0.tar.gz",
     "spatial-events": "^1.1.0",
     "stream": "0.0.2",
-    "three": "^0.88.0",
+    "three": "^0.91.0",
     "tic": "^1.0.0",
     "util": "^0.10.3",
     "voxel": "^0.5.0",
@@ -51,14 +52,13 @@
     "voxel-region-change": "^0.1.0",
     "voxel-registry": "^0.8.3",
     "voxel-view": "0.0.7",
-    "voxel-walk": "0.0.5",
-    "fract": "^0.1.0"
+    "voxel-walk": "0.0.5"
   },
   "devDependencies": {
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-es2015-loose": "^8.0.0",
     "babel-preset-es2016": "^6.24.1",
     "babel-preset-es2017": "^6.24.1",
-    "jest-expo": "23.0.0"
+    "jest-expo": "26.0.0"
   }
 }

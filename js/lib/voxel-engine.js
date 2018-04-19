@@ -5,7 +5,8 @@ import VoxelMesh from './voxel-mesh';
 var ray = require('voxel-raycast');
 import VoxelControl from './voxel-control';
 var inherits = require('inherits');
-import EventEmitter from 'EventEmitter';
+const { EventEmitter } = require('fbemitter');
+
 var interact = require('interact');
 var requestAnimationFrame = require('raf');
 var collisions = require('collide-3d-tilemap');
@@ -20,10 +21,9 @@ var pin = require('pin-it');
 const tic = require('tic')();
 import { THREE } from 'expo-three';
 
-module.exports = Game;
+module.exports = opts => new Game(opts);
 
 function Game(opts) {
-  if (!(this instanceof Game)) return new Game(opts);
   var self = this;
   if (!opts) opts = {};
 
@@ -112,9 +112,7 @@ function Game(opts) {
     'dirt',
   ];
 
-  self.chunkRegion.addListener('change', function(newChunk) {
-    self.removeFarChunks();
-  });
+  this.chunkRegion.addListener('change', newChunk => this.removeFarChunks());
 
   this.materials.load(this.materialNames);
 
@@ -125,8 +123,8 @@ function Game(opts) {
 
   this.showAllChunks();
 
-  setTimeout(function() {
-    self.asyncChunkGeneration =
+  setTimeout(() => {
+    this.asyncChunkGeneration =
       'asyncChunkGeneration' in opts ? opts.asyncChunkGeneration : true;
   }, 2000);
 
@@ -413,10 +411,9 @@ Game.prototype.playerAABB = function(position) {
 };
 
 Game.prototype.collideTerrain = function(other, bbox, vec, resting) {
-  var self = this;
   var axes = ['x', 'y', 'z'];
   var vec3 = [vec.x, vec.y, vec.z];
-  this.collideVoxels(bbox, vec3, function hit(axis, tile, coords, dir, edge) {
+  this.collideVoxels(bbox, vec3, (axis, tile, coords, dir, edge) => {
     if (!tile) return;
     if (Math.abs(vec3[axis]) < Math.abs(edge)) return;
     vec3[axis] = vec[axes[axis]] = edge;
@@ -425,7 +422,7 @@ Game.prototype.collideTerrain = function(other, bbox, vec, resting) {
     other.friction[axes[(axis + 1) % 3]] = other.friction[
       axes[(axis + 2) % 3]
     ] =
-      axis === 1 ? self.friction : 1;
+      axis === 1 ? this.friction : 1;
     return true;
   });
 };
@@ -442,7 +439,6 @@ Game.prototype.addLights = function(scene) {
 // # Chunk related methods
 
 Game.prototype.configureChunkLoading = function(opts) {
-  var self = this;
   if (!opts.generateChunks) return;
   if (!opts.generate) {
     this.generate = function(x, y, z) {
@@ -454,9 +450,8 @@ Game.prototype.configureChunkLoading = function(opts) {
   if (opts.generateVoxelChunk) {
     this.generateVoxelChunk = opts.generateVoxelChunk;
   } else {
-    this.generateVoxelChunk = function(low, high) {
-      return voxel._generate(low, high, self.generate, self);
-    };
+    this.generateVoxelChunk = (low, high) =>
+      voxel._generate(low, high, this.generate, this);
   }
 };
 
@@ -473,29 +468,27 @@ Game.prototype.chunkToWorld = function(pos) {
 };
 
 Game.prototype.removeFarChunks = function(playerPosition) {
-  var self = this;
   playerPosition = playerPosition || this.playerPosition();
   var nearbyChunks = this.voxels
     .nearbyChunks(playerPosition, this.removeDistance)
-    .map(function(chunkPos) {
-      return chunkPos.join('|');
-    });
-  Object.keys(self.voxels.chunks).map(function(chunkIndex) {
+    .map(chunkPos => chunkPos.join('|'));
+
+  Object.keys(this.voxels.chunks).map(chunkIndex => {
     if (nearbyChunks.indexOf(chunkIndex) > -1) return;
-    var chunk = self.voxels.chunks[chunkIndex];
-    var mesh = self.voxels.meshes[chunkIndex];
-    var pendingIndex = self.pendingChunks.indexOf(chunkIndex);
-    if (pendingIndex !== -1) self.pendingChunks.splice(pendingIndex, 1);
+    var chunk = this.voxels.chunks[chunkIndex];
+    var mesh = this.voxels.meshes[chunkIndex];
+    var pendingIndex = this.pendingChunks.indexOf(chunkIndex);
+    if (pendingIndex !== -1) this.pendingChunks.splice(pendingIndex, 1);
     if (!chunk) return;
     var chunkPosition = chunk.position;
     if (mesh) {
       if (mesh.surfaceMesh) {
-        self.scene.remove(mesh.surfaceMesh);
+        this.scene.remove(mesh.surfaceMesh);
         mesh.surfaceMesh.geometry.dispose();
       }
       if (mesh.wireMesh) {
         mesh.wireMesh.geometry.dispose();
-        self.scene.remove(mesh.wireMesh);
+        this.scene.remove(mesh.wireMesh);
       }
       delete mesh.data;
       delete mesh.geometry;
@@ -503,11 +496,11 @@ Game.prototype.removeFarChunks = function(playerPosition) {
       delete mesh.surfaceMesh;
       delete mesh.wireMesh;
     }
-    delete self.voxels.chunks[chunkIndex];
-    self.emitter.emit('removeChunk', chunkPosition);
+    delete this.voxels.chunks[chunkIndex];
+    this.emitter.emit('removeChunk', chunkPosition);
   });
   console.log('get missing', playerPosition);
-  self.voxels.requestMissingChunks(playerPosition);
+  this.voxels.requestMissingChunks(playerPosition);
 };
 
 Game.prototype.addChunkToNextUpdate = function(chunk) {
@@ -515,13 +508,10 @@ Game.prototype.addChunkToNextUpdate = function(chunk) {
 };
 
 Game.prototype.updateDirtyChunks = function() {
-  var self = this;
-  Object.keys(this.chunksNeedsUpdate).forEach(function showChunkAtIndex(
-    chunkIndex,
-  ) {
-    var chunk = self.chunksNeedsUpdate[chunkIndex];
-    self.emitter.emit('dirtyChunkUpdate', chunk);
-    self.showChunk(chunk);
+  Object.keys(this.chunksNeedsUpdate).forEach(chunkIndex => {
+    var chunk = this.chunksNeedsUpdate[chunkIndex];
+    this.emitter.emit('dirtyChunkUpdate', chunk);
+    this.showChunk(chunk);
   });
   this.chunksNeedsUpdate = {};
 };
@@ -676,7 +666,12 @@ Game.prototype.tick = function(delta) {
 };
 
 Game.prototype.render = function(delta) {
+  time = new Date().getTime();
+
+  this.emitter.emit('prerender', delta);
   this.view.render(this.scene);
+
+  this.emitter.emit('postrender', delta);
 };
 
 Game.prototype.initializeTimer = function(rate) {
@@ -687,9 +682,9 @@ Game.prototype.initializeTimer = function(rate) {
   var dt = 0;
   var wholeTick;
 
-  self.frameUpdated = true;
-  self.interval = setInterval(timer, 0);
-  return self.interval;
+  this.frameUpdated = true;
+  this.interval = setInterval(timer, 0);
+  return this.interval;
 
   function timer() {
     if (self.paused) {
@@ -715,20 +710,17 @@ Game.prototype.initializeTimer = function(rate) {
 var time;
 
 Game.prototype.initializeRendering = function(opts) {
-  var self = this;
-
-  // window.addEventListener('resize', self.onWindowResize.bind(self), false)
-  const _render = () => {
-    var now = new Date().getTime();
-    var dt = now - (time || now);
-    time = now;
-    requestAnimationFrame(_render);
-
-    self.emitter.emit('prerender', dt);
-    self.render(dt);
-    self.emitter.emit('postrender', dt);
-  };
-  _render();
+  // // window.addEventListener('resize', self.onWindowResize.bind(self), false)
+  // const _render = () => {
+  //   var now = new Date().getTime();
+  //   var dt = now - (time || now);
+  //   time = now;
+  //   requestAnimationFrame(_render);
+  //   this.emitter.emit('prerender', dt);
+  //   this.render(dt);
+  //   this.emitter.emit('postrender', dt);
+  // };
+  // _render();
 };
 
 Game.prototype.initializeControls = function(opts) {

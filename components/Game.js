@@ -305,7 +305,9 @@ export default class App extends React.Component {
     this.view.resizeWindow(width, height);
   };
 
-  onRender = delta => {};
+  onRender = delta => {
+    this.game.render(delta);
+  };
 
   defaultSetup = (game, avatar) => {
     let plugins = {};

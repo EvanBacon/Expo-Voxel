@@ -1,5 +1,5 @@
 const aabb = require('aabb-3d');
-import EventEmitter from 'EventEmitter';
+const { EventEmitter } = require('fbemitter');
 
 function coordinates(spatial, box, regionWidth) {
   this.emitter = new EventEmitter();

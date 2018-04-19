@@ -1,4 +1,4 @@
-import EventEmitter from 'EventEmitter';
+const { EventEmitter } = require('fbemitter');
 
 module.exports = (game, opts) => new Use(game, opts);
 
@@ -11,7 +11,6 @@ class Use extends EventEmitter {
     super();
 
     this.game = game;
-
 
     //// TODO: Fix this nonsense
     return;
@@ -29,52 +28,55 @@ class Use extends EventEmitter {
   }
 
   enable() {
-    this.reach.on('use', this.onInteract = (target) => {
-      // 1. block interaction
-      if (target && target.voxel && !this.game.buttons.crouch) {
-        const clickedBlockID = this.game.getBlock(target.voxel);  // TODO: should voxel-reach get this?
-        const clickedBlock = this.registry.getBlockName(clickedBlockID);
+    this.reach.on(
+      'use',
+      (this.onInteract = target => {
+        // 1. block interaction
+        if (target && target.voxel && !this.game.buttons.crouch) {
+          const clickedBlockID = this.game.getBlock(target.voxel); // TODO: should voxel-reach get this?
+          const clickedBlock = this.registry.getBlockName(clickedBlockID);
 
-        const props = this.registry.getBlockProps(clickedBlock);
-        if (props.onInteract) {
-          // this block handles its own interaction
-          // TODO: redesign this? cancelable event?
-          const preventDefault = props.onInteract(target);
-          if (preventDefault) return;
-        }
-      }
-
-      // 2. use items in hand
-      const held = this.inventoryHotbar.held();
-
-      if (held && held.item) {
-        const props = this.registry.getItemProps(held.item);
-        if (props && props.onUse) {
-          // 2a. use items
-
-          const ret = props.onUse(held, target);
-          if (typeof ret === 'undefined') {
-            // nothing
-          } else if (typeof ret === 'number' || typeof ret === 'boolean') {
-            // consume this many
-            const consumeCount = ret|0;
-            this.inventoryHotbar.takeHeld(consumeCount);
-          } else if (typeof ret === 'object') {
-            // (assumed ItemPile instance (TODO: instanceof? but..))
-            // replace item - used for voxel-bucket
-            // TODO: handle if item count >1? this replaces the whole pile
-            this.inventoryHotbar.replaceHeld(ret);
+          const props = this.registry.getBlockProps(clickedBlock);
+          if (props.onInteract) {
+            // this block handles its own interaction
+            // TODO: redesign this? cancelable event?
+            const preventDefault = props.onInteract(target);
+            if (preventDefault) return;
           }
-        } else if (this.registry.isBlock(held.item)) {
-          // 2b. place itemblocks
-          const newHeld = this.useBlock(target, held);
-          this.inventoryHotbar.replaceHeld(newHeld);
-          this.emit('usedBlock', target, held, newHeld);
         }
-      } else {
-        console.log('waving');
-      }
-    });
+
+        // 2. use items in hand
+        const held = this.inventoryHotbar.held();
+
+        if (held && held.item) {
+          const props = this.registry.getItemProps(held.item);
+          if (props && props.onUse) {
+            // 2a. use items
+
+            const ret = props.onUse(held, target);
+            if (typeof ret === 'undefined') {
+              // nothing
+            } else if (typeof ret === 'number' || typeof ret === 'boolean') {
+              // consume this many
+              const consumeCount = ret | 0;
+              this.inventoryHotbar.takeHeld(consumeCount);
+            } else if (typeof ret === 'object') {
+              // (assumed ItemPile instance (TODO: instanceof? but..))
+              // replace item - used for voxel-bucket
+              // TODO: handle if item count >1? this replaces the whole pile
+              this.inventoryHotbar.replaceHeld(ret);
+            }
+          } else if (this.registry.isBlock(held.item)) {
+            // 2b. place itemblocks
+            const newHeld = this.useBlock(target, held);
+            this.inventoryHotbar.replaceHeld(newHeld);
+            this.emit('usedBlock', target, held, newHeld);
+          }
+        } else {
+          console.log('waving');
+        }
+      }),
+    );
   }
 
   // place a block on target and decrement held

@@ -1,4 +1,4 @@
-import EventEmitter from 'EventEmitter';
+const { EventEmitter } = require('fbemitter');
 import { THREE } from 'expo-three';
 const _ = require('underscore');
 

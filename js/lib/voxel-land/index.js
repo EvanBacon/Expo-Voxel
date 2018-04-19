@@ -1,5 +1,5 @@
 var ndarray = require('ndarray');
-var EventEmitter = require('events').EventEmitter;
+const { EventEmitter } = require('fbemitter');
 var inherits = require('inherits');
 import ChunkGenerator from './worker';
 module.exports = function(game, opts) {

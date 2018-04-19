@@ -564,6 +564,9 @@ Game.prototype.showAllChunks = function() {
 
 Game.prototype.showChunk = function(chunk) {
   const chunkIndex = chunk.position.join('|');
+  if (chunkIndex !== '0|0|0') {
+    return;
+  }
   console.log('show chunk', chunkIndex);
   var bounds = this.voxels.getBounds.apply(this.voxels, chunk.position);
   var scale = new THREE.Vector3(1, 1, 1);

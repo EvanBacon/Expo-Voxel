@@ -180,7 +180,7 @@ class Land extends EventEmitter {
     let chunkGen = new ChunkGenerator(this, self.opts);
     // self.emit({cmd: 'configure', opts:self.opts});
 
-    this.game.voxels.emitter.addListener(
+    this.game.voxels.addListener(
       'missingChunk',
       (this.missingChunk = function(pos) {
         // console.warn("packitnsionfmd")

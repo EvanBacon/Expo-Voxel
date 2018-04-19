@@ -51,7 +51,12 @@ export default class App extends React.Component {
   }
 
   screenDelta = { x: 0, y: 0 };
-
+  fakeEvent = () =>
+    this.updateStreamWithEvent(
+      'mousedown',
+      { nativeEvent: {} },
+      { dx: 0, dy: 0 },
+    );
   updateStreamWithEvent = (type, event, gestureState) => {
     const { nativeEvent } = event;
     const { dx, dy } = gestureState;
@@ -235,7 +240,7 @@ export default class App extends React.Component {
       scale,
       skyColor: 0x5dc3ea,
       ortho: false,
-      antialias: true,
+      antialias: false,
       bindToScene: element => {},
       canvas: {
         width,
@@ -279,6 +284,8 @@ export default class App extends React.Component {
       materialFlatColor: true,
       worldOrigin: [0, 0, 0],
       controls: this.controls,
+      materialType: THREE.MeshBasicMaterial,
+      antialias: false,
     });
 
     const createPlayer = player(this.game);
@@ -286,11 +293,12 @@ export default class App extends React.Component {
     const texture = await ExpoTHREE.loadAsync(Assets.images['player.png']);
     const avatar = createPlayer(texture);
     avatar.possess();
-    avatar.yaw.position.set(2, 14, 4);
+    avatar.yaw.position.set(2, 14, 2);
     this.avatar = avatar;
 
     this.defaultSetup(this.game, this.avatar);
     // })();
+    this.fakeEvent();
   };
 
   onResize = ({ width, height, scale }) => {
@@ -310,8 +318,8 @@ export default class App extends React.Component {
     };
     game.plugins.add('voxel-registry', require('voxel-registry'), {});
     game.plugins.add('voxel-land', require('../js/lib/voxel-land'), {
-      treesScale: 2,
-      hillScale: 2,
+      // treesScale: 2,
+      // hillScale: 2,
       chunkSize: 16,
     });
     game.plugins.add('voxel-recipes', require('voxel-recipes'), {});

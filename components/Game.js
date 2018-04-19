@@ -367,11 +367,11 @@ export default class App extends React.Component {
     this.reach = createReach(game, reachDistance);
 
     plugins['voxel-reach'] = this.reach;
-    this.reach.emitter.addListener('use', function(target) {
+    this.reach.addListener('use', function(target) {
       target && game.createBlock(target.adjacent, 1);
     });
 
-    this.reach.emitter.addListener('mining', function(target) {
+    this.reach.addListener('mining', function(target) {
       // console.warn("mining", target)
       target && game.setBlock(target.voxel, 0);
     });

@@ -112,7 +112,7 @@ class VoxelMine extends EventEmitter {
   }
 
   enable() {
-    this.reach.emitter.addListener(
+    this.reach.addListener(
       'mining',
       (this.onMining = target => {
         if (!target) {
@@ -126,7 +126,7 @@ class VoxelMine extends EventEmitter {
         const hardness = this.timeToMine(target);
         if (this.instaMine || progressSeconds >= hardness) {
           this.progress = 0;
-          this.reach.emitter.emit('stop mining', target);
+          this.reach.emit('stop mining', target);
           this.emit('break', target);
         }
 
@@ -134,7 +134,7 @@ class VoxelMine extends EventEmitter {
       }),
     );
 
-    this.reach.emitter.addListener(
+    this.reach.addListener(
       'start mining',
       (this.onStartMining = target => {
         if (!target) {
@@ -145,7 +145,7 @@ class VoxelMine extends EventEmitter {
       }),
     );
 
-    this.reach.emitter.addListener(
+    this.reach.addListener(
       'stop mining',
       (this.onStopMining = target => {
         if (!target) {
@@ -160,9 +160,9 @@ class VoxelMine extends EventEmitter {
   }
 
   disable() {
-    this.reach.emitter.removeListener('mining', this.onMining);
-    this.reach.emitter.removeListener('start mining', this.onStartMining);
-    this.reach.emitter.removeListener('stop mining', this.onStopMining);
+    this.reach.removeListener('mining', this.onMining);
+    this.reach.removeListener('start mining', this.onStartMining);
+    this.reach.removeListener('stop mining', this.onStopMining);
   }
 
   setupTextures() {

@@ -38,4 +38,5 @@ Stack:
 [![Github Pages](https://img.shields.io/badge/Github-EvanBacon-4078c0.svg?maxAge=2592000)](http://EvanBacon.github.io)
 [![Frog](https://img.shields.io/badge/Website-FrogDesign-46bd00.svg?maxAge=2592000)](http://frogdesign.com/)
 [![Google](https://img.shields.io/badge/Google+-BaconBrix-dd4b39.svg?maxAge=2592000)](http://google.com/+Baconbrix)
+[![reactnative.gallery](https://img.shields.io/badge/reactnative.gallery-%F0%9F%8E%AC-green.svg)](https://reactnative.gallery/EvanBacon/expo-voxel)
 

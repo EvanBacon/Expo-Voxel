@@ -1,6 +1,6 @@
 # [Expo Voxel](https://threejs.org/examples/?q=mine#webgl_geometry_minecraft_ao)
 [![Twitter](https://img.shields.io/badge/twitter-@baconbrix-55acee.svg?maxAge=2592000)](http://twitter.com/baconbrix)
-[![Code Pen](https://img.shields.io/badge/CodePen-EvanBacon-000000.svg?maxAge=2592000)](http://codepen.io/EvanBacon/)
+[![Youtube](https://img.shields.io/badge/Subscribe!-Expo-ff0000.svg?maxAge=2592000)](https://www.youtube.com/c/exposition?sub_confirmation=1)
 
 ![voxel gif should be here. yolo](/demo.gif?raw=true "Preview Gif 😀 ...I love you")
 

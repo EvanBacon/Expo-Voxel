@@ -9,15 +9,11 @@ Expo: https://exp.host/@bacon/voxel
 
 ** Watch the video tutorial: https://youtu.be/H-4t-srSSvI 👍** 
 
-----
-
 ## Stack 🥞
 
 - [Expo](http://expo.io)
 - [React Native](https://facebook.github.io/react-native/)
 - [THREE.js](https://threejs.org/)
-
-----
 
 ## Special Thanks 🙏
 
@@ -25,8 +21,6 @@ Expo: https://exp.host/@bacon/voxel
 - [Nikhilesh Sigatapu](https://github.com/nikki93)
 - [Charlie Cheever](https://github.com/ccheever)
 - [Expo Team](https://twitter.com/expo_io)
-
-----
 
 ## Follow 😍😁
 

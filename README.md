@@ -8,6 +8,8 @@
 
 **Watch the video tutorial: [Youtube](https://youtu.be/H-4t-srSSvI) 👍**
 
+[![reactnative.gallery](https://img.shields.io/badge/reactnative.gallery-%F0%9F%8E%AC-green.svg)](https://reactnative.gallery/EvanBacon/expo-voxel)
+
 ## Stack 🥞
 
 - [Expo](http://expo.io)

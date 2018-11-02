@@ -6,7 +6,7 @@
 
 ## Tutorial 🍎
 
-** Watch the video tutorial: https://youtu.be/H-4t-srSSvI 👍** 
+**Watch the video tutorial: [Youtube](https://youtu.be/H-4t-srSSvI) 👍**
 
 ## Stack 🥞
 

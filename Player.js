@@ -1,20 +1,10 @@
-/**
- * @author mrdoob / http://mrdoob.com/
- * @author alteredq / http://alteredqualia.com/
- * @author paulirish / http://paulirish.com/
- */
-
 import React from 'react';
-import PropTypes from 'prop-types';
-import * as THREE from 'three';
 
-import GestureType from './GestureType';
+import { THREE } from 'expo-three';
 
-import DirectionType from './DirectionType';
+const HEIGHT = 1.7;
 
 export default class Player {
-  HEIGHT = 1.7;
-
   constructor(camera, physics) {
     this.physics = physics;
     this.camera = camera;
@@ -25,7 +15,7 @@ export default class Player {
     this.target = new THREE.Vector3(0, 0, 0);
     this.enabled = true;
 
-    this.movementSpeed = 1.0;
+    this.movementSpeed = 0.05;
     this.lookSpeed = 0.05;
 
     this.lookVertical = true;
@@ -72,24 +62,24 @@ export default class Player {
     }
   };
 
-  look = (horizontal, vertical) => {
-    this.touchX = horizontal;
-    this.touchY = vertical;
+  updateDirection = (x, y) => {
+    const mult = 1;
+    if (isNaN(x) || isNaN(y)) {
+      return;
+    }
+    this.touchX = x * mult;
+    this.touchY = y * mult;
   };
 
   checkDeath = () => {
     if (this.position.y < -1 || this.position.y > 200) {
-      console.log('VOXEL:: Dead', this.position);
       this.setPosition(new THREE.Vector3(50, 50, 50));
-      // this.position.y = 50
-      // this.position.x = 0
-      // this.position.z = 0
     }
   };
 
   setPosition = position => {
     const { x, y, z } = position;
-    this.camera.position.set(x, y + (this.HEIGHT - 1), z);
+    this.camera.position.set(x, y + (HEIGHT - 1), z);
     this.position = position;
 
     ///Update Camera
@@ -101,27 +91,10 @@ export default class Player {
     this.viewHalfY = height / 2;
   };
 
-  onGesture = (event, gestureState, type) => {
-    event.preventDefault();
-    switch (type) {
-      case GestureType.began:
-        break;
-      case GestureType.moved:
-        this.look(gestureState.dx, gestureState.dy);
-        break;
-      case GestureType.ended:
-        break;
-      default:
-        console.warn('Unknown Gesture State: ', gestureState);
-        break;
-    }
-  };
-
   checkedMovement = direction => {
     //for any input movement, break it down into granular chunks so the displacement
     //of a chunk in any axis is less than the radius of the player
 
-    const { HEIGHT } = this;
     const RADIUS = 0.3;
     //const int X_AXIS = 0, Y_AXIS = 1, Z_AXIS = 2;
 
@@ -163,7 +136,6 @@ export default class Player {
         RADIUS,
       );
 
-      // console.log("Moved by", oldPos.x - this.position.x, oldPos.y - this.position.y, oldPos.z - this.position.z)
       if (Math.abs(oldPos.y - _position.y) < 0.00001) {
         // set velocity to zero if we stopped moving vertically
         this.velocity.y = 0;
@@ -172,75 +144,22 @@ export default class Player {
     return _position;
   };
 
-  movePlayer = (delta, directionType) => {
+  updateMovement = ({ angle, speed }) => {
     if (this.heightSpeed) {
       var y = THREE.Math.clamp(this.position.y, this.heightMin, this.heightMax);
       var heightDelta = y - this.heightMin;
-      this.autoSpeedFactor = delta * (heightDelta * this.heightCoef);
+      this.autoSpeedFactor = heightDelta * this.heightCoef;
     } else {
       this.autoSpeedFactor = 0.0;
     }
 
     let movement = new THREE.Vector3(0, 0, 0);
-
-    var actualMoveSpeed = delta * this.movementSpeed;
-
-    switch (directionType) {
-      case DirectionType.front: //Top
-        movement.x +=
-          (actualMoveSpeed + this.autoSpeedFactor) *
-          Math.sin(this.phi) *
-          Math.cos(this.theta);
-        movement.z +=
-          (actualMoveSpeed + this.autoSpeedFactor) *
-          Math.sin(this.phi) *
-          Math.sin(this.theta);
-
-        break;
-      case DirectionType.left: //Left
-        {
-          let angle = -(Math.PI / 2);
-
-          movement.x +=
-            actualMoveSpeed * Math.sin(this.phi) * Math.cos(this.theta + angle);
-          movement.z +=
-            actualMoveSpeed * Math.sin(this.phi) * Math.sin(this.theta + angle);
-        }
-
-        break;
-      case DirectionType.up: //Center
-        this.jump();
-        // movement.y += actualMoveSpeed;
-        break;
-      case DirectionType.right: //Right
-        {
-          let angle = Math.PI / 2;
-          movement.x +=
-            actualMoveSpeed * Math.sin(this.phi) * Math.cos(this.theta + angle);
-          movement.z +=
-            actualMoveSpeed * Math.sin(this.phi) * Math.sin(this.theta + angle);
-        }
-        break;
-      case DirectionType.back: //Bottom
-        // movement.z += actualMoveSpeed;
-        movement.x -=
-          actualMoveSpeed * Math.sin(this.phi) * Math.cos(this.theta);
-        movement.z -=
-          actualMoveSpeed * Math.sin(this.phi) * Math.sin(this.theta);
-        break;
-      case DirectionType.down: //Down
-        movement.y += -actualMoveSpeed;
-        break;
-      default:
-        break;
-    }
-
-    const GRAVITY = -20;
-    this.velocity.y += GRAVITY * delta;
-    // this.velocity.y = 0
-    movement.x += this.velocity.x * delta;
-    movement.z += this.velocity.z * delta;
-    movement.y += this.velocity.y * delta;
+    angle += Math.PI / 2;
+    const actualMoveSpeed = this.movementSpeed * (speed * 0.01);
+    movement.x +=
+      actualMoveSpeed * Math.sin(this.phi) * Math.cos(this.theta + angle);
+    movement.z +=
+      actualMoveSpeed * Math.sin(this.phi) * Math.sin(this.theta + angle);
 
     this.setPosition(this.checkedMovement(movement));
   };
@@ -277,22 +196,34 @@ export default class Player {
       );
     }
 
-    var targetPosition = this.target,
-      position = this.camera.position;
+    let position = this.camera.position;
 
-    targetPosition.x =
-      position.x + 1 * Math.sin(this.phi) * Math.cos(this.theta);
-    targetPosition.y = position.y + 1 * Math.cos(this.phi);
-    targetPosition.z =
-      position.z + 1 * Math.sin(this.phi) * Math.sin(this.theta);
+    const targetPosition = new THREE.Vector3(
+      position.x + 1 * Math.sin(this.phi) * Math.cos(this.theta),
+      position.y + 1 * Math.cos(this.phi),
+      position.z + 1 * Math.sin(this.phi) * Math.sin(this.theta),
+    );
 
     this.camera.lookAt(targetPosition);
   };
 
-  update = (delta, directionType) => {
+  applyVelocity = delta => {
+    const GRAVITY = -20;
+    this.velocity.y += GRAVITY * delta;
+
+    const movement = new THREE.Vector3(
+      this.velocity.x * delta,
+      this.velocity.y * delta,
+      this.velocity.z * delta,
+    );
+
+    this.setPosition(this.checkedMovement(movement));
+  };
+
+  update = (delta, angle, speed) => {
     if (this.enabled === false) return;
 
-    this.movePlayer(delta, directionType);
+    this.applyVelocity(delta);
     this.rotatePlayer(delta);
     const damp = 0.95;
     this.touchX *= damp;

@@ -1,23 +1,16 @@
 // Author: Three.js - https://threejs.org/examples/?q=mine#webgl_geometry_minecraft_ao
-
-import { Asset } from 'expo';
-import * as React from 'react';
-import { View, Dimensions } from 'react-native';
-const { width, height } = Dimensions.get('window');
 import * as THREE from 'three';
-import ImprovedNoise from './ImprovedNoise';
-import { loadTextureAsync } from 'expo-three';
+import ImprovedNoise from 'improved-noise';
 
 export default class World {
-  width;
-  height;
-  data;
-  mesh;
+  blocks = {};
 
-  constructor(width, depth) {
+  constructor({ width, depth, texture }) {
     this.width = width;
     this.depth = depth;
+    this.texture = texture;
     this.data = this.generateHeight(width, depth);
+    this.mesh = this.buildTerrain();
   }
 
   isValidBlock = (x, y, z) => {
@@ -52,16 +45,6 @@ export default class World {
     // return null
   };
 
-  getGeometry = async () => {
-    if (this.mesh) {
-      return this.mesh;
-    }
-
-    await this.buildTerrain();
-
-    return this.mesh;
-  };
-
   generateHeight(width, height) {
     var data = [],
       perlin = new ImprovedNoise(),
@@ -82,13 +65,12 @@ export default class World {
     }
     return data;
   }
-  blocks = {};
 
   getY = (x, z) => {
     return (this.data[x + z * this.width] * 0.2) | 0;
   };
 
-  _buildTerrain = texture => {
+  buildTerrain = () => {
     // // sides
     const size = 1;
     const half = size * 0.5;
@@ -96,7 +78,7 @@ export default class World {
     var shadow = new THREE.Color(0x505050);
     var matrix = new THREE.Matrix4();
 
-    var pxGeometry = new THREE.PlaneGeometry(size, size);
+    const pxGeometry = new THREE.PlaneGeometry(size, size);
     pxGeometry.faces[0].vertexColors = [light, shadow, light];
     pxGeometry.faces[1].vertexColors = [shadow, shadow, light];
     pxGeometry.faceVertexUvs[0][0][0].y = 0.5;
@@ -105,7 +87,7 @@ export default class World {
     pxGeometry.rotateY(Math.PI / 2);
     pxGeometry.translate(half, 0, 0);
 
-    var nxGeometry = new THREE.PlaneGeometry(size, size);
+    const nxGeometry = new THREE.PlaneGeometry(size, size);
     nxGeometry.faces[0].vertexColors = [light, shadow, light];
     nxGeometry.faces[1].vertexColors = [shadow, shadow, light];
     nxGeometry.faceVertexUvs[0][0][0].y = 0.5;
@@ -114,7 +96,7 @@ export default class World {
     nxGeometry.rotateY(-Math.PI / 2);
     nxGeometry.translate(-half, 0, 0);
 
-    var pyGeometry = new THREE.PlaneGeometry(size, size);
+    const pyGeometry = new THREE.PlaneGeometry(size, size);
     pyGeometry.faces[0].vertexColors = [light, light, light];
     pyGeometry.faces[1].vertexColors = [light, light, light];
     pyGeometry.faceVertexUvs[0][0][1].y = 0.5;
@@ -123,7 +105,7 @@ export default class World {
     pyGeometry.rotateX(-Math.PI / 2);
     pyGeometry.translate(0, half, 0);
 
-    var py2Geometry = new THREE.PlaneGeometry(size, size);
+    const py2Geometry = new THREE.PlaneGeometry(size, size);
     py2Geometry.faces[0].vertexColors = [light, light, light];
     py2Geometry.faces[1].vertexColors = [light, light, light];
     py2Geometry.faceVertexUvs[0][0][1].y = 0.5;
@@ -133,7 +115,7 @@ export default class World {
     py2Geometry.rotateY(Math.PI / 2);
     py2Geometry.translate(0, half, 0);
 
-    var pzGeometry = new THREE.PlaneGeometry(size, size);
+    const pzGeometry = new THREE.PlaneGeometry(size, size);
     pzGeometry.faces[0].vertexColors = [light, shadow, light];
     pzGeometry.faces[1].vertexColors = [shadow, shadow, light];
     pzGeometry.faceVertexUvs[0][0][0].y = 0.5;
@@ -141,7 +123,7 @@ export default class World {
     pzGeometry.faceVertexUvs[0][1][2].y = 0.5;
     pzGeometry.translate(0, 0, half);
 
-    var nzGeometry = new THREE.PlaneGeometry(size, size);
+    const nzGeometry = new THREE.PlaneGeometry(size, size);
     nzGeometry.faces[0].vertexColors = [light, shadow, light];
     nzGeometry.faces[1].vertexColors = [shadow, shadow, light];
     nzGeometry.faceVertexUvs[0][0][0].y = 0.5;
@@ -235,31 +217,11 @@ export default class World {
       }
     }
 
-    return this.buildMesh(geometry, texture);
-  };
-
-  buildMesh = (geometry, image) => {
-    this.mesh = new THREE.Mesh(geometry, this.buildTexture(image));
-    return this.mesh;
-  };
-
-  buildTexture = image => {
-    return new THREE.MeshLambertMaterial({
-      map: image,
+    const material = new THREE.MeshLambertMaterial({
+      map: this.texture,
+      // color: 0xff0000,
       vertexColors: THREE.VertexColors,
     });
+    return new THREE.Mesh(geometry, material);
   };
-
-  async buildTerrain() {
-    const textureAsset = Asset.fromModule(
-      require('../assets/images/material.png'),
-    );
-    await textureAsset.downloadAsync();
-
-    this.texture = loadTextureAsync(textureAsset);
-    this.texture.magFilter = THREE.NearestFilter;
-    this.texture.minFilter = THREE.LinearMipMapLinearFilter;
-
-    return this._buildTerrain(this.texture);
-  }
 }
